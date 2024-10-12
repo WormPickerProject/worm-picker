@@ -1,0 +1,213 @@
+<?xml version="1.0" ?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:macro name="motoman_gp4" params="prefix">
+    <xacro:include filename="$(find worm_picker_description)/urdf/common_materials.xacro"/>
+
+    <!-- link list -->
+    <link name="${prefix}base_link">
+      <visual>
+        <geometry>
+          <mesh filename="package://worm_picker_description/meshes/robot/visual/base_link.dae"/>
+        </geometry>
+        <xacro:material_yaskawa_blue/>
+      </visual>
+      <collision>
+        <geometry>
+          <mesh filename="package://worm_picker_description/meshes/robot/collision/base_link.stl"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <link name="${prefix}joint_1">
+      <visual>
+        <geometry>
+          <mesh filename="package://worm_picker_description/meshes/robot/visual/joint_1.dae"/>
+        </geometry>
+        <xacro:material_yaskawa_blue/>
+      </visual>
+      <collision>
+        <geometry>
+          <mesh filename="package://worm_picker_description/meshes/robot/collision/joint_1.stl"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <link name="${prefix}joint_2">
+      <visual>
+        <geometry>
+          <mesh filename="package://worm_picker_description/meshes/robot/visual/joint_2.dae"/>
+        </geometry>
+        <xacro:material_yaskawa_blue/>
+      </visual>
+      <collision>
+        <geometry>
+          <mesh filename="package://worm_picker_description/meshes/robot/collision/joint_2.stl"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <link name="${prefix}joint_3">
+      <visual>
+        <geometry>
+          <mesh filename="package://worm_picker_description/meshes/robot/visual/joint_3.dae"/>
+        </geometry>
+        <xacro:material_yaskawa_blue/>
+      </visual>
+      <collision>
+        <geometry>
+          <mesh filename="package://worm_picker_description/meshes/robot/collision/joint_3.stl"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <link name="${prefix}joint_4">
+      <visual>
+        <geometry>
+          <mesh filename="package://worm_picker_description/meshes/robot/visual/joint_4.dae"/>
+        </geometry>
+        <xacro:material_yaskawa_blue/>
+      </visual>
+      <collision>
+        <geometry>
+          <mesh filename="package://worm_picker_description/meshes/robot/collision/joint_4.stl"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <link name="${prefix}joint_5">
+      <visual>
+        <geometry>
+          <mesh filename="package://worm_picker_description/meshes/robot/visual/joint_5.dae"/>
+        </geometry>
+        <xacro:material_yaskawa_blue/>
+      </visual>
+      <collision>
+        <geometry>
+          <mesh filename="package://worm_picker_description/meshes/robot/collision/joint_5.stl"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <link name="${prefix}joint_6">
+      <visual>
+        <geometry>
+          <mesh filename="package://worm_picker_description/meshes/robot/visual/joint_6.dae"/>
+        </geometry>
+        <xacro:material_yaskawa_silver/>
+      </visual>
+      <collision>
+        <geometry>
+          <mesh filename="package://worm_picker_description/meshes/robot/collision/joint_6.stl"/>
+        </geometry>
+      </collision>
+    </link>
+    <!-- end of link list -->
+
+    <!-- joint list -->
+    <joint name="${prefix}joint_1" type="revolute">
+      <parent link="${prefix}base_link"/>
+      <child link="${prefix}joint_1"/>
+      <origin xyz="0 0 0.330" rpy="0 0 0" />
+      <axis xyz="0 0 1" />
+      <limit lower="${radians(-170)}" upper="${radians(170)}" effort="220.5" velocity="${radians(465)}"/>
+    </joint>
+
+    <joint name="${prefix}joint_2" type="revolute">
+      <parent link="${prefix}joint_1"/>
+      <child link="${prefix}joint_2"/>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <axis xyz="0 1 0" />
+      <limit lower="${radians(-110)}" upper="${radians(130)}" effort="305.76" velocity="${radians(465)}"/>
+    </joint>
+
+    <joint name="${prefix}joint_3" type="revolute">
+      <parent link="${prefix}joint_2"/>
+      <child link="${prefix}joint_3"/>
+      <origin xyz="0 0 0.260" rpy="0 0 0" />
+      <axis xyz="0 -1 0" />
+      <limit lower="${radians(-65)}" upper="${radians(200)}" effort="95.55" velocity="${radians(525)}"/>
+    </joint>
+
+    <joint name="${prefix}joint_4" type="revolute">
+      <parent link="${prefix}joint_3"/>
+      <child link="${prefix}joint_4"/>
+      <origin xyz="0.290 0 0.015" rpy="0 0 0" />
+      <axis xyz="-1 0 0" />
+      <limit lower="${radians(-200)}" upper="${radians(200)}" effort="48.02" velocity="${radians(565)}"/>
+    </joint>
+
+    <joint name="${prefix}joint_5" type="revolute">
+      <parent link="${prefix}joint_4"/>
+      <child link="${prefix}joint_5"/>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <axis xyz="0 -1 0" />
+      <limit lower="${radians(-123)}" upper="${radians(123)}" effort="38.42" velocity="${radians(565)}"/>
+    </joint>
+
+    <joint name="${prefix}joint_6" type="revolute">
+      <parent link="${prefix}joint_5"/>
+      <child link="${prefix}joint_6"/>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <axis xyz="-1 0 0" />
+      <limit lower="${radians(-455)}" upper="${radians(455)}" effort="16.46" velocity="${radians(1000)}"/>
+    </joint>
+    <!-- end of joint list -->
+
+    <!-- ROS-Industrial 'flange' frame -->
+    <link name="${prefix}flange"/>
+    <joint name="${prefix}joint_6-flange" type="fixed">
+      <origin xyz="0.072 0 0" rpy="0 0 0"/>
+      <parent link="${prefix}joint_6"/>
+      <child link="${prefix}flange"/>
+    </joint>
+
+    <!-- ROS-Industrial 'tool0' frame -->
+    <link name="${prefix}tool0"/>
+    <joint name="${prefix}flange-tool0" type="fixed">
+      <origin xyz="0 0 0" rpy="${radians(180)} ${radians(-90)} 0"/>
+      <parent link="${prefix}flange"/>
+      <child link="${prefix}tool0"/>
+    </joint>
+
+    <!-- End Effector -->
+    <link name="${prefix}eoat">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="package://worm_picker_description/meshes/workcell/eoat_v2.stl"/>
+        </geometry>
+        <material name="sprayer">
+          <color rgba="0.65 0.6 0.20 1"/>
+        </material>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="package://worm_picker_description/meshes/workcell/eoat_v2.stl"/>
+        </geometry>
+      </collision>
+    </link>
+    <joint name="flange-${prefix}eoat" type="fixed">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <parent link="flange"/>
+      <child link="${prefix}eoat"/> 
+    </joint>
+
+    <!-- EOAT TCP -->
+    <link name="${prefix}eoat_tcp"/>
+    <joint name="${prefix}eoat-${prefix}eoat_tcp" type="fixed">
+      <origin xyz="0.1 0 -0.1" rpy="${radians(180)} ${radians(0)} ${radians(90)}"/>
+      <parent link="${prefix}eoat"/>
+      <child link="${prefix}eoat_tcp"/> 
+    </joint>
+    
+    <!-- ROS base_link to Robot Manufacturer World Coordinates transform -->
+    <link name="${prefix}base" />
+    <joint name="${prefix}base_link-base" type="fixed">
+      <origin xyz="0 0 0.330" rpy="0 0 0"/>
+      <parent link="${prefix}base_link"/>
+      <child link="${prefix}base"/>
+    </joint>
+    
+  </xacro:macro>
+</robot>

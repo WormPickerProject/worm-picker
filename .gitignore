@@ -1,32 +1,14 @@
-# Prerequisites
-*.d
+# Ignore the src directory itself
+/src
 
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
+# Un-ignore all contents inside src
+!/src/
 
-# Precompiled Headers
-*.gch
-*.pch
+# Ignore build, install, and log directories
+/build
+/install
+/log
 
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
-
-# Executables
-*.exe
-*.out
-*.app
+# Ignore IDE specific directories
+.vscode/
+.github/
