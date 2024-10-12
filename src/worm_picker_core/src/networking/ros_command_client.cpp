@@ -1,3 +1,22 @@
+// ros_command_client.cpp
+//
+// Copyright (c) 2024 Logan Kaising
+// SPDX-License-Identifier: Apache-2.0
+//
+// Author: Logan Kaising 
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 #include "worm_picker_core/networking/ros_command_client.hpp"
 
 RosCommandClient::RosCommandClient(int argc, char **argv) 
@@ -5,9 +24,12 @@ RosCommandClient::RosCommandClient(int argc, char **argv)
     rclcpp::init(argc, argv);
     ros_node_instance_ = rclcpp::Node::make_shared("ros_command_client");
 
-    task_command_client_ = ros_node_instance_->create_client<worm_picker_custom_msgs::srv::TaskCommand>("/task_command");
-    start_trajectory_mode_client_ = ros_node_instance_->create_client<motoros2_interfaces::srv::StartTrajMode>("/start_traj_mode");
-    stop_trajectory_mode_client_ = ros_node_instance_->create_client<std_srvs::srv::Trigger>("/stop_traj_mode");
+    task_command_client_ = ros_node_instance_->create_client<
+        worm_picker_custom_msgs::srv::TaskCommand>("/task_command");
+    start_trajectory_mode_client_ = ros_node_instance_->create_client
+        <motoros2_interfaces::srv::StartTrajMode>("/start_traj_mode");
+    stop_trajectory_mode_client_ = ros_node_instance_->create_client<
+        std_srvs::srv::Trigger>("/stop_traj_mode");
 
     initializeSocketCommandHandlers();
 }
@@ -19,11 +41,17 @@ void RosCommandClient::initializeSocketCommandHandlers()
     socket_command_function_map_["startWormPicker"] = [self](std::function<void(bool)> result_callback) { 
         RCLCPP_INFO(self->ros_node_instance_->get_logger(), "Start robot command received. Starting robot.");
         auto start_request = std::make_shared<motoros2_interfaces::srv::StartTrajMode::Request>();
-        self->start_trajectory_mode_client_->async_send_request(start_request,
-            [self, result_callback](rclcpp::Client<motoros2_interfaces::srv::StartTrajMode>::SharedFuture start_future) {
+        self->start_trajectory_mode_client_->async_send_request(
+            start_request,
+            [self, result_callback](
+                rclcpp::Client<motoros2_interfaces::srv::StartTrajMode>::SharedFuture start_future
+            ) {
                 auto start_result = start_future.get();
-                result_callback(start_result->result_code.value == motoros2_interfaces::msg::MotionReadyEnum::READY);
-            });
+                result_callback(
+                    start_result->result_code.value == motoros2_interfaces::msg::MotionReadyEnum::READY
+                );
+            }
+        );
     };
 
     /* Does not work yet. 
@@ -87,12 +115,17 @@ void RosCommandClient::runSocketServer(int server_port)
     auto socket_server_instance = std::make_unique<TcpSocketServer>(server_port);
     std::weak_ptr<RosCommandClient> weak_self_instance = shared_from_this();
 
-    socket_server_instance->setCommandHandler([weak_self_instance](const std::string &received_command, std::function<void(bool)> result_callback) {
-        auto self_instance = weak_self_instance.lock();
-        if (self_instance) {
-            self_instance->handleReceivedSocketCommand(received_command, result_callback);
+    socket_server_instance->setCommandHandler(
+        [weak_self_instance](
+            const std::string &received_command, 
+            std::function<void(bool)> result_callback
+        ) {
+            auto self_instance = weak_self_instance.lock();
+            if (self_instance) {
+                self_instance->handleReceivedSocketCommand(received_command, result_callback);
+            }
         }
-    });
+    );
 
     RCLCPP_INFO(ros_node_instance_->get_logger(), "Starting server.");
     socket_server_instance->startServer();
@@ -105,27 +138,35 @@ void RosCommandClient::runSocketServer(int server_port)
     socket_server_instance->stopServer();
 }
 
-void RosCommandClient::handleReceivedSocketCommand(const std::string &received_command, std::function<void(bool)> result_callback) 
+void RosCommandClient::handleReceivedSocketCommand(
+    const std::string &received_command, std::function<void(bool)> result_callback) 
 {
     auto command_iterator = socket_command_function_map_.find(received_command);
     if (command_iterator != socket_command_function_map_.end()) {
         command_iterator->second(result_callback); 
     } else {
-        auto task_command_request = std::make_shared<worm_picker_custom_msgs::srv::TaskCommand::Request>();
+        auto task_command_request = std::make_shared<
+            worm_picker_custom_msgs::srv::TaskCommand::Request>();
         task_command_request->command = received_command;
         sendTaskCommandServiceRequest(task_command_request, result_callback);
     }
 }
 
-void RosCommandClient::sendTaskCommandServiceRequest(const std::shared_ptr<worm_picker_custom_msgs::srv::TaskCommand::Request>& task_command_request, std::function<void(bool)> result_callback) 
+void RosCommandClient::sendTaskCommandServiceRequest(
+    const std::shared_ptr<worm_picker_custom_msgs::srv::TaskCommand::Request>& task_command_request, 
+    std::function<void(bool)> result_callback) 
 {
     RCLCPP_INFO(ros_node_instance_->get_logger(), "Task command received. Tasking robot.");
     auto self = shared_from_this();
-    task_command_client_->async_send_request(task_command_request, 
-        [self, result_callback](rclcpp::Client<worm_picker_custom_msgs::srv::TaskCommand>::SharedFuture task_result_future) { 
+    task_command_client_->async_send_request(
+        task_command_request, 
+        [self, result_callback](
+            rclcpp::Client<worm_picker_custom_msgs::srv::TaskCommand>::SharedFuture task_result_future
+        ) { 
             auto task_result = task_result_future.get();
             result_callback(task_result->success); 
-        });
+        }
+    );
 }
 
 int main(int argc, char **argv) 
