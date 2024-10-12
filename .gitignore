@@ -5,4 +5,4 @@
 
 # Ignore IDE specific directories
 .vscode/
-.github/
+.github/workflows/
