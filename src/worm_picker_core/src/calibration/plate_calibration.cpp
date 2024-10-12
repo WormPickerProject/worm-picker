@@ -1,7 +1,27 @@
+// plate_calibration.cpp
+//
+// Copyright (c) 2024 Logan Kaising
+// SPDX-License-Identifier: Apache-2.0
+//
+// Author: Logan Kaising 
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 #include "worm_picker_core/calibration/plate_calibration.hpp"
 #include <cmath>
 
-PlateCalibration::Point::Point(double joint1, double joint2, double joint3, double joint4, double joint5, double joint6)
+PlateCalibration::Point::Point(
+    double joint1, double joint2, double joint3, double joint4, double joint5, double joint6)
 {
     const double deg_to_rad = M_PI / 180.0;
 
@@ -77,14 +97,17 @@ void PlateCalibration::createMoveToPlateTask(const Point& point,
     exec_info.controller_names = {controller_name};
     current_task.setProperty("trajectory_execution_info", exec_info);
 
-    auto current_state_stage = std::make_unique<moveit::task_constructor::stages::CurrentState>("current");
+    auto current_state_stage = std::make_unique<
+        moveit::task_constructor::stages::CurrentState>("current");
     current_task.add(std::move(current_state_stage));
 
-    auto joint_interpolation_planner = std::make_shared<moveit::task_constructor::solvers::JointInterpolationPlanner>();
+    auto joint_interpolation_planner = std::make_shared<
+        moveit::task_constructor::solvers::JointInterpolationPlanner>();
     joint_interpolation_planner->setMaxVelocityScalingFactor(velocity_scaling_factor);
     joint_interpolation_planner->setMaxAccelerationScalingFactor(acceleration_scaling_factor);
     
-    auto stage = std::make_unique<moveit::task_constructor::stages::MoveTo>("move_to_target", joint_interpolation_planner);
+    auto stage = std::make_unique<
+        moveit::task_constructor::stages::MoveTo>("move_to_target", joint_interpolation_planner);
     stage->setGoal(point.joint_positions);
     stage->setGroup(arm_group_name);
     stage->setIKFrame("eoat_tcp");
@@ -118,8 +141,9 @@ void PlateCalibration::executeCurrentTask(moveit::task_constructor::Task& curren
     }
 }
 
-void PlateCalibration::handleUserInput(const std::shared_ptr<worm_picker_custom_msgs::srv::TaskCommand::Request> request,
-                                       std::shared_ptr<worm_picker_custom_msgs::srv::TaskCommand::Response> response) 
+void PlateCalibration::handleUserInput(
+    const std::shared_ptr<worm_picker_custom_msgs::srv::TaskCommand::Request> request,
+    std::shared_ptr<worm_picker_custom_msgs::srv::TaskCommand::Response> response) 
 {
     if (!calibration_active_) {
         RCLCPP_WARN(calibration_node_->get_logger(), "Calibration completed. No further commands are accepted.");
