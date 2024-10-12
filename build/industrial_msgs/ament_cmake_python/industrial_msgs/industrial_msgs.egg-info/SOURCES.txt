@@ -1,6 +1,0 @@
-setup.py
-industrial_msgs/__init__.py
-industrial_msgs.egg-info/PKG-INFO
-industrial_msgs.egg-info/SOURCES.txt
-industrial_msgs.egg-info/dependency_links.txt
-industrial_msgs.egg-info/top_level.txt

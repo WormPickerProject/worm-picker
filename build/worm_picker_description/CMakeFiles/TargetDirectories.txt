@@ -1,9 +1,0 @@
-/home/logan/worm-picker/build/worm_picker_description/CMakeFiles/uninstall.dir
-/home/logan/worm-picker/build/worm_picker_description/CMakeFiles/worm_picker_description_uninstall.dir
-/home/logan/worm-picker/build/worm_picker_description/CMakeFiles/test.dir
-/home/logan/worm-picker/build/worm_picker_description/CMakeFiles/edit_cache.dir
-/home/logan/worm-picker/build/worm_picker_description/CMakeFiles/rebuild_cache.dir
-/home/logan/worm-picker/build/worm_picker_description/CMakeFiles/list_install_components.dir
-/home/logan/worm-picker/build/worm_picker_description/CMakeFiles/install.dir
-/home/logan/worm-picker/build/worm_picker_description/CMakeFiles/install/local.dir
-/home/logan/worm-picker/build/worm_picker_description/CMakeFiles/install/strip.dir
