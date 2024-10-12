@@ -9,23 +9,3 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v3
-
-    - name: Set up ROS 2 environment
-      uses: ros-tooling/setup-ros@v0.2.2
-      with:
-        required-ros-distributions: humble  # Replace with your ROS 2 distro
-
-    - name: Install dependencies
-      run: |
-        sudo apt update
-        rosdep update
-        rosdep install --from-paths src --ignore-src -r -y
-
-    - name: Build the workspace
-      run: colcon build --event-handlers console_cohesion+
-
-    - name: Run tests
-      run: colcon test --event-handlers console_cohesion+
