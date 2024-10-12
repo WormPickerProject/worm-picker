@@ -1,9 +1,3 @@
-# Ignore the src directory itself
-/src
-
-# Un-ignore all contents inside src
-!/src/
-
 # Ignore build, install, and log directories
 /build
 /install
