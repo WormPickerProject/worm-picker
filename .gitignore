@@ -1,8 +1,11 @@
+*~
+~$
+.swp$
+
 # Ignore build, install, and log directories
-/build
-/install
-/log
+build/
+install/
+log/
 
 # Ignore IDE specific directories
 .vscode/
-.github/workflows/

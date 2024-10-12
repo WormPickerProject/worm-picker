@@ -16,15 +16,26 @@ rclcpp::node_interfaces::NodeBaseInterface::SharedPtr WormPickerTaskController::
 
 void WormPickerTaskController::setupService() 
 {
-    execute_task_action_client_ = rclcpp_action::create_client<moveit_task_constructor_msgs::action::ExecuteTaskSolution>(
-        worm_picker_node_, "/execute_task_solution");
-    execute_task_action_client_->wait_for_action_server(std::chrono::seconds(60));
+    execute_task_action_client_ = rclcpp_action::create_client<
+        moveit_task_constructor_msgs::action::ExecuteTaskSolution>(
+            worm_picker_node_, 
+            "/execute_task_solution"
+    );
 
-    task_command_service_ = worm_picker_node_->create_service<worm_picker_custom_msgs::srv::TaskCommand>("/task_command", 
-        [this](const std::shared_ptr<worm_picker_custom_msgs::srv::TaskCommand::Request> request, 
-            std::shared_ptr<worm_picker_custom_msgs::srv::TaskCommand::Response> response) {
-            handleTaskCommand(request, response);
-        });
+    execute_task_action_client_->wait_for_action_server(
+        std::chrono::seconds(10)
+    );
+
+    task_command_service_ = worm_picker_node_->create_service<
+        worm_picker_custom_msgs::srv::TaskCommand>(
+            "/task_command",
+            [this](
+                const std::shared_ptr<worm_picker_custom_msgs::srv::TaskCommand::Request> request, 
+                std::shared_ptr<worm_picker_custom_msgs::srv::TaskCommand::Response> response
+            ) {
+                handleTaskCommand(request, response);
+            }
+    );
 }
 
 void WormPickerTaskController::handleTaskCommand(const std::shared_ptr<worm_picker_custom_msgs::srv::TaskCommand::Request> request,

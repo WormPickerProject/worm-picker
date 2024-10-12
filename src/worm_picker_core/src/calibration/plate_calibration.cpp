@@ -37,15 +37,26 @@ PlateCalibration::PlateCalibration(int argc, char **argv)
 
 void PlateCalibration::setupServices() 
 {
-    task_execution_client_ = rclcpp_action::create_client<moveit_task_constructor_msgs::action::ExecuteTaskSolution>(
-        calibration_node_, "/execute_task_solution");
-    task_execution_client_->wait_for_action_server(std::chrono::seconds(10));
+    task_execution_client_ = rclcpp_action::create_client<
+        moveit_task_constructor_msgs::action::ExecuteTaskSolution>(
+            calibration_node_, 
+            "/execute_task_solution"
+    );
+    
+    task_execution_client_->wait_for_action_server(
+        std::chrono::seconds(10)
+    );
 
-    task_command_service_ = calibration_node_->create_service<worm_picker_custom_msgs::srv::TaskCommand>("/task_command", 
-        [this](const std::shared_ptr<worm_picker_custom_msgs::srv::TaskCommand::Request> request, 
-            std::shared_ptr<worm_picker_custom_msgs::srv::TaskCommand::Response> response) {
-            handleUserInput(request, response);
-        });
+    task_command_service_ = calibration_node_->create_service<
+        worm_picker_custom_msgs::srv::TaskCommand>(
+            "/task_command", 
+            [this](
+                const std::shared_ptr<worm_picker_custom_msgs::srv::TaskCommand::Request> request, 
+                std::shared_ptr<worm_picker_custom_msgs::srv::TaskCommand::Response> response
+            ) {
+                handleUserInput(request, response);
+            }
+    );
 }
 
 void PlateCalibration::createMoveToPlateTask(const Point& point, 
