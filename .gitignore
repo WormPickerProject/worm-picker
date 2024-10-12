@@ -1,18 +1,14 @@
-# ROS2 build files
-build/
-install/
-log/
+# Ignore the src directory itself
+/src
 
-# IDE specific files
+# Un-ignore all contents inside src
+!/src/
+
+# Ignore build, install, and log directories
+/build
+/install
+/log
+
+# Ignore IDE specific directories
 .vscode/
-.idea/
-
-# MacOS specific files
-.DS_Store
-
-# Python cache files
-__pycache__/
-
-# Other temporary files
-*.pyc
-*.swp
+.github/
