@@ -1,4 +1,0 @@
-srv/TaskCommand.idl
-srv/TaskCommand.srv
-srv/TaskCommand_Request.msg
-srv/TaskCommand_Response.msg
