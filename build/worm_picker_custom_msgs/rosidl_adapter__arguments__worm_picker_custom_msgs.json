@@ -1,6 +1,0 @@
-{
-  "package_name": "worm_picker_custom_msgs",
-  "non_idl_tuples": [
-    "/home/logan/worm-picker/src/worm_picker_custom_msgs:srv/TaskCommand.srv"
-  ]
-}

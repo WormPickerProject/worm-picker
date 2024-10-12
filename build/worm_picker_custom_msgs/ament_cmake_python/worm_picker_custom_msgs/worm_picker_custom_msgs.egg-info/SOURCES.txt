@@ -1,6 +1,0 @@
-setup.py
-worm_picker_custom_msgs/__init__.py
-worm_picker_custom_msgs.egg-info/PKG-INFO
-worm_picker_custom_msgs.egg-info/SOURCES.txt
-worm_picker_custom_msgs.egg-info/dependency_links.txt
-worm_picker_custom_msgs.egg-info/top_level.txt

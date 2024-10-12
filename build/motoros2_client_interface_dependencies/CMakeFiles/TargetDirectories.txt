@@ -1,9 +1,0 @@
-/home/logan/worm-picker/build/motoros2_client_interface_dependencies/CMakeFiles/uninstall.dir
-/home/logan/worm-picker/build/motoros2_client_interface_dependencies/CMakeFiles/motoros2_client_interface_dependencies_uninstall.dir
-/home/logan/worm-picker/build/motoros2_client_interface_dependencies/CMakeFiles/test.dir
-/home/logan/worm-picker/build/motoros2_client_interface_dependencies/CMakeFiles/edit_cache.dir
-/home/logan/worm-picker/build/motoros2_client_interface_dependencies/CMakeFiles/rebuild_cache.dir
-/home/logan/worm-picker/build/motoros2_client_interface_dependencies/CMakeFiles/list_install_components.dir
-/home/logan/worm-picker/build/motoros2_client_interface_dependencies/CMakeFiles/install.dir
-/home/logan/worm-picker/build/motoros2_client_interface_dependencies/CMakeFiles/install/local.dir
-/home/logan/worm-picker/build/motoros2_client_interface_dependencies/CMakeFiles/install/strip.dir
