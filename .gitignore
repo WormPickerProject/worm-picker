@@ -1,0 +1,18 @@
+# ROS2 build files
+build/
+install/
+log/
+
+# IDE specific files
+.vscode/
+.idea/
+
+# MacOS specific files
+.DS_Store
+
+# Python cache files
+__pycache__/
+
+# Other temporary files
+*.pyc
+*.swp
