@@ -1,0 +1,24 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from industrial_msgs/msg/DebugLevel.msg
+// generated code does not contain a copyright notice
+
+
+module industrial_msgs {
+  module msg {
+    module DebugLevel_Constants {
+      const uint8 DEBUG = 5;
+      const uint8 INFO = 4;
+      const uint8 WARN = 3;
+      const uint8 ERROR = 2;
+      const uint8 FATAL = 1;
+      const uint8 NONE = 0;
+    };
+    @verbatim (language="comment", text=
+      "Debug level message enumeration.  This may replicate some functionality that" "\n"
+      "alreay exists in the ROS logger." "\n"
+      "TODO: Get more information on the ROS Logger.")
+    struct DebugLevel {
+      uint8 val;
+    };
+  };
+};

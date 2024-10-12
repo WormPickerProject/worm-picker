@@ -1,0 +1,133 @@
+// generated from rosidl_adapter/resource/srv.idl.em
+// with input from motoros2_interfaces/srv/SelectMotionTool.srv
+// generated code does not contain a copyright notice
+
+#include "motoros2_interfaces/msg/SelectionResultCodes.idl"
+
+module motoros2_interfaces {
+  module srv {
+    @verbatim (language="comment", text=
+      "SPDX-FileCopyrightText: 2022-2023, Yaskawa America, Inc." "\n"
+      "SPDX-FileCopyrightText: 2022-2023, Delft University of Technology" "\n"
+      "" "\n"
+      "SPDX-License-Identifier: Apache-2.0")
+    struct SelectMotionTool_Request {
+      @verbatim (language="comment", text=
+        "Change the active tool file used for motion on the controller." "\n"
+        "" "\n"
+        "This changes the tool definition used for (Moto)ROS-controlled motions, not" "\n"
+        "manual jogging." "\n"
+        "" "\n"
+        "Make sure to read the following sections carefully to be aware" "\n"
+        "of the behaviour of this service and of the Yaskawa controller after calling" "\n"
+        "this service." "\n"
+        "" "\n"
+        "## FSU and PFL" "\n"
+        "" "\n"
+        "Tool switches through this service will be taken into account by the FSU and" "\n"
+        "PFL safety systems if the controller has these options and they are enabled." "\n"
+        "" "\n"
+        "Tool interference files, if associated with certain tool file definitions," "\n"
+        "will therefore also switch." "\n"
+        "" "\n"
+        "## Tool switch timing" "\n"
+        "" "\n"
+        "The active tool will be switched AFTER the controller has completed execution" "\n"
+        "of the last trajectory segment that was sent to MotoROS BEFORE this service" "\n"
+        "was called." "\n"
+        "" "\n"
+        "The motion queue internal to MotoROS caches a number of segments in a FIFO." "\n"
+        "Only segments received AFTER this service was invoked will be executed with" "\n"
+        "the new tool. Any segments received before a tool switch was invoked will use" "\n"
+        "the old tool." "\n"
+        "" "\n"
+        "To ensure motion will be executed using a certain tool, applications should" "\n"
+        "check the 'in_motion' field (part of the RobotStatus message published on the" "\n"
+        "'robot_status' topic by the driver) and invoke the service when the robot has" "\n"
+        "come to a stop (and the motion queue of MotoROS is empty). Any subsequent" "\n"
+        "trajectories will use the new tool." "\n"
+        "" "\n"
+        "## Effect on trajectory execution" "\n"
+        "" "\n"
+        "As MotoROS currently only executes joint space trajectories, changing tool" "\n"
+        "file with this service DOES NOT affect the execution of those trajectories." "\n"
+        "" "\n"
+        "As noted earlier though, the active tool file definition will affect FSU and" "\n"
+        "PFL behaviour, as the tool definition is used in calculation of dynamics and" "\n"
+        "safety (see \"FSU and PFL\" above)." "\n"
+        "" "\n"
+        "To clarify: the TCP definition of the tool file is NOT taken into account when" "\n"
+        "calculating manipulator motion based on incoming ROS JointTrajectoryAction" "\n"
+        "goals (as JointTrajectory goals do not include any Cartesian poses, only" "\n"
+        "absolute joint space coordinates for each axis)." "\n"
+        "" "\n"
+        "Instead, ROS applications should use different TF frames to define tool frames" "\n"
+        "on the ROS side and plan their motions with the appropriate TF frame as the" "\n"
+        "active tool." "\n"
+        "" "\n"
+        "This service could then be used to notify the controller of other tool" "\n"
+        "characteristics, such as weight, CoG and inertia by switching to a tool file" "\n"
+        "configured with those parameters." "\n"
+        "" "\n"
+        "## Retrieving the active tool file" "\n"
+        "" "\n"
+        "MotoROS2 does not currently support retrieving the active tool file." "\n"
+        "" "\n"
+        "For more information about tool file configuration, selection and use on" "\n"
+        "Yaskawa controllers, refer to the relevant Yaskawa Motoman documentation." "\n"
+        "Numeric ID of the group the tool file is defined for." "\n"
+        "" "\n"
+        "This MUST correspond to a group ID currently defined and active on the" "\n"
+        "controller. The ROS service does not check whether the value specified here" "\n"
+        "is legal. The MotoROS2 server will however check this, and will refuse to" "\n"
+        "switch to an illegal value and will report this to the ROS driver." "\n"
+        "" "\n"
+        "Callers will be notified of such failures by 'success' being set to 'false'" "\n"
+        "and an appropriate error message being provided via the 'message' field of" "\n"
+        "the service response." "\n"
+        "" "\n"
+        "NOTE: this field is 0-based, with 0 corresponding to the first motion group," "\n"
+        "      1 the second, etc." "\n"
+        "" "\n"
+        "legal-values: [0, total_nr_of_groups)" "\n"
+        "required: yes (absence-causes-service-failure)" "\n"
+        "default: no-default")
+      uint32 group_number;
+
+      @verbatim (language="comment", text=
+        "Numeric ID of the tool file to switch to for the specified group." "\n"
+        "" "\n"
+        "Identical to 'group_number', specification of illegal values will result" "\n"
+        "in failure to invoke the MotoROS2 service, and an unsuccessful service result" "\n"
+        "being returned." "\n"
+        "" "\n"
+        "NOTE: this field is 0-based, with 0 corresponding to the first tool file," "\n"
+        "      1 the second, etc." "\n"
+        "" "\n"
+        "legal-values: [0, 63]" "\n"
+        "required: yes (absence-causes-service-failure)" "\n"
+        "default: no-default")
+      uint32 tool_number;
+    };
+    struct SelectMotionTool_Response {
+      @verbatim (language="comment", text=
+        "Result of the service invocation. Values other than zero (0) signal failure." "\n"
+        "" "\n"
+        "Refer to SelectionResultCodes.msg for defined values")
+      motoros2_interfaces::msg::SelectionResultCodes result_code;
+
+      @verbatim (language="comment", text=
+        "A human-readable error message, or an empty string if there was no error.")
+      string message;
+
+      @verbatim (language="comment", text=
+        "true IFF invocation of the MotoROS service was successful." "\n"
+        "" "\n"
+        "NOTE: this is independent of whether the ROS service invocation was" "\n"
+        "      successful. In absence of any ROS middleware failures, a failed MotoROS" "\n"
+        "      service invocation will result in 'success' here being set to 'false'," "\n"
+        "      but a successful ROS service invocation.")
+      boolean success;
+    };
+  };
+};

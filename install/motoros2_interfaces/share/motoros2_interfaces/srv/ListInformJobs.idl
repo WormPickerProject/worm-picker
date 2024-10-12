@@ -1,0 +1,41 @@
+// generated from rosidl_adapter/resource/srv.idl.em
+// with input from motoros2_interfaces/srv/ListInformJobs.srv
+// generated code does not contain a copyright notice
+
+
+module motoros2_interfaces {
+  module srv {
+    @verbatim (language="comment", text=
+      "SPDX-FileCopyrightText: 2024, Yaskawa America, Inc." "\n"
+      "SPDX-FileCopyrightText: 2024, Delft University of Technology" "\n"
+      "" "\n"
+      "SPDX-License-Identifier: Apache-2.0")
+    struct ListInformJobs_Request {
+      uint8 structure_needs_at_least_one_member;
+    };
+    struct ListInformJobs_Response {
+      @verbatim (language="comment", text=
+        "Result of the service invocation. Values other than one (1) signal failure." "\n"
+        "" "\n"
+        "Values defined in 'motoros2_interfaces/msg/InformJobCrudResultCodes'." "\n"
+        "" "\n"
+        "NOTE: future versions of this service may use a different set of result" "\n"
+        "codes. Always make sure to compare against defined named constants instead" "\n"
+        "of integers directly.")
+      uint32 result_code;
+
+      @verbatim (language="comment", text=
+        "string representation of the value in 'result_code', for humans")
+      string message;
+
+      @verbatim (language="comment", text=
+        "The list of jobs present on the controller." "\n"
+        "" "\n"
+        "NOTE:" "\n"
+        "- these are job names, not filenames, and thus will not include the file" "\n"
+        "  extension (JBI)" "\n"
+        "- character encodings other than ASCII are only partially supported")
+      sequence<string> names;
+    };
+  };
+};

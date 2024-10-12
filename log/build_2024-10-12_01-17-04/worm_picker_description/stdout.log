@@ -1,0 +1,67 @@
+-- The C compiler identification is GNU 11.4.0
+-- The CXX compiler identification is GNU 11.4.0
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Found ament_cmake: 1.3.10 (/opt/ros/humble/share/ament_cmake/cmake)
+-- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter 
+-- Found xacro: 2.0.8 (/opt/ros/humble/share/xacro/cmake)
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/logan/worm-picker/build/worm_picker_description
+-- Install configuration: ""
+-- Installing: /home/logan/worm-picker/install/worm_picker_description/share/worm_picker_description/config
+-- Installing: /home/logan/worm-picker/install/worm_picker_description/share/worm_picker_description/config/joint_names_gp4.yaml
+-- Installing: /home/logan/worm-picker/install/worm_picker_description/share/worm_picker_description/config/opw_parameters_gp4.yaml
+-- Installing: /home/logan/worm-picker/install/worm_picker_description/share/worm_picker_description/config/visualize_description.rviz
+-- Installing: /home/logan/worm-picker/install/worm_picker_description/share/worm_picker_description/meshes
+-- Installing: /home/logan/worm-picker/install/worm_picker_description/share/worm_picker_description/meshes/robot
+-- Installing: /home/logan/worm-picker/install/worm_picker_description/share/worm_picker_description/meshes/robot/visual
+-- Installing: /home/logan/worm-picker/install/worm_picker_description/share/worm_picker_description/meshes/robot/visual/joint_1.dae
+-- Installing: /home/logan/worm-picker/install/worm_picker_description/share/worm_picker_description/meshes/robot/visual/joint_6.dae
+-- Installing: /home/logan/worm-picker/install/worm_picker_description/share/worm_picker_description/meshes/robot/visual/joint_5.dae
+-- Installing: /home/logan/worm-picker/install/worm_picker_description/share/worm_picker_description/meshes/robot/visual/joint_2.dae
+-- Installing: /home/logan/worm-picker/install/worm_picker_description/share/worm_picker_description/meshes/robot/visual/base_link.dae
+-- Installing: /home/logan/worm-picker/install/worm_picker_description/share/worm_picker_description/meshes/robot/visual/joint_3.dae
+-- Installing: /home/logan/worm-picker/install/worm_picker_description/share/worm_picker_description/meshes/robot/visual/joint_4.dae
+-- Installing: /home/logan/worm-picker/install/worm_picker_description/share/worm_picker_description/meshes/robot/collision
+-- Installing: /home/logan/worm-picker/install/worm_picker_description/share/worm_picker_description/meshes/robot/collision/joint_4.stl
+-- Installing: /home/logan/worm-picker/install/worm_picker_description/share/worm_picker_description/meshes/robot/collision/joint_5.stl
+-- Installing: /home/logan/worm-picker/install/worm_picker_description/share/worm_picker_description/meshes/robot/collision/joint_1.stl
+-- Installing: /home/logan/worm-picker/install/worm_picker_description/share/worm_picker_description/meshes/robot/collision/joint_2.stl
+-- Installing: /home/logan/worm-picker/install/worm_picker_description/share/worm_picker_description/meshes/robot/collision/joint_6.stl
+-- Installing: /home/logan/worm-picker/install/worm_picker_description/share/worm_picker_description/meshes/robot/collision/base_link.stl
+-- Installing: /home/logan/worm-picker/install/worm_picker_description/share/worm_picker_description/meshes/robot/collision/joint_3.stl
+-- Installing: /home/logan/worm-picker/install/worm_picker_description/share/worm_picker_description/meshes/workcell
+-- Installing: /home/logan/worm-picker/install/worm_picker_description/share/worm_picker_description/meshes/workcell/workstation_v1_visual.stl
+-- Installing: /home/logan/worm-picker/install/worm_picker_description/share/worm_picker_description/meshes/workcell/eoat_v2.stl
+-- Installing: /home/logan/worm-picker/install/worm_picker_description/share/worm_picker_description/meshes/workcell/eoat_v1.stl
+-- Installing: /home/logan/worm-picker/install/worm_picker_description/share/worm_picker_description/meshes/workcell/hotel_1.stl
+-- Installing: /home/logan/worm-picker/install/worm_picker_description/share/worm_picker_description/urdf
+-- Installing: /home/logan/worm-picker/install/worm_picker_description/share/worm_picker_description/urdf/gp4_macro.xacro
+-- Installing: /home/logan/worm-picker/install/worm_picker_description/share/worm_picker_description/urdf/common_materials.xacro
+-- Installing: /home/logan/worm-picker/install/worm_picker_description/share/worm_picker_description/urdf/common_colors.xacro
+-- Installing: /home/logan/worm-picker/install/worm_picker_description/share/worm_picker_description/urdf/workcell_macro.xacro
+-- Installing: /home/logan/worm-picker/install/worm_picker_description/share/worm_picker_description/urdf/worm_picker_robot.urdf.xacro
+-- Installing: /home/logan/worm-picker/install/worm_picker_description/share/ament_index/resource_index/package_run_dependencies/worm_picker_description
+-- Installing: /home/logan/worm-picker/install/worm_picker_description/share/ament_index/resource_index/parent_prefix_path/worm_picker_description
+-- Installing: /home/logan/worm-picker/install/worm_picker_description/share/worm_picker_description/environment/ament_prefix_path.sh
+-- Installing: /home/logan/worm-picker/install/worm_picker_description/share/worm_picker_description/environment/ament_prefix_path.dsv
+-- Installing: /home/logan/worm-picker/install/worm_picker_description/share/worm_picker_description/environment/path.sh
+-- Installing: /home/logan/worm-picker/install/worm_picker_description/share/worm_picker_description/environment/path.dsv
+-- Installing: /home/logan/worm-picker/install/worm_picker_description/share/worm_picker_description/local_setup.bash
+-- Installing: /home/logan/worm-picker/install/worm_picker_description/share/worm_picker_description/local_setup.sh
+-- Installing: /home/logan/worm-picker/install/worm_picker_description/share/worm_picker_description/local_setup.zsh
+-- Installing: /home/logan/worm-picker/install/worm_picker_description/share/worm_picker_description/local_setup.dsv
+-- Installing: /home/logan/worm-picker/install/worm_picker_description/share/worm_picker_description/package.dsv
+-- Installing: /home/logan/worm-picker/install/worm_picker_description/share/ament_index/resource_index/packages/worm_picker_description
+-- Installing: /home/logan/worm-picker/install/worm_picker_description/share/worm_picker_description/cmake/worm_picker_descriptionConfig.cmake
+-- Installing: /home/logan/worm-picker/install/worm_picker_description/share/worm_picker_description/cmake/worm_picker_descriptionConfig-version.cmake
+-- Installing: /home/logan/worm-picker/install/worm_picker_description/share/worm_picker_description/package.xml

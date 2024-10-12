@@ -1,0 +1,8 @@
+source;share/motoros2_client_interface_dependencies/hook/cmake_prefix_path.ps1
+source;share/motoros2_client_interface_dependencies/hook/cmake_prefix_path.dsv
+source;share/motoros2_client_interface_dependencies/hook/cmake_prefix_path.sh
+source;share/motoros2_client_interface_dependencies/local_setup.bash
+source;share/motoros2_client_interface_dependencies/local_setup.dsv
+source;share/motoros2_client_interface_dependencies/local_setup.ps1
+source;share/motoros2_client_interface_dependencies/local_setup.sh
+source;share/motoros2_client_interface_dependencies/local_setup.zsh

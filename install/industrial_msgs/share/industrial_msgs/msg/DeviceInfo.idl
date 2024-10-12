@@ -1,0 +1,26 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from industrial_msgs/msg/DeviceInfo.msg
+// generated code does not contain a copyright notice
+
+
+module industrial_msgs {
+  module msg {
+    @verbatim (language="comment", text=
+      "Device info captures device agnostic information about a piece of hardware." "\n"
+      "This message is meant as a generic as possible.  Items that don't apply should" "\n"
+      "be left blank.  This message is not meant to replace diagnostic messages, but" "\n"
+      "rather provide a standard service message that can be used to populate standard" "\n"
+      "components (like a GUI for example)")
+    struct DeviceInfo {
+      string model;
+
+      string serial_number;
+
+      string hw_version;
+
+      string sw_version;
+
+      string address;
+    };
+  };
+};

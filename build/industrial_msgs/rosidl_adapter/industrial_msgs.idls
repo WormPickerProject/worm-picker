@@ -1,0 +1,6 @@
+/home/logan/worm-picker/build/industrial_msgs/rosidl_adapter/industrial_msgs:msg/DebugLevel.idl
+/home/logan/worm-picker/build/industrial_msgs/rosidl_adapter/industrial_msgs:msg/DeviceInfo.idl
+/home/logan/worm-picker/build/industrial_msgs/rosidl_adapter/industrial_msgs:msg/RobotMode.idl
+/home/logan/worm-picker/build/industrial_msgs/rosidl_adapter/industrial_msgs:msg/RobotStatus.idl
+/home/logan/worm-picker/build/industrial_msgs/rosidl_adapter/industrial_msgs:msg/ServiceReturnCode.idl
+/home/logan/worm-picker/build/industrial_msgs/rosidl_adapter/industrial_msgs:msg/TriState.idl

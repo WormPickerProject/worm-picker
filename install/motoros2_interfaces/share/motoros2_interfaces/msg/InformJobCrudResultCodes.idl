@@ -1,0 +1,31 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from motoros2_interfaces/msg/InformJobCrudResultCodes.msg
+// generated code does not contain a copyright notice
+
+
+module motoros2_interfaces {
+  module msg {
+    module InformJobCrudResultCodes_Constants {
+      const uint32 RC_OK = 1;
+      const string STR_OK = "Success";
+      const uint32 RC_ERR_REFRESHING_JOB_LIST = 10;
+      const string STR_ERR_REFRESHING_JOB_LIST = "Error refreshing job list";
+      const uint32 RC_ERR_RETRIEVING_FILE_COUNT = 11;
+      const string STR_ERR_RETRIEVING_FILE_COUNT = "Error retrieving file count";
+      const uint32 RC_ERR_TOO_MANY_JOBS = 12;
+      const string STR_ERR_TOO_MANY_JOBS = "Too many jobs";
+      const uint32 RC_ERR_RETRIEVING_JOB_NAME_FROM_LIST = 13;
+      const string STR_ERR_RETRIEVING_JOB_NAME_FROM_LIST = "Failed retrieving job name from list";
+      const uint32 RC_ERR_APPENDING_JOB_NAME_TO_SVC_RESPONSE = 14;
+      const string STR_ERR_APPENDING_JOB_NAME_TO_SVC_RESPONSE = "Error adding job name to service response";
+    };
+    @verbatim (language="comment", text=
+      "SPDX-FileCopyrightText: 2024, Yaskawa America, Inc." "\n"
+      "SPDX-FileCopyrightText: 2024, Delft University of Technology" "\n"
+      "" "\n"
+      "SPDX-License-Identifier: Apache-2.0")
+    struct InformJobCrudResultCodes {
+      uint8 structure_needs_at_least_one_member;
+    };
+  };
+};

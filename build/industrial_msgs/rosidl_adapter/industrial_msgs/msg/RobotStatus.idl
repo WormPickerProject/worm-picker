@@ -1,0 +1,57 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from industrial_msgs/msg/RobotStatus.msg
+// generated code does not contain a copyright notice
+
+#include "industrial_msgs/msg/RobotMode.idl"
+#include "industrial_msgs/msg/TriState.idl"
+#include "std_msgs/msg/Header.idl"
+
+module industrial_msgs {
+  module msg {
+    @verbatim (language="comment", text=
+      "The RobotStatus message contains low level status information " "\n"
+      "that is specific to an industrial robot controller")
+    struct RobotStatus {
+      @verbatim (language="comment", text=
+        "The header frame ID is not used")
+      std_msgs::msg::Header header;
+
+      @verbatim (language="comment", text=
+        "The robot mode captures the operating mode of the robot.  When in" "\n"
+        "manual, remote motion is not possible.")
+      industrial_msgs::msg::RobotMode mode;
+
+      @verbatim (language="comment", text=
+        "Estop status: True if robot is e-stopped.  The drives are disabled" "\n"
+        "and motion is not possible.  The e-stop condition must be acknowledged" "\n"
+        "and cleared before any motion can begin.")
+      industrial_msgs::msg::TriState e_stopped;
+
+      @verbatim (language="comment", text=
+        "Drive power status: True if drives are powered.  Motion commands will" "\n"
+        "automatically enable the drives if required.  Drive power is not requred" "\n"
+        "for possible motion")
+      industrial_msgs::msg::TriState drives_powered;
+
+      @verbatim (language="comment", text=
+        "Motion enabled: True if robot motion is possible.")
+      industrial_msgs::msg::TriState motion_possible;
+
+      @verbatim (language="comment", text=
+        "Motion status: True if robot is in motion, otherwise false")
+      industrial_msgs::msg::TriState in_motion;
+
+      @verbatim (language="comment", text=
+        "Error status: True if there is an error condition on the robot. Motion may" "\n"
+        "or may not be affected (see motion_possible)")
+      industrial_msgs::msg::TriState in_error;
+
+      @verbatim (language="comment", text=
+        "Error code: Vendor specific error codes. If this list is empty, there are" "\n"
+        "no active errors on the controller. Order of entries in this list does" "\n"
+        "not necessarily encode for any specific severity or priority of active" "\n"
+        "errors.")
+      sequence<int32> error_codes;
+    };
+  };
+};

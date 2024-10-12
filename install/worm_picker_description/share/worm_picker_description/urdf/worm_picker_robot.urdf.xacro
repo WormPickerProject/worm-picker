@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro" name="worm_picker_robot">
+  
+  <!-- Include necessary Xacro files -->
+  <xacro:include filename="$(find worm_picker_description)/urdf/gp4_macro.xacro" />
+  <xacro:include filename="$(find worm_picker_description)/urdf/workcell_macro.xacro" />
+  
+  <!-- Create 'world' link -->
+  <link name="world"/>
+
+  <!-- Instantiate the GP4 robot macro with no prefix -->
+  <xacro:motoman_gp4 prefix=""/>
+
+  <!-- Connect robot base_link to world -->
+  <joint name="world-base_link" type="fixed">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <parent link="world"/>
+    <child link="base_link"/>
+  </joint>
+
+  <!-- Instantiate the workcell macro with prefix "workcell_" -->
+  <xacro:workcell prefix="workcell_"/>
+
+</robot>
+
