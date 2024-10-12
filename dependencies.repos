@@ -1,0 +1,13 @@
+repositories: 
+  motoros2_client_interface_dependencies: 
+    type: git 
+    url: https://github.com/yaskawa-global/motoros2_client_interface_dependencies.git  
+    version: master
+  motoros2_interfaces: 
+    type: git 
+    url: https://github.com/yaskawa-global/motoros2_interfaces.git 
+    version: main
+  industrial_core_ros2_msgs_only: 
+    type: git 
+    url: https://github.com/ros-industrial/industrial_core.git 
+    version: ros2_msgs_only
