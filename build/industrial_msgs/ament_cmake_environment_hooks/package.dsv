@@ -1,0 +1,4 @@
+source;share/industrial_msgs/local_setup.bash
+source;share/industrial_msgs/local_setup.dsv
+source;share/industrial_msgs/local_setup.sh
+source;share/industrial_msgs/local_setup.zsh

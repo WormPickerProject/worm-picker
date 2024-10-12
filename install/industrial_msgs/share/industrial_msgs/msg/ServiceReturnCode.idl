@@ -1,0 +1,20 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from industrial_msgs/msg/ServiceReturnCode.msg
+// generated code does not contain a copyright notice
+
+
+module industrial_msgs {
+  module msg {
+    module ServiceReturnCode_Constants {
+      const int8 SUCCESS = 1;
+      const int8 FAILURE = -1;
+    };
+    @verbatim (language="comment", text=
+      "Service return codes for simple requests.  All ROS-Industrial service" "\n"
+      "replies are required to have a return code indicating success or failure" "\n"
+      "Specific return codes for different failure should be negative.")
+    struct ServiceReturnCode {
+      int8 val;
+    };
+  };
+};

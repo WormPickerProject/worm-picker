@@ -1,0 +1,26 @@
+{
+  "package_name": "motoros2_interfaces",
+  "non_idl_tuples": [
+    "/home/logan/worm-picker/src/dependencies/motoros2_interfaces:msg/AlarmInfo.msg",
+    "/home/logan/worm-picker/src/dependencies/motoros2_interfaces:msg/AlarmCauseRemedy.msg",
+    "/home/logan/worm-picker/src/dependencies/motoros2_interfaces:msg/ErrorInfo.msg",
+    "/home/logan/worm-picker/src/dependencies/motoros2_interfaces:msg/InformJobCrudResultCodes.msg",
+    "/home/logan/worm-picker/src/dependencies/motoros2_interfaces:msg/IoResultCodes.msg",
+    "/home/logan/worm-picker/src/dependencies/motoros2_interfaces:msg/MotionReadyEnum.msg",
+    "/home/logan/worm-picker/src/dependencies/motoros2_interfaces:msg/QueueResultEnum.msg",
+    "/home/logan/worm-picker/src/dependencies/motoros2_interfaces:msg/SelectionResultCodes.msg",
+    "/home/logan/worm-picker/src/dependencies/motoros2_interfaces:srv/GetActiveAlarmInfo.srv",
+    "/home/logan/worm-picker/src/dependencies/motoros2_interfaces:srv/ListInformJobs.srv",
+    "/home/logan/worm-picker/src/dependencies/motoros2_interfaces:srv/QueueTrajPoint.srv",
+    "/home/logan/worm-picker/src/dependencies/motoros2_interfaces:srv/ReadMRegister.srv",
+    "/home/logan/worm-picker/src/dependencies/motoros2_interfaces:srv/ReadSingleIO.srv",
+    "/home/logan/worm-picker/src/dependencies/motoros2_interfaces:srv/ReadGroupIO.srv",
+    "/home/logan/worm-picker/src/dependencies/motoros2_interfaces:srv/ResetError.srv",
+    "/home/logan/worm-picker/src/dependencies/motoros2_interfaces:srv/SelectMotionTool.srv",
+    "/home/logan/worm-picker/src/dependencies/motoros2_interfaces:srv/StartTrajMode.srv",
+    "/home/logan/worm-picker/src/dependencies/motoros2_interfaces:srv/StartPointQueueMode.srv",
+    "/home/logan/worm-picker/src/dependencies/motoros2_interfaces:srv/WriteMRegister.srv",
+    "/home/logan/worm-picker/src/dependencies/motoros2_interfaces:srv/WriteSingleIO.srv",
+    "/home/logan/worm-picker/src/dependencies/motoros2_interfaces:srv/WriteGroupIO.srv"
+  ]
+}

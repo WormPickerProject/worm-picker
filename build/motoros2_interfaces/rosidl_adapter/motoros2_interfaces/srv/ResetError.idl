@@ -1,0 +1,31 @@
+// generated from rosidl_adapter/resource/srv.idl.em
+// with input from motoros2_interfaces/srv/ResetError.srv
+// generated code does not contain a copyright notice
+
+#include "motoros2_interfaces/msg/MotionReadyEnum.idl"
+
+module motoros2_interfaces {
+  module srv {
+    @verbatim (language="comment", text=
+      "SPDX-FileCopyrightText: 2022-2023, Yaskawa America, Inc." "\n"
+      "SPDX-FileCopyrightText: 2022-2023, Delft University of Technology" "\n"
+      "" "\n"
+      "SPDX-License-Identifier: Apache-2.0")
+    struct ResetError_Request {
+      uint8 structure_needs_at_least_one_member;
+    };
+    @verbatim (language="comment", text=
+      "Result of the service invocation. Values other than one (1) signal failure." "\n"
+      "" "\n"
+      "Refer to MotionReadyEnum.msg for defined values" "\n"
+      "" "\n"
+      "NOTE: future versions of this service may use a different set of result codes")
+    struct ResetError_Response {
+      motoros2_interfaces::msg::MotionReadyEnum result_code;
+
+      @verbatim (language="comment", text=
+        "string representation of the value in 'result_code', for humans")
+      string message;
+    };
+  };
+};

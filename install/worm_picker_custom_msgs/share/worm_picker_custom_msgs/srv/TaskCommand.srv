@@ -1,0 +1,4 @@
+# srv/TaskCommand.srv
+string command
+---
+bool success
