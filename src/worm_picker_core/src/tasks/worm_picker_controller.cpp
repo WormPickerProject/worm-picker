@@ -22,6 +22,7 @@
 using NodeBaseInterfacePtr = rclcpp::node_interfaces::NodeBaseInterface::SharedPtr;
 using TaskCommandRequestPtr = std::shared_ptr<worm_picker_custom_msgs::srv::TaskCommand::Request>;
 using TaskCommandResponsePtr = std::shared_ptr<worm_picker_custom_msgs::srv::TaskCommand::Response>;
+using TimerResults = std::vector<std::pair<std::string, double>>;
 
 WormPickerController::WormPickerController(const rclcpp::NodeOptions& options) 
     : worm_picker_node_{ std::make_shared<rclcpp::Node>("worm_picker_controller", options) },
@@ -80,16 +81,40 @@ void WormPickerController::handleTaskCommand(const TaskCommandRequestPtr request
 
 bool WormPickerController::doTask(const std::string& command) 
 {
-    current_task_ = task_factory_->createTask(command);
-    current_task_.init();
+    std::vector<std::pair<std::string, double>> timer_results;
+    moveit_msgs::msg::MoveItErrorCodes result;
+    result.val = moveit_msgs::msg::MoveItErrorCodes::FAILURE;
+    
+    auto timeTaskStep = [&](const std::string& timer_name, auto&& task_step) {
+        TicToc timer(timer_name);
+        task_step(); 
+        timer_results.emplace_back(timer.getName(), timer.stop());
+    };
 
-    if (!current_task_.plan(5)) {
-        RCLCPP_ERROR(worm_picker_node_->get_logger(), "Task planning failed");
-        return false;
-    }
+    timeTaskStep("Do Task Timer", [&] { 
+        
+        timeTaskStep("Create Task Timer", [&] {
+            current_task_ = task_factory_->createTask(command);
+        });
 
-    current_task_.introspection().publishSolution(*current_task_.solutions().front());
-    auto result = current_task_.execute(*current_task_.solutions().front());
+        timeTaskStep("Initialize Task Timer", [&] {
+            current_task_.init();
+        });
+
+        timeTaskStep("Plan Task Timer", [&] {
+            if (!current_task_.plan(5)) {
+                RCLCPP_ERROR(worm_picker_node_->get_logger(), "Task planning failed");
+                return; 
+            }
+        });
+
+        timeTaskStep("Execute Task Timer", [&] {
+            current_task_.introspection().publishSolution(*current_task_.solutions().front());
+            result = current_task_.execute(*current_task_.solutions().front());
+        });
+    });
+
+    summarizeTimers(timer_results);
 
     if (result.val != moveit_msgs::msg::MoveItErrorCodes::SUCCESS) {
         RCLCPP_ERROR(worm_picker_node_->get_logger(), "Task execution failed");
@@ -97,6 +122,20 @@ bool WormPickerController::doTask(const std::string& command)
     }
 
     return true; 
+}
+
+void WormPickerController::summarizeTimers(const TimerResults& timer_results) 
+{
+    RCLCPP_INFO(worm_picker_node_->get_logger(), "---- Timer Summary ----");
+    for (const auto& timer : timer_results) {
+        RCLCPP_INFO(
+            worm_picker_node_->get_logger(), 
+            "Timer [%s]: %.4f seconds.",
+            timer.first.c_str(), 
+            timer.second
+        );
+    }
+    RCLCPP_INFO(worm_picker_node_->get_logger(), "-----------------------");
 }
 
 int main(int argc, char **argv) 

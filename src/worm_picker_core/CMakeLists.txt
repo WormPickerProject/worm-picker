@@ -89,6 +89,7 @@ add_worm_picker_executable(worm_picker_robot
     src/tasks/worm_picker_controller.cpp
     src/tasks/task_data_structure.cpp
     src/tasks/task_factory.cpp
+    src/tools/tic_toc.cpp
   ARGS
     rclcpp
     moveit_core
