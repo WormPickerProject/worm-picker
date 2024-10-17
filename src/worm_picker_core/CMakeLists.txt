@@ -86,8 +86,7 @@ endfunction()
 ## Worm Picker Robot
 add_worm_picker_executable(worm_picker_robot
   SOURCES
-    src/worm_picker_main.cpp 
-    src/tasks/worm_picker_task_controller.cpp
+    src/tasks/worm_picker_controller.cpp
     src/tasks/task_data_structure.cpp
     src/tasks/task_factory.cpp
   ARGS
