@@ -1,4 +1,4 @@
-// worm_picker_task_controller.hpp
+// worm_picker_controller.hpp 
 //
 // Copyright (c) 2024 Logan Kaising
 // SPDX-License-Identifier: Apache-2.0
@@ -17,8 +17,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef WORM_PICKER_TASK_CONTROLLER_HPP
-#define WORM_PICKER_TASK_CONTROLLER_HPP
+#ifndef WORM_PICKER_CONTROLLER_HPP
+#define WORM_PICKER_CONTROLLER_HPP
 
 // ROS Core and Action includes
 #include <rclcpp/rclcpp.hpp>
@@ -43,27 +43,33 @@
 #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 #include <tf2_eigen/tf2_eigen.hpp>
 
-// Custom application includes
+// WormPicker application includes
 #include "worm_picker_core/tasks/task_data_structure.hpp"
 #include "worm_picker_core/tasks/task_factory.hpp"
+
+using NodeBaseInterfacePtr = rclcpp::node_interfaces::NodeBaseInterface::SharedPtr;
+using TaskCommandRequestPtr = std::shared_ptr<worm_picker_custom_msgs::srv::TaskCommand::Request>;
+using TaskCommandResponsePtr = std::shared_ptr<worm_picker_custom_msgs::srv::TaskCommand::Response>;
+using TaskCommandServicePtr = rclcpp::Service<worm_picker_custom_msgs::srv::TaskCommand>::SharedPtr;
+using ExecuteTaskSolutionClientPtr = rclcpp_action::Client<moveit_task_constructor_msgs::action::ExecuteTaskSolution>::SharedPtr;
 
 /**
  * @brief Class that manages the task creation, planning, and execution for the WormPicker project.
  */
-class WormPickerTaskController 
+class WormPickerController 
 {
 public:
     /**
-     * @brief Constructs the WormPickerTaskController object.
+     * @brief Constructs the WormPickerController object.
      * @param options Node options passed to the ROS 2 node.
      */
-    WormPickerTaskController(const rclcpp::NodeOptions& options);
+    WormPickerController(const rclcpp::NodeOptions& options);
 
     /**
-     * @brief Gets the NodeBaseInterface of the ROS node.
+     * @brief Retrieves the shared pointer to the node's base interface.
      * @return A shared pointer to the NodeBaseInterface.
      */
-    rclcpp::node_interfaces::NodeBaseInterface::SharedPtr getNodeBaseInterface();
+    NodeBaseInterfacePtr getBaseInterface();
 
 private:
     /**
@@ -72,12 +78,16 @@ private:
     void setupService();
 
     /**
+     * @brief Continuously waits for the '/execute_task_solution' action server to become available.
+     */
+    void waitForActionServer();
+
+    /**
      * @brief Handles incoming task commands from the ROS service.
      * @param request The incoming task command request.
      * @param response The response to be sent back indicating success or failure.
      */
-    void handleTaskCommand(const std::shared_ptr<worm_picker_custom_msgs::srv::TaskCommand::Request> request,
-                           std::shared_ptr<worm_picker_custom_msgs::srv::TaskCommand::Response> response);
+    void handleTaskCommand(const TaskCommandRequestPtr request, TaskCommandResponsePtr response);
 
     /**
      * @brief Executes a task based on the provided command string.
@@ -87,11 +97,12 @@ private:
     bool doTask(const std::string& command);
 
     rclcpp::Node::SharedPtr worm_picker_node_; // The ROS 2 node for the WormPicker system.
-    rclcpp::Service<worm_picker_custom_msgs::srv::TaskCommand>::SharedPtr task_command_service_; // The ROS service for handling task command requests.
-    rclcpp_action::Client<moveit_task_constructor_msgs::action::ExecuteTaskSolution>::SharedPtr execute_task_action_client_; // The ROS action client for executing task solutions.
+    TaskCommandServicePtr task_command_service_; // The ROS service for handling task command requests.
+    ExecuteTaskSolutionClientPtr execute_task_action_client_; // The ROS action client for executing task solutions.
+    std::jthread execute_task_wait_thread_; // Thread responsible for waiting for the '/execute_task_solution' action server.
 
     std::shared_ptr<TaskFactory> task_factory_; // A factory object for creating and managing tasks.
     moveit::task_constructor::Task current_task_; // The current task being processed.
 };
 
-#endif  // WORM_PICKER_TASK_CONTROLLER_HPP
+#endif  // WORM_PICKER_CONTROLLER_HPP
