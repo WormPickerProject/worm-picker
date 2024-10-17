@@ -46,12 +46,14 @@
 // WormPicker application includes
 #include "worm_picker_core/tasks/task_data_structure.hpp"
 #include "worm_picker_core/tasks/task_factory.hpp"
+#include "worm_picker_core/tools/tic_toc.hpp"
 
 using NodeBaseInterfacePtr = rclcpp::node_interfaces::NodeBaseInterface::SharedPtr;
 using TaskCommandRequestPtr = std::shared_ptr<worm_picker_custom_msgs::srv::TaskCommand::Request>;
 using TaskCommandResponsePtr = std::shared_ptr<worm_picker_custom_msgs::srv::TaskCommand::Response>;
 using TaskCommandServicePtr = rclcpp::Service<worm_picker_custom_msgs::srv::TaskCommand>::SharedPtr;
 using ExecuteTaskSolutionClientPtr = rclcpp_action::Client<moveit_task_constructor_msgs::action::ExecuteTaskSolution>::SharedPtr;
+using TimerResults = std::vector<std::pair<std::string, double>>;
 
 /**
  * @brief Class that manages the task creation, planning, and execution for the WormPicker project.
@@ -95,6 +97,12 @@ private:
      * @return True if the task was successfully executed, otherwise false.
      */
     bool doTask(const std::string& command);
+
+    /**
+     * @brief Logs the execution time of each task step.
+     * @param timer_results A vector of pairs, where each pair contains a timer name and the elapsed time in seconds.
+     */
+    void summarizeTimers(const TimerResults& timer_results);
 
     rclcpp::Node::SharedPtr worm_picker_node_; // The ROS 2 node for the WormPicker system.
     TaskCommandServicePtr task_command_service_; // The ROS service for handling task command requests.
