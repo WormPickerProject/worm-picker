@@ -137,17 +137,14 @@ int main(int argc, char **argv)
         rclcpp::NodeOptions().automatically_declare_parameters_from_overrides(true));
     rclcpp::executors::MultiThreadedExecutor executor;
 
+    executor.add_node(worm_picker_node->getBaseInterface());
+    executor.spin();
+    executor.remove_node(worm_picker_node->getBaseInterface());
+
     rclcpp::on_shutdown([&]() {
         worm_picker_node.reset();
     });
-
-    auto spin_thread = std::make_unique<std::thread>([&]() {
-        executor.add_node(worm_picker_node->getBaseInterface());
-        executor.spin();
-        executor.remove_node(worm_picker_node->getBaseInterface());
-    });
-
-    spin_thread->join();
+    
     rclcpp::shutdown();
     return 0;
 }
