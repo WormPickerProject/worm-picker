@@ -22,11 +22,11 @@
 using NodeBaseInterfacePtr = rclcpp::node_interfaces::NodeBaseInterface::SharedPtr;
 using TaskCommandRequestPtr = std::shared_ptr<worm_picker_custom_msgs::srv::TaskCommand::Request>;
 using TaskCommandResponsePtr = std::shared_ptr<worm_picker_custom_msgs::srv::TaskCommand::Response>;
-using TimerResults = std::vector<std::pair<std::string, double>>;
 
 WormPickerController::WormPickerController(const rclcpp::NodeOptions& options) 
     : worm_picker_node_{ std::make_shared<rclcpp::Node>("worm_picker_controller", options) },
-      task_factory_{ std::make_shared<TaskFactory>(worm_picker_node_) } 
+      task_factory_{ std::make_shared<TaskFactory>(worm_picker_node_) },
+      timer_data_collector_{ std::make_shared<TimerDataCollector>("/worm-picker/worm_picker_core/timer_log") }
 {
     setupService();
 }
@@ -70,7 +70,8 @@ void WormPickerController::handleTaskCommand(const TaskCommandRequestPtr request
                                              TaskCommandResponsePtr response) 
 {
     if (!execute_task_action_client_->wait_for_action_server(std::chrono::seconds(0))) {
-        RCLCPP_ERROR(worm_picker_node_->get_logger(), "Action server '/execute_task_solution' is not available.");
+        RCLCPP_ERROR(worm_picker_node_->get_logger(), 
+            "Action server '/execute_task_solution' is not available.");
         response->success = false;
         return;
     }
@@ -82,17 +83,16 @@ void WormPickerController::handleTaskCommand(const TaskCommandRequestPtr request
 bool WormPickerController::doTask(const std::string& command) 
 {
     std::vector<std::pair<std::string, double>> timer_results;
-    moveit_msgs::msg::MoveItErrorCodes result;
-    result.val = moveit_msgs::msg::MoveItErrorCodes::FAILURE;
+    bool planning_result = true; 
+    moveit_msgs::msg::MoveItErrorCodes execution_result;
     
     auto timeTaskStep = [&](const std::string& timer_name, auto&& task_step) {
-        TicToc timer(timer_name);
+        ExecutionTimer timer(timer_name);
         task_step(); 
         timer_results.emplace_back(timer.getName(), timer.stop());
     };
 
     timeTaskStep("Do Task Timer", [&] { 
-        
         timeTaskStep("Create Task Timer", [&] {
             current_task_ = task_factory_->createTask(command);
         });
@@ -103,39 +103,30 @@ bool WormPickerController::doTask(const std::string& command)
 
         timeTaskStep("Plan Task Timer", [&] {
             if (!current_task_.plan(5)) {
-                RCLCPP_ERROR(worm_picker_node_->get_logger(), "Task planning failed");
+                planning_result = false; 
                 return; 
             }
         });
 
         timeTaskStep("Execute Task Timer", [&] {
             current_task_.introspection().publishSolution(*current_task_.solutions().front());
-            result = current_task_.execute(*current_task_.solutions().front());
+            execution_result = current_task_.execute(*current_task_.solutions().front());
         });
     });
 
-    summarizeTimers(timer_results);
+    timer_data_collector_->recordTimerData(command, timer_results);
 
-    if (result.val != moveit_msgs::msg::MoveItErrorCodes::SUCCESS) {
+    if (!planning_result) {
+        RCLCPP_ERROR(worm_picker_node_->get_logger(), "Task planning failed");
+        return false; 
+    }
+
+    if (execution_result.val != moveit_msgs::msg::MoveItErrorCodes::SUCCESS) {
         RCLCPP_ERROR(worm_picker_node_->get_logger(), "Task execution failed");
         return false;
     }
 
     return true; 
-}
-
-void WormPickerController::summarizeTimers(const TimerResults& timer_results) 
-{
-    RCLCPP_INFO(worm_picker_node_->get_logger(), "---- Timer Summary ----");
-    for (const auto& timer : timer_results) {
-        RCLCPP_INFO(
-            worm_picker_node_->get_logger(), 
-            "Timer [%s]: %.4f seconds.",
-            timer.first.c_str(), 
-            timer.second
-        );
-    }
-    RCLCPP_INFO(worm_picker_node_->get_logger(), "-----------------------");
 }
 
 int main(int argc, char **argv) 
@@ -145,6 +136,10 @@ int main(int argc, char **argv)
     auto worm_picker_node = std::make_shared<WormPickerController>(
         rclcpp::NodeOptions().automatically_declare_parameters_from_overrides(true));
     rclcpp::executors::MultiThreadedExecutor executor;
+
+    rclcpp::on_shutdown([&]() {
+        worm_picker_node.reset();
+    });
 
     auto spin_thread = std::make_unique<std::thread>([&]() {
         executor.add_node(worm_picker_node->getBaseInterface());

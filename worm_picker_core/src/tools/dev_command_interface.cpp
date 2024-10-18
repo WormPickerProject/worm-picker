@@ -1,4 +1,4 @@
-// command_client.cpp
+// dev_command_interface.cpp
 //
 // Copyright (c) 2024 Logan Kaising
 // SPDX-License-Identifier: Apache-2.0
@@ -13,27 +13,27 @@
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// WITHOUT WARRANTIES OR CONDITIONS, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "worm_picker_core/tools/command_client.hpp"
+#include "worm_picker_core/tools/dev_command_interface.hpp"
 
-CommandClient::CommandClient(int argc, char **argv) 
-    : service_name_("task_command")
+DevCommandInterface::DevCommandInterface(int argc, char **argv) 
+    : service_name_("/task_command")
 {
     initializeROS(argc, argv);
 }
 
-void CommandClient::initializeROS(int argc, char **argv) 
+void DevCommandInterface::initializeROS(int argc, char **argv) 
 {
     rclcpp::init(argc, argv);
-    node_ = rclcpp::Node::make_shared("command_client");
+    node_ = rclcpp::Node::make_shared("dev_command_interface");
     client_ = node_->create_client<worm_picker_custom_msgs::srv::TaskCommand>(service_name_);
     waitForService();
 }
 
-void CommandClient::waitForService() 
+void DevCommandInterface::waitForService() 
 {
     while (!client_->wait_for_service(std::chrono::seconds(1))) {
         if (!rclcpp::ok()) {
@@ -45,20 +45,20 @@ void CommandClient::waitForService()
     RCLCPP_INFO(node_->get_logger(), "Service '%s' is available.", service_name_.c_str());
 }
 
-std::shared_ptr<worm_picker_custom_msgs::srv::TaskCommand::Request> CommandClient::createRequest(const std::string& command) const 
+std::shared_ptr<worm_picker_custom_msgs::srv::TaskCommand::Request> DevCommandInterface::createRequest(const std::string& command) const 
 {
     auto request = std::make_shared<worm_picker_custom_msgs::srv::TaskCommand::Request>();
     request->command = command;
     return request;
 }
 
-void CommandClient::sendRequest(const std::shared_ptr<worm_picker_custom_msgs::srv::TaskCommand::Request>& request) const 
+void DevCommandInterface::sendRequest(const std::shared_ptr<worm_picker_custom_msgs::srv::TaskCommand::Request>& request) const 
 {
     auto result_future = client_->async_send_request(request);
     receiveResponse(result_future.share());
 }
 
-void CommandClient::receiveResponse(const rclcpp::Client<worm_picker_custom_msgs::srv::TaskCommand>::SharedFuture& result_future) const 
+void DevCommandInterface::receiveResponse(const rclcpp::Client<worm_picker_custom_msgs::srv::TaskCommand>::SharedFuture& result_future) const 
 {
     if (rclcpp::spin_until_future_complete(node_, result_future) == rclcpp::FutureReturnCode::SUCCESS) {
         auto result = result_future.get();
@@ -70,11 +70,11 @@ void CommandClient::receiveResponse(const rclcpp::Client<worm_picker_custom_msgs
     }
 }
 
-void CommandClient::runCommandLoop() 
+void DevCommandInterface::runCommandLoop() 
 {
     std::string command;
     while (rclcpp::ok()) {
-        std::cout << "Enter command (home, pointA, point1, point2, pickUpPlate, quit): ";
+        std::cout << "Enter command (or 'quit'): ";
         std::cin >> command;
 
         if (command == "quit" || command == "q") {
@@ -88,8 +88,8 @@ void CommandClient::runCommandLoop()
 
 int main(int argc, char **argv) 
 {
-    auto command_client = std::make_shared<CommandClient>(argc, argv);
-    command_client->runCommandLoop();
+    auto command_interface = std::make_shared<DevCommandInterface>(argc, argv);
+    command_interface->runCommandLoop();
 
     rclcpp::shutdown();
     return 0;

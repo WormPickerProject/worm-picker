@@ -10,3 +10,6 @@ log/
 
 # Ignore IDE specific directories
 .vscode/
+
+# Ignore timer log directory
+worm_picker_core/timer_log/

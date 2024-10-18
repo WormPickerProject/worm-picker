@@ -1,4 +1,4 @@
-// tic_toc.cpp 
+// execution_timer.cpp
 //
 // Copyright (c) 2024 Logan Kaising
 // SPDX-License-Identifier: Apache-2.0
@@ -17,21 +17,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "worm_picker_core/tools/tic_toc.hpp"
+#include "worm_picker_core/tools/execution_timer.hpp"
 
-TicToc::TicToc(const std::string& name) 
+ExecutionTimer::ExecutionTimer(const std::string& name) 
     : timer_name_(name), start_time_(std::chrono::steady_clock::now())
 {
 }
 
-double TicToc::stop() 
+double ExecutionTimer::stop() 
 {
     auto end_time = std::chrono::steady_clock::now();
     std::chrono::duration<double> elapsed = end_time - start_time_;
     return elapsed.count();
 }
 
-const std::string& TicToc::getName() const
+const std::string& ExecutionTimer::getName() const
 {
     return timer_name_;
 }
