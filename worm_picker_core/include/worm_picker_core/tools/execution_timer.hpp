@@ -1,4 +1,4 @@
-// tic_toc.hpp 
+// execution_timer.hpp
 //
 // Copyright (c) 2024 Logan Kaising
 // SPDX-License-Identifier: Apache-2.0
@@ -17,18 +17,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef TIC_TOC_HPP
-#define TIC_TOC_HPP
+#ifndef EXECUTION_TIMER_HPP
+#define EXECUTION_TIMER_HPP
 
 #include <string>
 #include <chrono>
 #include <stdexcept>
 #include <utility>
 
-class TicToc
+class ExecutionTimer
 {
 public:
-    TicToc(const std::string& name);
+    ExecutionTimer(const std::string& name);
 
     double stop();
 
@@ -39,4 +39,5 @@ private:
     std::chrono::time_point<std::chrono::steady_clock> start_time_;
 };
 
-#endif // TIC_TOC_HPP
+#endif // EXECUTION_TIMER_HPP
+

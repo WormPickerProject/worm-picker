@@ -69,7 +69,7 @@ function(add_worm_picker_executable target_name)
   target_compile_features(${target_name} PUBLIC c_std_99 cxx_std_20)
   
   if(EXE_ARGS)
-    ament_target_dependencies(${target_name} ${EXE_ARGS})
+    ament_target_dependencies(${target_name} PUBLIC ${EXE_ARGS})
   else()
     message(WARNING "No dependencies provided for target ${target_name}")
   endif()
@@ -89,7 +89,8 @@ add_worm_picker_executable(worm_picker_robot
     src/tasks/worm_picker_controller.cpp
     src/tasks/task_data_structure.cpp
     src/tasks/task_factory.cpp
-    src/tools/tic_toc.cpp
+    src/tools/execution_timer.cpp
+    src/tools/timer_data_collector.cpp
   ARGS
     rclcpp
     moveit_core
@@ -104,9 +105,9 @@ add_worm_picker_executable(worm_picker_robot
 )
 
 ## Service Client
-add_worm_picker_executable(task_command_client
+add_worm_picker_executable(dev_command_interface
   SOURCES
-    src/tools/command_client.cpp
+    src/tools/dev_command_interface.cpp
   ARGS
     rclcpp
     worm_picker_custom_msgs

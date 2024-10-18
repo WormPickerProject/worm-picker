@@ -46,14 +46,14 @@
 // WormPicker application includes
 #include "worm_picker_core/tasks/task_data_structure.hpp"
 #include "worm_picker_core/tasks/task_factory.hpp"
-#include "worm_picker_core/tools/tic_toc.hpp"
+#include "worm_picker_core/tools/execution_timer.hpp"
+#include "worm_picker_core/tools/timer_data_collector.hpp"
 
 using NodeBaseInterfacePtr = rclcpp::node_interfaces::NodeBaseInterface::SharedPtr;
 using TaskCommandRequestPtr = std::shared_ptr<worm_picker_custom_msgs::srv::TaskCommand::Request>;
 using TaskCommandResponsePtr = std::shared_ptr<worm_picker_custom_msgs::srv::TaskCommand::Response>;
 using TaskCommandServicePtr = rclcpp::Service<worm_picker_custom_msgs::srv::TaskCommand>::SharedPtr;
 using ExecuteTaskSolutionClientPtr = rclcpp_action::Client<moveit_task_constructor_msgs::action::ExecuteTaskSolution>::SharedPtr;
-using TimerResults = std::vector<std::pair<std::string, double>>;
 
 /**
  * @brief Class that manages the task creation, planning, and execution for the WormPicker project.
@@ -98,19 +98,18 @@ private:
      */
     bool doTask(const std::string& command);
 
-    /**
-     * @brief Logs the execution time of each task step.
-     * @param timer_results A vector of pairs, where each pair contains a timer name and the elapsed time in seconds.
-     */
-    void summarizeTimers(const TimerResults& timer_results);
-
-    rclcpp::Node::SharedPtr worm_picker_node_; // The ROS 2 node for the WormPicker system.
-    TaskCommandServicePtr task_command_service_; // The ROS service for handling task command requests.
+    rclcpp::Node::SharedPtr worm_picker_node_; // The ROS 2 node responsible for the WormPicker system.
+    
+    std::shared_ptr<TaskFactory> task_factory_; // A factory object for creating and managing tasks.
+    std::shared_ptr<TimerDataCollector> timer_data_collector_; // A utility to collect and record task timing data.
+    
     ExecuteTaskSolutionClientPtr execute_task_action_client_; // The ROS action client for executing task solutions.
     std::jthread execute_task_wait_thread_; // Thread responsible for waiting for the '/execute_task_solution' action server.
-
-    std::shared_ptr<TaskFactory> task_factory_; // A factory object for creating and managing tasks.
+    
+    TaskCommandServicePtr task_command_service_; // The ROS service for handling task command requests.
+    
     moveit::task_constructor::Task current_task_; // The current task being processed.
+
 };
 
 #endif  // WORM_PICKER_CONTROLLER_HPP
