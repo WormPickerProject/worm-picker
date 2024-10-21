@@ -39,4 +39,39 @@ private:
     int error_code_;
 };
 
+class NullNodeException : public std::runtime_error
+{
+public:
+    explicit NullNodeException(const std::string& message)
+        : std::runtime_error(message) {}
+};
+
+class TaskCommandNotFoundException : public std::out_of_range
+{
+public:
+    explicit TaskCommandNotFoundException(const std::string& message)
+        : std::out_of_range(message) {}
+};
+
+class UnknownStageTypeException : public std::invalid_argument
+{
+public:
+    explicit UnknownStageTypeException(const std::string& message)
+        : std::invalid_argument(message) {}
+};
+
+class StageCreationFailedException : public std::runtime_error
+{
+public:
+    explicit StageCreationFailedException(const std::string& message)
+        : std::runtime_error(message) {}
+};
+
+class StageNotFoundException : public std::invalid_argument
+{
+public:
+    explicit StageNotFoundException(const std::string& message)
+        : std::invalid_argument(message) {}
+};
+
 #endif // EXCEPTIONS_HPP

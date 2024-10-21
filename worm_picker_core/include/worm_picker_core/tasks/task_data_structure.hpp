@@ -14,6 +14,8 @@
 #include <tf2/LinearMath/Quaternion.h>
 #include <rclcpp/rclcpp.hpp>
 
+#include "worm_picker_core/exceptions/exceptions.hpp"
+
 /** 
  * @enum StageType
  * @brief Enumerates the types of stages available.
@@ -29,7 +31,6 @@ struct StageData {
 
     /** 
      * @brief Retrieves the type of the stage.
-     * 
      * @return StageType The type of the stage.
      */
     virtual StageType getType() const = 0;
@@ -115,7 +116,7 @@ struct TaskData {
      * @brief Constructs a TaskData with the given stage data map and stage names.
      * @param stage_data_map Map of stage names to StageData.
      * @param stage_names Initializer list of stage names to include in the task.
-     * @throws std::invalid_argument If any stage name is not found in stage_data_map.
+     * @throws StageNotFoundException If any stage name is not found in the stage_data_map.
      */
     TaskData(const std::map<std::string, std::shared_ptr<StageData>>& stage_data_map,
              const std::initializer_list<std::string>& stage_names);
