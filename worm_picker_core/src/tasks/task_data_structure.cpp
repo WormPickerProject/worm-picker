@@ -45,8 +45,7 @@ TaskData::TaskData(const std::map<std::string, std::shared_ptr<StageData>>& stag
         if (it != stage_data_map.end()) {
             stages.emplace_back(it->second);
         } else {
-            RCLCPP_ERROR(rclcpp::get_logger("TaskData"), "Stage name '%s' not found in stage_data_map.", name.c_str());
-            throw std::invalid_argument("TaskData::TaskData failed: Stage name '" + name + "' not found.");
+            throw StageNotFoundException("TaskData::TaskData failed: Stage name '" + name + "' not found.");
         }
     }
 }

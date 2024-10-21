@@ -53,6 +53,7 @@ public:
      * Sets up services and actions for task commands and task execution.
      * 
      * @param options Node options passed to the ROS 2 node (optional).
+     * @throws NullNodeException If the node initialization fails.
      */
     explicit WormPickerController(const rclcpp::NodeOptions& options = rclcpp::NodeOptions());
 
@@ -90,6 +91,9 @@ private:
      * 
      * @param request Incoming task command request.
      * @param response Response to the service request indicating success or failure.
+     * @throws ActionServerUnavailableException If the action server is unavailable during the command.
+     * @throws TaskPlanningFailedException If task planning fails.
+     * @throws TaskExecutionFailedException If task execution fails.
      */
     void handleTaskCommand(
         const std::shared_ptr<worm_picker_custom_msgs::srv::TaskCommand::Request> request,
@@ -103,6 +107,8 @@ private:
      * planning or execution stages.
      * 
      * @param command The task command to be processed.
+     * @throws TaskPlanningFailedException If task planning fails.
+     * @throws TaskExecutionFailedException If task execution fails.
      */
     void doTask(const std::string& command);
 

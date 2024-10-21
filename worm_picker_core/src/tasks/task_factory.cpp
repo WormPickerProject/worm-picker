@@ -14,7 +14,7 @@ TaskFactory::TaskFactory(const rclcpp::Node::SharedPtr& node)
     : worm_picker_node_(node)
 { 
     if (!worm_picker_node_) {
-        throw std::runtime_error("TaskFactory initialization failed: worm_picker_node_ is null.");
+        throw NullNodeException("TaskFactory initialization failed: worm_picker_node_ is null.");
     }
     setupPlanningScene();
 }
@@ -123,14 +123,12 @@ void TaskFactory::setupPlanningScene()
 moveit::task_constructor::Task TaskFactory::createTask(const std::string& command) 
 {
     if (!worm_picker_node_) {
-        RCLCPP_ERROR(rclcpp::get_logger("TaskFactory"), "Node pointer is null.");
-        throw std::runtime_error("TaskFactory::createTask failed: node_ is null.");
+        throw NullNodeException("TaskFactory::createTask failed: node_ is null.");
     }
 
     auto it = task_data_map_.find(command);
     if (it == task_data_map_.end()) {
-        RCLCPP_ERROR(worm_picker_node_->get_logger(), "Command '%s' not found in task_data_map_.", command.c_str());
-        throw std::out_of_range("TaskFactory::createTask failed: Command '" + command + "' not found.");
+        throw TaskCommandNotFoundException("TaskFactory::createTask failed: Command '" + command + "' not found.");
     }
 
     moveit::task_constructor::Task current_task;
@@ -167,8 +165,7 @@ moveit::task_constructor::Task TaskFactory::createTask(const std::string& comman
                     break;
                 }
             default:
-                RCLCPP_ERROR(worm_picker_node_->get_logger(), "Unknown StageType encountered.");
-                throw std::invalid_argument("TaskFactory::createTask failed: Unknown StageType.");
+                throw UnknownStageTypeException("TaskFactory::createTask failed: Unknown StageType.");
         }
     }
 
@@ -192,8 +189,7 @@ void TaskFactory::addJointStage(moveit::task_constructor::Task& task, const std:
     current_stage->setProperty("trajectory_execution_info", execution_info);
 
     if (!current_stage) {
-        RCLCPP_ERROR(worm_picker_node_->get_logger(), "Failed to create joint move stage: %s", name.c_str());
-        throw std::runtime_error("TaskFactory::addJointMoveStage failed to create stage: " + name);
+        throw StageCreationFailedException("TaskFactory::addJointStage failed to create stage: " + name);
     }
 
     task.add(std::move(current_stage));
@@ -229,8 +225,7 @@ void TaskFactory::addMoveToStage(moveit::task_constructor::Task& task, const std
     current_stage->setProperty("trajectory_execution_info", execution_info);
 
     if (!current_stage) {
-        RCLCPP_ERROR(worm_picker_node_->get_logger(), "Failed to create point move stage: %s", name.c_str());
-        throw std::runtime_error("TaskFactory::addPointMoveStage failed to create stage: " + name);
+        throw StageCreationFailedException("TaskFactory::addMoveToStage failed to create stage: " + name);
     }
 
     task.add(std::move(current_stage));
