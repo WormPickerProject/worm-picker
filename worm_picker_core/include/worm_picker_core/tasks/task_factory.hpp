@@ -66,6 +66,14 @@ private:
      */
     void addMoveToStage(moveit::task_constructor::Task& task, const std::string& name, const std::shared_ptr<MoveToData>& move_to_data);
     
+    // Type aliases
+    using Task = moveit::task_constructor::Task;
+    using JointInterpolationPlanner = moveit::task_constructor::solvers::JointInterpolationPlanner;
+    using CartesianPath = moveit::task_constructor::solvers::CartesianPath;
+    using MoveToStage = moveit::task_constructor::stages::MoveTo;
+    using CurrentStateStage = moveit::task_constructor::stages::CurrentState;
+    using TrajectoryExecutionInfo = moveit::task_constructor::TrajectoryExecutionInfo;
+
     rclcpp::Node::SharedPtr worm_picker_node_;                          ///< Shared pointer to the WormPicker node.
     std::map<std::string, std::shared_ptr<StageData>> stage_data_map_;  ///< Map of stage names to StageData.
     std::map<std::string, TaskData> task_data_map_;                     ///< Map of task commands to TaskData.

@@ -128,10 +128,12 @@ moveit::task_constructor::Task TaskFactory::createTask(const std::string& comman
 
     auto it = task_data_map_.find(command);
     if (it == task_data_map_.end()) {
-        throw TaskCommandNotFoundException("TaskFactory::createTask failed: Command '" + command + "' not found.");
+        throw TaskCommandNotFoundException(
+            "TaskFactory::createTask failed: Command '" + command + "' not found."
+        );
     }
 
-    moveit::task_constructor::Task current_task;
+    Task current_task;
     current_task.stages()->setName("dynamic_task");
 
     current_task.loadRobotModel(worm_picker_node_);
@@ -140,11 +142,11 @@ moveit::task_constructor::Task TaskFactory::createTask(const std::string& comman
     current_task.setProperty("group", arm_group_name);
 
     const std::string controller_name = "follow_joint_trajectory";
-    moveit::task_constructor::TrajectoryExecutionInfo execution_info;
+    TrajectoryExecutionInfo execution_info;
     execution_info.controller_names = {controller_name};
     current_task.setProperty("trajectory_execution_info", execution_info);
     
-    auto current_state_stage = std::make_unique<moveit::task_constructor::stages::CurrentState>("current");
+    auto current_state_stage = std::make_unique<CurrentStateStage>("current");
     current_task.add(std::move(current_state_stage));
 
     int stage_counter = 1;
@@ -165,37 +167,43 @@ moveit::task_constructor::Task TaskFactory::createTask(const std::string& comman
                     break;
                 }
             default:
-                throw UnknownStageTypeException("TaskFactory::createTask failed: Unknown StageType.");
+                throw UnknownStageTypeException(
+                    "TaskFactory::createTask failed: Unknown StageType."
+                );
         }
     }
 
     return current_task;
 }
 
-void TaskFactory::addJointStage(moveit::task_constructor::Task& task, const std::string& name, const std::shared_ptr<JointData>& joint_data) 
+void TaskFactory::addJointStage(Task& task, const std::string& name, 
+                                const std::shared_ptr<JointData>& joint_data) 
 {
-    auto joint_interpolation_planner = std::make_shared<moveit::task_constructor::solvers::JointInterpolationPlanner>();
+    auto joint_interpolation_planner = std::make_shared<JointInterpolationPlanner>();
     joint_interpolation_planner->setMaxVelocityScalingFactor(joint_data->velocity_scaling_factor);
     joint_interpolation_planner->setMaxAccelerationScalingFactor(joint_data->acceleration_scaling_factor);
     
-    auto current_stage = std::make_unique<moveit::task_constructor::stages::MoveTo>(name, joint_interpolation_planner);
+    auto current_stage = std::make_unique<MoveToStage>(name, joint_interpolation_planner);
     current_stage->setGoal(joint_data->joint_positions);
     current_stage->setGroup("gp4_arm");
     current_stage->setIKFrame("eoat_tcp");
 
     const std::string controller_name = "follow_joint_trajectory";
-    moveit::task_constructor::TrajectoryExecutionInfo execution_info;
+    TrajectoryExecutionInfo execution_info;
     execution_info.controller_names = {controller_name};
     current_stage->setProperty("trajectory_execution_info", execution_info);
 
     if (!current_stage) {
-        throw StageCreationFailedException("TaskFactory::addJointStage failed to create stage: " + name);
+        throw StageCreationFailedException(
+            "TaskFactory::addJointStage failed to create stage: " + name
+        );
     }
 
     task.add(std::move(current_stage));
 }
 
-void TaskFactory::addMoveToStage(moveit::task_constructor::Task& task, const std::string& name, const std::shared_ptr<MoveToData>& move_to_data) 
+void TaskFactory::addMoveToStage(Task& task, const std::string& name, 
+                                 const std::shared_ptr<MoveToData>& move_to_data) 
 {
     geometry_msgs::msg::PoseStamped target_pose;
     target_pose.header.frame_id = "base_link";
@@ -208,24 +216,26 @@ void TaskFactory::addMoveToStage(moveit::task_constructor::Task& task, const std
     target_pose.pose.orientation.z = move_to_data->qz;
     target_pose.pose.orientation.w = move_to_data->qw;
     
-    auto cartesian_planner = std::make_shared<moveit::task_constructor::solvers::CartesianPath>();
+    auto cartesian_planner = std::make_shared<CartesianPath>();
     cartesian_planner->setMaxVelocityScalingFactor(move_to_data->velocity_scaling_factor);
     cartesian_planner->setMaxAccelerationScalingFactor(move_to_data->acceleration_scaling_factor);
     cartesian_planner->setStepSize(.01);
     cartesian_planner->setMinFraction(0.0);
 
-    auto current_stage = std::make_unique<moveit::task_constructor::stages::MoveTo>(name, cartesian_planner);
+    auto current_stage = std::make_unique<MoveToStage>(name, cartesian_planner);
     current_stage->setGoal(target_pose);
     current_stage->setGroup("gp4_arm"); 
     current_stage->setIKFrame("eoat_tcp");
 
     const std::string controller_name = "follow_joint_trajectory";
-    moveit::task_constructor::TrajectoryExecutionInfo execution_info;
+    TrajectoryExecutionInfo execution_info;
     execution_info.controller_names = {controller_name};
     current_stage->setProperty("trajectory_execution_info", execution_info);
 
     if (!current_stage) {
-        throw StageCreationFailedException("TaskFactory::addMoveToStage failed to create stage: " + name);
+        throw StageCreationFailedException(
+            "TaskFactory::addMoveToStage failed to create stage: " + name
+        );
     }
 
     task.add(std::move(current_stage));
