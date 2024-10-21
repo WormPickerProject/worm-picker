@@ -54,12 +54,11 @@ void WormPickerController::waitForActionServer()
 }
 
 void WormPickerController::handleTaskCommand(const std::shared_ptr<TaskCommandRequest> request,
-                                             std::shared_ptr<TaskCommandResponse> response)
+                                             std::shared_ptr<TaskCommandResponse> response) 
 {
     try {
         if (!execute_task_action_client_->wait_for_action_server(std::chrono::seconds(0))) {
-            throw ActionServerUnavailableException(
-                "Action server '/execute_task_solution' is not available.");
+            throw ActionServerUnavailableException("Action server '/execute_task_solution' is not available.");
         }
 
         doTask(request->command);
@@ -70,7 +69,7 @@ void WormPickerController::handleTaskCommand(const std::shared_ptr<TaskCommandRe
     }
 }
 
-void WormPickerController::doTask(const std::string& command)
+void WormPickerController::doTask(const std::string& command) 
 {
     std::vector<std::pair<std::string, double>> timer_results;
     moveit_msgs::msg::MoveItErrorCodes execution_result;
@@ -98,8 +97,7 @@ void WormPickerController::doTask(const std::string& command)
     {
         ExecutionTimer timer("Execute Task Timer");
         if (current_task_.solutions().empty()) {
-            throw TaskExecutionFailedException(
-                "No solutions found for task execution for command: " + command, -1);
+            throw TaskExecutionFailedException("No solutions found for task execution for command: " + command, -1);
         }
 
         current_task_.introspection().publishSolution(*current_task_.solutions().front());
@@ -110,10 +108,7 @@ void WormPickerController::doTask(const std::string& command)
     timer_data_collector_->recordTimerData(command, timer_results);
 
     if (execution_result.val != moveit_msgs::msg::MoveItErrorCodes::SUCCESS) {
-        throw TaskExecutionFailedException(
-            "Task execution failed with error code: " + 
-            std::to_string(execution_result.val) + " for command: " + command,
-            execution_result.val);
+        throw TaskExecutionFailedException("Task execution failed with error code: " + std::to_string(execution_result.val) + " for command: " + command, execution_result.val);
     }
 }
 
@@ -129,10 +124,6 @@ int main(int argc, char **argv)
     executor.spin();
     executor.remove_node(worm_picker_node->getBaseInterface());
 
-    rclcpp::on_shutdown([&]() {
-        worm_picker_node.reset();
-    });
-    
-    rclcpp::shutdown();
+    worm_picker_node.reset();
     return 0;
 }
