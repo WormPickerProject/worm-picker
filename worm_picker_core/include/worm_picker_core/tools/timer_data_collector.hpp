@@ -1,4 +1,12 @@
-// Include guard
+// timer_data_collector.hpp
+//
+// Copyright (c) 2024
+// SPDX-License-Identifier: Apache-2.0
+//
+// Author: Logan Kaising
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+
 #ifndef TIMER_DATA_COLLECTOR_HPP
 #define TIMER_DATA_COLLECTOR_HPP
 

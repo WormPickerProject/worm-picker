@@ -1,3 +1,12 @@
+// timer_data_collector.cpp 
+//
+// Copyright (c) 2024
+// SPDX-License-Identifier: Apache-2.0
+//
+// Author: Logan Kaising
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+
 #include "worm_picker_core/tools/timer_data_collector.hpp"
 
 TimerDataCollector::TimerDataCollector(const std::string& output_directory)
