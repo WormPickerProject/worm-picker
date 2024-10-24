@@ -11,11 +11,11 @@
         </geometry>
         <xacro:material_yaskawa_blue/>
       </visual>
-      <collision>
+      <!-- <collision>
         <geometry>
           <mesh filename="package://worm_picker_description/meshes/robot/collision/base_link.stl"/>
         </geometry>
-      </collision>
+      </collision> -->
     </link>
 
     <link name="${prefix}joint_1">
@@ -25,11 +25,11 @@
         </geometry>
         <xacro:material_yaskawa_blue/>
       </visual>
-      <collision>
+      <!-- <collision>
         <geometry>
           <mesh filename="package://worm_picker_description/meshes/robot/collision/joint_1.stl"/>
         </geometry>
-      </collision>
+      </collision> -->
     </link>
 
     <link name="${prefix}joint_2">
@@ -39,11 +39,11 @@
         </geometry>
         <xacro:material_yaskawa_blue/>
       </visual>
-      <collision>
+      <!-- <collision>
         <geometry>
           <mesh filename="package://worm_picker_description/meshes/robot/collision/joint_2.stl"/>
         </geometry>
-      </collision>
+      </collision> -->
     </link>
 
     <link name="${prefix}joint_3">
@@ -53,11 +53,11 @@
         </geometry>
         <xacro:material_yaskawa_blue/>
       </visual>
-      <collision>
+      <!-- <collision>
         <geometry>
           <mesh filename="package://worm_picker_description/meshes/robot/collision/joint_3.stl"/>
         </geometry>
-      </collision>
+      </collision> -->
     </link>
 
     <link name="${prefix}joint_4">
@@ -67,11 +67,11 @@
         </geometry>
         <xacro:material_yaskawa_blue/>
       </visual>
-      <collision>
+      <!-- <collision>
         <geometry>
           <mesh filename="package://worm_picker_description/meshes/robot/collision/joint_4.stl"/>
         </geometry>
-      </collision>
+      </collision> -->
     </link>
 
     <link name="${prefix}joint_5">
@@ -81,11 +81,11 @@
         </geometry>
         <xacro:material_yaskawa_blue/>
       </visual>
-      <collision>
+      <!-- <collision>
         <geometry>
           <mesh filename="package://worm_picker_description/meshes/robot/collision/joint_5.stl"/>
         </geometry>
-      </collision>
+      </collision> -->
     </link>
 
     <link name="${prefix}joint_6">
@@ -95,11 +95,11 @@
         </geometry>
         <xacro:material_yaskawa_silver/>
       </visual>
-      <collision>
+      <!-- <collision>
         <geometry>
           <mesh filename="package://worm_picker_description/meshes/robot/collision/joint_6.stl"/>
         </geometry>
-      </collision>
+      </collision> -->
     </link>
     <!-- end of link list -->
 
@@ -180,12 +180,12 @@
           <color rgba="0.65 0.6 0.20 1"/>
         </material>
       </visual>
-      <collision>
+      <!-- <collision>
         <origin xyz="0 0 0" rpy="0 0 0" />
         <geometry>
           <mesh filename="package://worm_picker_description/meshes/workcell/eoat_v2.stl"/>
         </geometry>
-      </collision>
+      </collision> -->
     </link>
     <joint name="flange-${prefix}eoat" type="fixed">
       <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -196,7 +196,7 @@
     <!-- EOAT TCP -->
     <link name="${prefix}eoat_tcp"/>
     <joint name="${prefix}eoat-${prefix}eoat_tcp" type="fixed">
-      <origin xyz="0.1 0 -0.1" rpy="${radians(180)} ${radians(0)} ${radians(90)}"/>
+      <origin xyz="0.079 0 -0.0925" rpy="${radians(0)} ${radians(-60.0)} ${radians(180)}"/>
       <parent link="${prefix}eoat"/>
       <child link="${prefix}eoat_tcp"/> 
     </joint>

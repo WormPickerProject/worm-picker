@@ -23,12 +23,12 @@
           <color rgba="0.95 0.95 0.95 1"/>
         </material>
       </visual>
-      <collision>
+      <!-- <collision>
         <origin xyz="0 0 0" rpy="0 0 0" />
         <geometry>
           <mesh filename="package://worm_picker_description/meshes/workcell/workstation_v1_visual.stl"/>
         </geometry>
-      </collision>
+      </collision> -->
     </link>
     <joint name="world-workstation" type="fixed">
       <origin xyz="0 0 0" rpy="0 0 0"/> <!-- Workstation STL has origin defined at robot base_link origin -->
@@ -37,7 +37,7 @@
     </joint>
 
     <!-- Hotel 1 -->
-    <!-- <link name="hotel_1">
+    <link name="hotel_1">
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0" />
         <geometry>
@@ -47,18 +47,18 @@
           <color rgba="0.95 0 0 0.5"/>
         </material>
       </visual>
-      <collision>
+      <!-- <collision>
         <origin xyz="0 0 0" rpy="0 0 0" />
         <geometry>
           <mesh filename="package://worm_picker_description/meshes/workcell/hotel_1.stl"/>
         </geometry>
-      </collision>
+      </collision> -->
     </link>
     <joint name="world-hotel_1" type="fixed">
-      <origin xyz="0 0 0" rpy="0 0 0"/> <!- STL has origin defined at robot base_link origin ->
+      <origin xyz="0 0 0" rpy="0 0 0"/>  <!-- STL has origin defined at robot base_link origin -->
       <parent link="world"/>
       <child link="hotel_1"/> 
-    </joint> -->
+    </joint>
 
     <!-- Float Table URDF -->
     <link name="table">
@@ -69,12 +69,12 @@
           <box size="1.8288 1.2192 0.2"/>
         </geometry>
       </visual>
-      <collision>
+      <!-- <collision>
         <origin xyz="0.9144 0 -0.1" rpy="0 0 0"/>
         <geometry>
           <box size="1.8288 1.2192 0.2"/>
         </geometry>
-      </collision>
+      </collision> -->
     </link>
     <joint name="world-table" type="fixed">
       <origin xyz="-0.5588 0 0" rpy="0 0 0"/> <!-- 0.5588 is approx 22 inches -->
@@ -84,12 +84,12 @@
 
     <!-- Rough Collision Block - Ceiling -->
     <link name="ceiling">
-      <collision>
+      <!-- <collision>
         <origin xyz="0 0 0" rpy="0 0 0" />
         <geometry>
           <cylinder length="0.01" radius="3" />
         </geometry>
-      </collision>
+      </collision> -->
     </link>
     <joint name="world-ceiling" type="fixed">
       <origin xyz="0 0 1.2573" rpy="0 0 0"/> <!-- Ceiling is approx 49.5 inches -->

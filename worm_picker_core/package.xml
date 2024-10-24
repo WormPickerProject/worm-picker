@@ -17,18 +17,20 @@
   <exec_depend>rosidl_default_runtime</exec_depend>
 
   <!-- Build Dependencies -->
-  <build_depend>moveit_core</build_depend>
-  <build_depend>moveit_task_constructor_core</build_depend>
-  <build_depend>moveit_ros_planning_interface</build_depend>
   <build_depend>rclcpp</build_depend>
-  <build_depend>worm_picker_moveit_config</build_depend>
-  <build_depend>moveit_task_constructor_msgs</build_depend>
-  <build_depend>moveit_task_constructor_visualization</build_depend>
   <build_depend>geometry_msgs</build_depend>
-  <build_depend>worm_picker_custom_msgs</build_depend>
   <build_depend>tf2</build_depend>
   <build_depend>tf2_geometry_msgs</build_depend>
   <build_depend>std_srvs</build_depend>
+  <build_depend>moveit_core</build_depend>
+  <build_depend>moveit_msgs</build_depend>
+  <build_depend>moveit_ros_planning</build_depend>
+  <build_depend>moveit_ros_planning_interface</build_depend>
+  <build_depend>moveit_task_constructor_core</build_depend>
+  <build_depend>moveit_task_constructor_msgs</build_depend>
+  <build_depend>moveit_task_constructor_visualization</build_depend>
+  <build_depend>worm_picker_moveit_config</build_depend>
+  <build_depend>worm_picker_custom_msgs</build_depend>
   <build_depend>motoros2_interfaces</build_depend>
 
   <!-- Test Dependencies -->
