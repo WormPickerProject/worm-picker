@@ -25,6 +25,9 @@ private:
     std::shared_ptr<worm_picker_custom_msgs::srv::TaskCommand::Request> createRequest(const std::string& command) const;
     void sendRequest(const std::shared_ptr<worm_picker_custom_msgs::srv::TaskCommand::Request>& request) const;
     void receiveResponse(const rclcpp::Client<worm_picker_custom_msgs::srv::TaskCommand>::SharedFuture& result_future) const;
+    
+    // Type aliases
+    using TaskCommandService = worm_picker_custom_msgs::srv::TaskCommand;
 
     rclcpp::Node::SharedPtr node_;  // Shared pointer to the ROS node
     rclcpp::Client<worm_picker_custom_msgs::srv::TaskCommand>::SharedPtr client_;  // Shared pointer to the service client
