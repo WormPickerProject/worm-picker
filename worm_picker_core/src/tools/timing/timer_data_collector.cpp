@@ -7,7 +7,7 @@
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 
-#include "worm_picker_core/tools/timer_data_collector.hpp"
+#include "worm_picker_core/tools/timing/timer_data_collector.hpp"
 
 TimerDataCollector::TimerDataCollector(const std::string& output_directory)
     : data_(nlohmann::json::array()), 

@@ -8,6 +8,7 @@
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 
+#include <filesystem>
 #include "worm_picker_core/tasks/task_factory.hpp"
 
 TaskFactory::TaskFactory(const rclcpp::Node::SharedPtr& node) 
@@ -16,7 +17,19 @@ TaskFactory::TaskFactory(const rclcpp::Node::SharedPtr& node)
     if (!worm_picker_node_) {
         throw NullNodeException("TaskFactory initialization failed: worm_picker_node_ is null.");
     }
+
+    parseData();
     setupPlanningScene();
+}
+
+void TaskFactory::parseData() 
+{
+    const std::string input_directory = "/worm-picker/worm_picker_core/program_data/data_files/workstation_data.json";
+    const std::string workstation_data_file_path = std::filesystem::current_path().string() + input_directory;
+
+    WorkstationDataParser parser(workstation_data_file_path, worm_picker_node_);
+    workstation_data_map_ = parser.getWorkstationDataMap();
+
 }
 
 void TaskFactory::setupPlanningScene() 
