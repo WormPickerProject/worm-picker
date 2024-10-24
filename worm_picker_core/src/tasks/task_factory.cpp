@@ -16,7 +16,7 @@ TaskFactory::TaskFactory(const rclcpp::Node::SharedPtr& node)
     if (!worm_picker_node_) {
         throw NullNodeException("TaskFactory initialization failed: worm_picker_node_ is null.");
     }
- 
+
     parseData();
     setupPlanningScene();
 }
