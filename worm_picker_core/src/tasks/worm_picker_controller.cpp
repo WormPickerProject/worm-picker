@@ -12,7 +12,7 @@
 WormPickerController::WormPickerController(const rclcpp::NodeOptions& options) 
     : worm_picker_node_{ std::make_shared<rclcpp::Node>("worm_picker_controller", options) },
       task_factory_{ std::make_shared<TaskFactory>(worm_picker_node_) },
-      timer_data_collector_{ std::make_shared<TimerDataCollector>("/worm-picker/worm_picker_core/program_data/timer_log") }
+      timer_data_collector_{ std::make_shared<TimerDataCollector>("/worm_picker_description/program_data/timer_log") }
 {
     setupServicesAndActions();
 }

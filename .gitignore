@@ -12,4 +12,5 @@ log/
 .vscode/
 
 # Ignore timer log directory
-worm_picker_core/program_data/timer_log/
+worm_picker_description/program_data/timer_log/timer_data.json
+worm_picker_description/program_data/data_files/hotel_data.json
