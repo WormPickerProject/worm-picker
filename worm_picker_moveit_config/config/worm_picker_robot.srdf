@@ -27,10 +27,10 @@
     <virtual_joint name="world-base_link" type="fixed" parent_frame="world" child_link="base_link"/>
 
     <!-- Disable Collisions -->
-    <disable_collisions link1="base_link" link2="ceiling" reason="Adjacent"/>
+    <!-- <disable_collisions link1="base_link" link2="ceiling" reason="Adjacent"/>
     <disable_collisions link1="base_link" link2="joint_1" reason="Adjacent"/>
     <disable_collisions link1="base_link" link2="joint_2" reason="Never"/>
-    <!-- <disable_collisions link1="base_link" link2="hotel_1" reason="Adjacent"/> -->
+    <disable_collisions link1="base_link" link2="hotel_1" reason="Adjacent"/>
     <disable_collisions link1="base_link" link2="table" reason="Adjacent"/>
     <disable_collisions link1="base_link" link2="workstation" reason="Adjacent"/>
     <disable_collisions link1="ceiling" link2="eoat" reason="Never"/>
@@ -40,7 +40,7 @@
     <disable_collisions link1="ceiling" link2="joint_4" reason="Never"/>
     <disable_collisions link1="ceiling" link2="joint_5" reason="Never"/>
     <disable_collisions link1="ceiling" link2="joint_6" reason="Never"/>
-    <!-- <disable_collisions link1="ceiling" link2="hotel_1" reason="Adjacent"/> -->
+    <disable_collisions link1="ceiling" link2="hotel_1" reason="Adjacent"/>
     <disable_collisions link1="ceiling" link2="table" reason="Adjacent"/>
     <disable_collisions link1="ceiling" link2="workstation" reason="Adjacent"/>
     <disable_collisions link1="eoat" link2="joint_3" reason="Never"/>
@@ -48,11 +48,11 @@
     <disable_collisions link1="eoat" link2="joint_6" reason="Adjacent"/>
     <disable_collisions link1="joint_1" link2="joint_2" reason="Adjacent"/>
     <disable_collisions link1="joint_1" link2="joint_3" reason="Never"/>
-    <!-- <disable_collisions link1="joint_1" link2="hotel_1" reason="Never"/> -->
+    <disable_collisions link1="joint_1" link2="hotel_1" reason="Never"/>
     <disable_collisions link1="joint_1" link2="table" reason="Never"/>
     <disable_collisions link1="joint_1" link2="workstation" reason="Never"/>
     <disable_collisions link1="joint_2" link2="joint_3" reason="Adjacent"/>
-    <!-- <disable_collisions link1="joint_2" link2="hotel_1" reason="Never"/> -->
+    <disable_collisions link1="joint_2" link2="hotel_1" reason="Never"/>
     <disable_collisions link1="joint_2" link2="table" reason="Never"/>
     <disable_collisions link1="joint_3" link2="joint_4" reason="Adjacent"/>
     <disable_collisions link1="joint_3" link2="joint_5" reason="Never"/>
@@ -60,7 +60,7 @@
     <disable_collisions link1="joint_3" link2="table" reason="Never"/>
     <disable_collisions link1="joint_4" link2="joint_5" reason="Adjacent"/>
     <disable_collisions link1="joint_5" link2="joint_6" reason="Adjacent"/>
-    <!-- <disable_collisions link1="hotel_1" link2="table" reason="Adjacent"/> -->
-    <!-- <disable_collisions link1="hotel_1" link2="workstation" reason="Adjacent"/> -->
-    <disable_collisions link1="table" link2="workstation" reason="Adjacent"/>
+    <disable_collisions link1="hotel_1" link2="table" reason="Adjacent"/>
+    <disable_collisions link1="hotel_1" link2="workstation" reason="Adjacent"/>
+    <disable_collisions link1="table" link2="workstation" reason="Adjacent"/> -->
 </robot>

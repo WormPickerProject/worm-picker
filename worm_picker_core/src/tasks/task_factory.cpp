@@ -135,7 +135,6 @@ moveit::task_constructor::Task TaskFactory::createTask(const std::string& comman
 
     Task current_task;
     current_task.stages()->setName("dynamic_task");
-
     current_task.loadRobotModel(worm_picker_node_);
 
     const std::string arm_group_name = "gp4_arm";

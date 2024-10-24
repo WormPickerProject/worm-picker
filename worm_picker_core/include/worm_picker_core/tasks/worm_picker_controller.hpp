@@ -95,9 +95,8 @@ private:
      * @throws TaskPlanningFailedException If task planning fails.
      * @throws TaskExecutionFailedException If task execution fails.
      */
-    void handleTaskCommand(
-        const std::shared_ptr<worm_picker_custom_msgs::srv::TaskCommand::Request> request,
-        std::shared_ptr<worm_picker_custom_msgs::srv::TaskCommand::Response> response);
+    void handleTaskCommand(const std::shared_ptr<worm_picker_custom_msgs::srv::TaskCommand::Request> request,
+                           std::shared_ptr<worm_picker_custom_msgs::srv::TaskCommand::Response> response);
 
     /**
      * @brief Executes a task based on the provided command string.
