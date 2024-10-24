@@ -14,7 +14,6 @@
 #include <unordered_map>
 #include <nlohmann/json.hpp>
 #include <stdexcept>
-#include <rclcpp/rclcpp.hpp>
 
 /**
  * @brief Represents the coordinate information of a workstation.
@@ -30,23 +29,10 @@ struct Coordinate {
 };
 
 /**
- * @brief Represents the joint positions of a workstation.
- */
-struct Joint {
-    double joint_1; ///< Position of joint 1.
-    double joint_2; ///< Position of joint 2.
-    double joint_3; ///< Position of joint 3.
-    double joint_4; ///< Position of joint 4.
-    double joint_5; ///< Position of joint 5.
-    double joint_6; ///< Position of joint 6.
-};
-
-/**
- * @brief Contains both coordinate and joint data for a workstation.
+ * @brief Contains coordinate data for the workstation.
  */
 struct WorkstationData {
     Coordinate coordinate; ///< Coordinate data of the workstation.
-    Joint joint; ///< Joint data of the workstation.
 };
 
 /**
@@ -60,7 +46,7 @@ public:
      * @param file_path Path to the JSON file.
      * @param node Shared pointer to the ROS2 node.
      */
-    explicit WorkstationDataParser(const std::string& file_path, const rclcpp::Node::SharedPtr& node);
+    explicit WorkstationDataParser(const std::string& file_path);
 
     /**
      * @brief Retrieves the parsed workstation data map.
@@ -74,7 +60,7 @@ private:
      * @param file_path Path to the JSON file.
      * @param node Shared pointer to the ROS2 node.
      */
-    void parseJsonFile(const std::string& file_path, const rclcpp::Node::SharedPtr& node);
+    void parseJsonFile(const std::string& file_path);
 
     /**
      * @brief Checks for invalid values in the JSON data.
@@ -90,20 +76,13 @@ private:
      */
     Coordinate parseCoordinate(const nlohmann::json& coord_json) const;
 
-    /**
-     * @brief Parses the joint data from JSON.
-     * @param joint_json JSON data for joints.
-     * @return Parsed Joint structure.
-     */
-    Joint parseJoint(const nlohmann::json& joint_json) const;
-
     // Type aliases
     using json = nlohmann::json;
     using WorkstationDataMap = std::unordered_map<std::string, WorkstationData>;
 
     static constexpr double INVALID_VALUE = -9999.9;  ///< Invalid value constant.
 
-    WorkstationDataMap workstation_data_map_;  ///< Map of workstation IDs (e.g., "A1") to `WorkstationData` containing Cartesian `Coordinate` and robot `Joint` positions.
+    WorkstationDataMap workstation_data_map_;  ///< Map of workstation IDs (e.g., "A1") to `WorkstationData` containing Cartesian `Coordinate` positions.
 };
 
 #endif // WORKSTATION_DATA_PARSER_HPP
