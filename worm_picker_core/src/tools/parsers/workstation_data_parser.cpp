@@ -27,7 +27,7 @@ void WorkstationDataParser::parseJsonFile(const std::string& file_path, const rc
     const std::string current_path = std::filesystem::current_path().string();
     std::ifstream file(current_path + file_path);
     if (!file.is_open()) {
-        RCLCPP_ERROR(node->get_logger(), "Failed to open %s", file_path.c_str());
+        RCLCPP_ERROR(node->get_logger(), "Failed to open %s", (current_path + file_path).c_str());
     }
 
     json workstation_json;
