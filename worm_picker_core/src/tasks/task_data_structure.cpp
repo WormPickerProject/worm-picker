@@ -10,7 +10,7 @@
 
 #include "worm_picker_core/tasks/task_data_structure.hpp"
 
-MoveToData::MoveToData(double px, double py, double pz, double ox, double oy, double oz, double ow,
+MoveToPointData::MoveToPointData(double px, double py, double pz, double ox, double oy, double oz, double ow,
                        double velocity_scaling, double acceleration_scaling) 
     : x(px), y(py), z(pz), qx(ox), qy(oy), qz(oz), qw(ow),
       velocity_scaling_factor(velocity_scaling), acceleration_scaling_factor(acceleration_scaling)
@@ -23,7 +23,7 @@ MoveToData::MoveToData(double px, double py, double pz, double ox, double oy, do
     qw = q.w();
 }
 
-JointData::JointData(double joint1, double joint2, double joint3, double joint4, double joint5, double joint6,
+MoveToJointData::MoveToJointData(double joint1, double joint2, double joint3, double joint4, double joint5, double joint6,
                      double velocity_scaling, double acceleration_scaling) 
     : velocity_scaling_factor(velocity_scaling), acceleration_scaling_factor(acceleration_scaling)
 {
