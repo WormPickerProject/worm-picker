@@ -23,7 +23,7 @@ TaskFactory::TaskFactory(const rclcpp::Node::SharedPtr& node)
 
 void TaskFactory::parseData() 
 {
-    const std::string input_directory = "/worm-picker/worm_picker_core/program_data/data_files/workstation_data.json";
+    const std::string input_directory = "/worm_picker_description/program_data/data_files/workstation_data.json";
 
     WorkstationDataParser parser(input_directory, worm_picker_node_);
     workstation_data_map_ = parser.getWorkstationDataMap();
