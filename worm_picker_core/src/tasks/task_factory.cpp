@@ -25,7 +25,7 @@ void TaskFactory::parseData()
 {
     const std::string input_directory = "/worm_picker_description/program_data/data_files/workstation_data.json";
 
-    WorkstationDataParser parser(input_directory, worm_picker_node_);
+    WorkstationDataParser parser(input_directory);
     workstation_data_map_ = parser.getWorkstationDataMap();
 }
 
