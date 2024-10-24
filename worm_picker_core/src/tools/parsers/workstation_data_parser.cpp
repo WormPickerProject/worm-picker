@@ -9,6 +9,7 @@
 
 #include "worm_picker_core/tools/parsers/workstation_data_parser.hpp"
 #include <fstream>
+#include <filesystem>
 #include <iostream>
 
 WorkstationDataParser::WorkstationDataParser(const std::string& file_path, const rclcpp::Node::SharedPtr& node)
@@ -23,7 +24,8 @@ const std::unordered_map<std::string, WorkstationData>& WorkstationDataParser::g
 
 void WorkstationDataParser::parseJsonFile(const std::string& file_path, const rclcpp::Node::SharedPtr& node)
 {
-    std::ifstream file(file_path);
+    const std::string current_path = std::filesystem::current_path().string();
+    std::ifstream file(current_path + file_path);
     if (!file.is_open()) {
         RCLCPP_ERROR(node->get_logger(), "Failed to open %s", file_path.c_str());
     }

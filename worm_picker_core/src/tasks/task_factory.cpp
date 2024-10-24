@@ -8,7 +8,6 @@
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 
-#include <filesystem>
 #include "worm_picker_core/tasks/task_factory.hpp"
 
 TaskFactory::TaskFactory(const rclcpp::Node::SharedPtr& node) 
@@ -25,11 +24,9 @@ TaskFactory::TaskFactory(const rclcpp::Node::SharedPtr& node)
 void TaskFactory::parseData() 
 {
     const std::string input_directory = "/worm-picker/worm_picker_core/program_data/data_files/workstation_data.json";
-    const std::string workstation_data_file_path = std::filesystem::current_path().string() + input_directory;
 
-    WorkstationDataParser parser(workstation_data_file_path, worm_picker_node_);
+    WorkstationDataParser parser(input_directory, worm_picker_node_);
     workstation_data_map_ = parser.getWorkstationDataMap();
-
 }
 
 void TaskFactory::setupPlanningScene() 
@@ -139,13 +136,6 @@ moveit::task_constructor::Task TaskFactory::createTask(const std::string& comman
         throw NullNodeException("TaskFactory::createTask failed: node_ is null.");
     }
 
-    auto it = task_data_map_.find(command);
-    if (it == task_data_map_.end()) {
-        throw TaskCommandNotFoundException(
-            "TaskFactory::createTask failed: Command '" + command + "' not found."
-        );
-    }
-
     Task current_task;
     current_task.stages()->setName("dynamic_task");
     current_task.loadRobotModel(worm_picker_node_);
@@ -161,6 +151,13 @@ moveit::task_constructor::Task TaskFactory::createTask(const std::string& comman
     auto current_state_stage = std::make_unique<CurrentStateStage>("current");
     current_task.add(std::move(current_state_stage));
 
+    auto it = task_data_map_.find(command);
+    if (it == task_data_map_.end()) {
+        throw TaskCommandNotFoundException(
+            "TaskFactory::createTask failed: Command '" + command + "' not found."
+        );
+    }
+    
     int stage_counter = 1;
     const TaskData& task_data = it->second;
     for (const auto& stage_ptr : task_data.stages) {
