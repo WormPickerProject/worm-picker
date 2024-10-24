@@ -55,22 +55,22 @@ private:
     void setupPlanningScene();
 
     /**
-     * @brief Adds a joint move stage to the task.
+     * @brief Adds a MoveToJoint stage to the task.
      * @param task The MoveIt task to which the stage will be added.
      * @param name The name of the stage.
-     * @param joint_data Shared pointer to the JointData containing joint positions and scaling factors.
+     * @param move_to_joint_data Shared pointer to the MoveToJointData containing joint positions and scaling factors.
      * @throws StageCreationFailedException If the stage creation fails.
      */
-    void addJointStage(moveit::task_constructor::Task& task, const std::string& name, const std::shared_ptr<JointData>& joint_data);
+    void addMoveToJointStage(moveit::task_constructor::Task& task, const std::string& name, const std::shared_ptr<MoveToJointData>& move_to_joint_data);
 
     /** 
-     * @brief Adds a MoveTo stage to the task.
+     * @brief Adds a MoveToPoint stage to the task.
      * @param task The MoveIt task to which the stage will be added.
      * @param name The name of the stage.
-     * @param move_to_data Shared pointer to the MoveToData containing pose information and scaling factors.
+     * @param move_to_point_data Shared pointer to the MoveToPointData containing pose information and scaling factors.
      * @throws StageCreationFailedException If the stage creation fails.
      */
-    void addMoveToStage(moveit::task_constructor::Task& task, const std::string& name, const std::shared_ptr<MoveToData>& move_to_data);
+    void addMoveToPointStage(moveit::task_constructor::Task& task, const std::string& name, const std::shared_ptr<MoveToPointData>& move_to_point_data);
     
     // Type aliases
     using Task = moveit::task_constructor::Task;
