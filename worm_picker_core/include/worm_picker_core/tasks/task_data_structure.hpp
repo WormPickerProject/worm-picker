@@ -20,7 +20,7 @@
  * @enum StageType
  * @brief Enumerates the types of stages available.
  */
-enum class StageType { MOVE_TO, JOINT };
+enum class StageType { MOVE_TO_POINT, MOVE_TO_JOINT };
 
 /** 
  * @struct StageData
@@ -37,10 +37,10 @@ struct StageData {
 };
 
 /** 
- * @struct MoveToData
- * @brief Struct representing data for a MoveTo-based stage.
+ * @struct MoveToPointData
+ * @brief Struct representing data for a point MoveTo-based stage.
  */
-struct MoveToData : public StageData { 
+struct MoveToPointData : public StageData { 
     double x, y, z;  // Position coordinates.
     double qx, qy, qz, qw;  // Orientation as a quaternion.
     double velocity_scaling_factor;  // Velocity scaling factor.
@@ -49,10 +49,10 @@ struct MoveToData : public StageData {
     /** 
      * @brief Default constructor.
      */
-    MoveToData() = default;
+    MoveToPointData() = default;
 
     /** 
-     * @brief Constructs a MoveToData with the given parameters.
+     * @brief Constructs a MoveToPointData with the given parameters.
      * @param px Position x-coordinate.
      * @param py Position y-coordinate.
      * @param pz Position z-coordinate.
@@ -63,17 +63,17 @@ struct MoveToData : public StageData {
      * @param velocity_scaling Velocity scaling factor (default: 0.1).
      * @param acceleration_scaling Acceleration scaling factor (default: 0.1).
      */
-    MoveToData(double px, double py, double pz, double ox, double oy, double oz, double ow,
-              double velocity_scaling = 0.1, double acceleration_scaling = 0.1);
+    MoveToPointData(double px, double py, double pz, double ox, double oy, double oz, double ow,
+                    double velocity_scaling = 0.1, double acceleration_scaling = 0.1);
 
-    StageType getType() const override { return StageType::MOVE_TO; }
+    StageType getType() const override { return StageType::MOVE_TO_POINT; }
 };
 
 /** 
- * @struct JointData
- * @brief Struct representing data for a joint-based stage.
+ * @struct MoveToJointData
+ * @brief Struct representing data for a joint MoveTo-based stage.
  */
-struct JointData : public StageData { 
+struct MoveToJointData : public StageData { 
     std::map<std::string, double> joint_positions;  // Map of joint names to their positions (in radians).
     double velocity_scaling_factor;  // Velocity scaling factor.
     double acceleration_scaling_factor;  // Acceleration scaling factor.
@@ -81,10 +81,10 @@ struct JointData : public StageData {
     /** 
      * @brief Default constructor.
      */
-    JointData() = default;
+    MoveToJointData() = default;
 
     /**
-     * @brief Constructs a JointData with the given joint angles and scaling factors.
+     * @brief Constructs a MoveToJointData with the given joint angles and scaling factors.
      * @param joint1 Angle for joint 1 in degrees.
      * @param joint2 Angle for joint 2 in degrees.
      * @param joint3 Angle for joint 3 in degrees.
@@ -94,10 +94,10 @@ struct JointData : public StageData {
      * @param velocity_scaling Velocity scaling factor (default: 0.1).
      * @param acceleration_scaling Acceleration scaling factor (default: 0.1).
      */
-    JointData(double joint1, double joint2, double joint3, double joint4, double joint5, double joint6,
-              double velocity_scaling = 0.1, double acceleration_scaling = 0.1);
+    MoveToJointData(double joint1, double joint2, double joint3, double joint4, double joint5, double joint6,
+                    double velocity_scaling = 0.1, double acceleration_scaling = 0.1);
 
-    StageType getType() const override { return StageType::JOINT; }
+    StageType getType() const override { return StageType::MOVE_TO_JOINT; }
 };
 
 /** 
