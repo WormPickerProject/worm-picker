@@ -36,8 +36,8 @@
 // WormPicker application includes
 #include "worm_picker_core/tasks/task_data_structure.hpp"
 #include "worm_picker_core/tasks/task_factory.hpp"
-#include "worm_picker_core/tools/execution_timer.hpp"
-#include "worm_picker_core/tools/timer_data_collector.hpp"
+#include "worm_picker_core/tools/timing/execution_timer.hpp"
+#include "worm_picker_core/tools/timing/timer_data_collector.hpp"
 #include "worm_picker_core/exceptions/exceptions.hpp"
 
 /**

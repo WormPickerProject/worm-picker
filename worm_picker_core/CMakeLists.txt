@@ -91,8 +91,9 @@ add_worm_picker_executable(worm_picker_robot
     src/tasks/task_data_structure.cpp
     src/tasks/task_factory.cpp
     src/tasks/worm_picker_controller.cpp
-    src/tools/execution_timer.cpp
-    src/tools/timer_data_collector.cpp
+    src/tools/parsers/workstation_data_parser.cpp
+    src/tools/timing/execution_timer.cpp
+    src/tools/timing/timer_data_collector.cpp
   ARGS
     geometry_msgs
     moveit_core

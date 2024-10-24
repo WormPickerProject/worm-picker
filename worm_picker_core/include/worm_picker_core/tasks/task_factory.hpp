@@ -17,6 +17,7 @@
 #include <moveit/task_constructor/solvers.h>
 
 #include "worm_picker_core/tasks/task_data_structure.hpp"
+#include "worm_picker_core/tools/parsers/workstation_data_parser.hpp"
 #include "worm_picker_core/exceptions/exceptions.hpp"
 
 /** 
@@ -33,11 +34,6 @@ public:
     TaskFactory(const rclcpp::Node::SharedPtr& node);
 
     /** 
-     * @brief Sets up the planning scene by initializing stages and tasks.
-     */
-    void setupPlanningScene();
-
-    /** 
      * @brief Creates a MoveIt task based on the provided command.
      * @param command The command name to create the task.
      * @return moveit::task_constructor::Task The constructed task.
@@ -48,6 +44,16 @@ public:
     moveit::task_constructor::Task createTask(const std::string& command);
 
 private:
+    /** 
+     * @brief @brief Parses the workstation (and soon hotel) data from their respective JSON file.
+     */
+    void parseData();
+    
+    /** 
+     * @brief Sets up the planning scene by initializing stages and tasks.
+     */
+    void setupPlanningScene();
+
     /**
      * @brief Adds a joint move stage to the task.
      * @param task The MoveIt task to which the stage will be added.
@@ -73,8 +79,10 @@ private:
     using MoveToStage = moveit::task_constructor::stages::MoveTo;
     using CurrentStateStage = moveit::task_constructor::stages::CurrentState;
     using TrajectoryExecutionInfo = moveit::task_constructor::TrajectoryExecutionInfo;
+    using WorkstationDataMap = std::unordered_map<std::string, WorkstationData>;
 
     rclcpp::Node::SharedPtr worm_picker_node_;                          ///< Shared pointer to the WormPicker node.
+    WorkstationDataMap workstation_data_map_;                           ///< Map of workstation IDs (e.g., "A1") to `WorkstationData` containing Cartesian `Coordinate` and robot `Joint` positions.
     std::map<std::string, std::shared_ptr<StageData>> stage_data_map_;  ///< Map of stage names to StageData.
     std::map<std::string, TaskData> task_data_map_;                     ///< Map of task commands to TaskData.
 };
