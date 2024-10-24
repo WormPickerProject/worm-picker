@@ -12,9 +12,9 @@
 #include <filesystem>
 #include <iostream>
 
-WorkstationDataParser::WorkstationDataParser(const std::string& file_path, const rclcpp::Node::SharedPtr& node)
+WorkstationDataParser::WorkstationDataParser(const std::string& file_path)
 {
-    parseJsonFile(file_path, node);
+    parseJsonFile(file_path);
 }
 
 const std::unordered_map<std::string, WorkstationData>& WorkstationDataParser::getWorkstationDataMap() const 
@@ -22,12 +22,12 @@ const std::unordered_map<std::string, WorkstationData>& WorkstationDataParser::g
     return workstation_data_map_;
 }
 
-void WorkstationDataParser::parseJsonFile(const std::string& file_path, const rclcpp::Node::SharedPtr& node)
+void WorkstationDataParser::parseJsonFile(const std::string& file_path) 
 {
     const std::string current_path = std::filesystem::current_path().string();
     std::ifstream file(current_path + file_path);
     if (!file.is_open()) {
-        RCLCPP_ERROR(node->get_logger(), "Failed to open %s", (current_path + file_path).c_str());
+        throw std::runtime_error("Failed to open file: " + current_path + file_path);
     }
 
     json workstation_json;
@@ -44,9 +44,7 @@ void WorkstationDataParser::parseJsonFile(const std::string& file_path, const rc
             }
 
             Coordinate coord = parseCoordinate(col_data["coordinate"]);
-            Joint joint = parseJoint(col_data["joint"]);
-
-            workstation_data_map_.emplace(key, WorkstationData{coord, joint});
+            workstation_data_map_.emplace(key, WorkstationData{coord});
         }
     }
 }
@@ -58,20 +56,9 @@ bool WorkstationDataParser::hasInvalidValue(const json& col_data) const
         "orientation_x", "orientation_y", "orientation_z", "orientation_w"
     };
 
-    const std::vector<std::string> joint_keys = {
-        "joint_1", "joint_2", "joint_3", "joint_4", "joint_5", "joint_6"
-    };
-
     const auto& coord = col_data["coordinate"];
     for (const auto& key : coordinate_keys) {
         if (coord[key].get<double>() == INVALID_VALUE) {
-            return true;
-        }
-    }
-
-    const auto& joint = col_data["joint"];
-    for (const auto& key : joint_keys) {
-        if (joint[key].get<double>() == INVALID_VALUE) {
             return true;
         }
     }
@@ -89,17 +76,5 @@ Coordinate WorkstationDataParser::parseCoordinate(const json& coord_json) const
         coord_json["orientation_y"].get<double>(),
         coord_json["orientation_z"].get<double>(),
         coord_json["orientation_w"].get<double>()
-    };
-}
-
-Joint WorkstationDataParser::parseJoint(const json& joint_json) const 
-{
-    return Joint{
-        joint_json["joint_1"].get<double>(),
-        joint_json["joint_2"].get<double>(),
-        joint_json["joint_3"].get<double>(),
-        joint_json["joint_4"].get<double>(),
-        joint_json["joint_5"].get<double>(),
-        joint_json["joint_6"].get<double>()
     };
 }
