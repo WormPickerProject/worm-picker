@@ -30,7 +30,7 @@ private:
     using TaskCommandService = worm_picker_custom_msgs::srv::TaskCommand;
 
     rclcpp::Node::SharedPtr node_;  // Shared pointer to the ROS node
-    rclcpp::Client<worm_picker_custom_msgs::srv::TaskCommand>::SharedPtr client_;  // Shared pointer to the service client
+    rclcpp::Client<TaskCommandService>::SharedPtr client_;  // Shared pointer to the service client
     std::string service_name_;  // Name of the service
 };
 
