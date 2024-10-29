@@ -5,24 +5,31 @@
 TaskGenerator::TaskGenerator(const std::unordered_map<std::string, WorkstationData>& workstation_map,
                              const std::unordered_map<std::string, HotelData>& hotel_map)
 {
-    GenerateWorkstationPickPlateTask pick_plate_workstation(workstation_map);
-    pick_plate_workstation.generateTasks();
-    task_data_map_.insert(pick_plate_workstation.getTaskDataMap().begin(), pick_plate_workstation.getTaskDataMap().end());
-
-    GenerateWorkstationPlacePlateTask place_plate_workstation(workstation_map);
-    place_plate_workstation.generateTasks();
-    task_data_map_.insert(place_plate_workstation.getTaskDataMap().begin(), place_plate_workstation.getTaskDataMap().end());
-
-    GenerateHotelPickPlateTask pick_plate_hotel(hotel_map);
-    pick_plate_hotel.generateTasks();
-    task_data_map_.insert(pick_plate_hotel.getTaskDataMap().begin(), pick_plate_hotel.getTaskDataMap().end());
-
-    GenerateHotelPlacePlateTask place_plate_hotel(hotel_map);
-    place_plate_hotel.generateTasks();
-    task_data_map_.insert(place_plate_hotel.getTaskDataMap().begin(), place_plate_hotel.getTaskDataMap().end());
+    auto generators = initializeGenerators(workstation_map, hotel_map);
+    generateAndAggregateTasks(generators);
 }
 
-std::map<std::string, TaskData> TaskGenerator::getGeneratedTaskPlans()
+const std::map<std::string, TaskData>& TaskGenerator::getGeneratedTaskPlans() const
 {
     return task_data_map_;
+}
+
+std::vector<std::unique_ptr<BaseTaskGenerator>> TaskGenerator::initializeGenerators(const std::unordered_map<std::string, WorkstationData>& workstation_map,
+                                                                                    const std::unordered_map<std::string, HotelData>& hotel_map) 
+{
+    std::vector<std::unique_ptr<BaseTaskGenerator>> generators;
+    generators.emplace_back(std::make_unique<GenerateWorkstationPickPlateTask>(workstation_map));
+    generators.emplace_back(std::make_unique<GenerateWorkstationPlacePlateTask>(workstation_map));
+    generators.emplace_back(std::make_unique<GenerateHotelPickPlateTask>(hotel_map));
+    generators.emplace_back(std::make_unique<GenerateHotelPlacePlateTask>(hotel_map));
+    return generators;
+}
+
+void TaskGenerator::generateAndAggregateTasks(const std::vector<std::unique_ptr<BaseTaskGenerator>>& generators) 
+{
+    for (const auto& generator : generators) {
+        generator->generateTasks();
+        const auto& generated_tasks = generator->getTaskDataMap();
+        task_data_map_.insert(generated_tasks.begin(), generated_tasks.end());
+    }
 }
