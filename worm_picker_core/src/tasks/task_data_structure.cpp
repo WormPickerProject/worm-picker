@@ -37,6 +37,11 @@ MoveToJointData::MoveToJointData(double joint1, double joint2, double joint3, do
     joint_positions["joint_6"] = joint6 * deg_to_rad;
 }
 
+MoveRelativeData::MoveRelativeData(double delta_x, double delta_y, double delta_z,
+                                   double velocity_scaling, double acceleration_scaling)
+    : dx(delta_x), dy(delta_y), dz(delta_z),
+      velocity_scaling_factor(velocity_scaling), acceleration_scaling_factor(acceleration_scaling) {}
+
 TaskData::TaskData(const std::map<std::string, std::shared_ptr<StageData>>& stage_data_map,
                    const std::initializer_list<std::string>& stage_names) 
 {
