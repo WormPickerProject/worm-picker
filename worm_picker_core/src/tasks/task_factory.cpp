@@ -31,11 +31,14 @@ void TaskFactory::parseData()
     workstation_data_map_ = workstation_parser.getWorkstationDataMap();
 
     HotelDataParser hotel_parser(hotel_input_directory);
-    hotel_data_map_ = hotel_parser.getHotelDataMap();
+    hotel_data_map_ = hotel_parser.getHotelDataMap(); // Right now empty map 
 }
 
 void TaskFactory::setupPlanningScene() 
 {
+    TaskGenerator tasks_plans(workstation_data_map_, hotel_data_map_);
+    task_data_map_ = tasks_plans.getGeneratedTaskPlans(); 
+
     auto addMoveToPointData = [this](
         const std::string& name, double x, double y, double z, double qx, double qy, double qz, double qw,
         double velocity_scaling = 0.1, double acceleration_scaling = 0.1) {
