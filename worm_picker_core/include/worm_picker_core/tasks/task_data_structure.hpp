@@ -20,7 +20,7 @@
  * @enum StageType
  * @brief Enumerates the types of stages available.
  */
-enum class StageType { MOVE_TO_POINT, MOVE_TO_JOINT };
+enum class StageType { MOVE_TO_POINT, MOVE_TO_JOINT, MOVE_RELATIVE };
 
 /** 
  * @struct StageData
@@ -98,6 +98,34 @@ struct MoveToJointData : public StageData {
                     double velocity_scaling = 0.1, double acceleration_scaling = 0.1);
 
     StageType getType() const override { return StageType::MOVE_TO_JOINT; }
+};
+
+/** 
+ * @struct MoveRelativeData
+ * @brief Struct representing data for a relative move stage.
+ */
+struct MoveRelativeData : public StageData { 
+    double dx, dy, dz;  // Position deltas.
+    double velocity_scaling_factor;      // Velocity scaling factor.
+    double acceleration_scaling_factor;  // Acceleration scaling factor.
+
+    /** 
+     * @brief Default constructor.
+     */
+    MoveRelativeData() = default;
+
+    /** 
+     * @brief Constructs a MoveRelativeData with the given parameters.
+     * @param delta_x Position delta x-coordinate.
+     * @param delta_y Position delta y-coordinate.
+     * @param delta_z Position delta z-coordinate.
+     * @param velocity_scaling Velocity scaling factor (default: 0.1).
+     * @param acceleration_scaling Acceleration scaling factor (default: 0.1).
+     */
+    MoveRelativeData(double delta_x, double delta_y, double delta_z,
+                    double velocity_scaling = 0.1, double acceleration_scaling = 0.1);
+
+    StageType getType() const override { return StageType::MOVE_RELATIVE; }
 };
 
 /** 

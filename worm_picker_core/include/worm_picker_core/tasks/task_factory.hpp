@@ -73,11 +73,14 @@ private:
      */
     void addMoveToPointStage(moveit::task_constructor::Task& task, const std::string& name, const std::shared_ptr<MoveToPointData>& move_to_point_data);
     
+    void addMoveRelativeStage(moveit::task_constructor::Task& task, const std::string& name, const std::shared_ptr<MoveRelativeData>& move_relative_data);
+
     // Type aliases
     using Task = moveit::task_constructor::Task;
     using JointInterpolationPlanner = moveit::task_constructor::solvers::JointInterpolationPlanner;
     using CartesianPath = moveit::task_constructor::solvers::CartesianPath;
     using MoveToStage = moveit::task_constructor::stages::MoveTo;
+    using MoveRelativeStage = moveit::task_constructor::stages::MoveRelative;
     using CurrentStateStage = moveit::task_constructor::stages::CurrentState;
     using TrajectoryExecutionInfo = moveit::task_constructor::TrajectoryExecutionInfo;
     using WorkstationDataMap = std::unordered_map<std::string, WorkstationData>;
