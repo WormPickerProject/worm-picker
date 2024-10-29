@@ -122,4 +122,31 @@ struct TaskData {
              const std::initializer_list<std::string>& stage_names);
 };
 
+/**
+ * @brief Represents the coordinate data information of a workstation or hotel.
+ */
+struct Coordinate {
+    double position_x; ///< X position of the workstation.
+    double position_y; ///< Y position of the workstation.
+    double position_z; ///< Z position of the workstation.
+    double orientation_x; ///< X component of orientation quaternion.
+    double orientation_y; ///< Y component of orientation quaternion.
+    double orientation_z; ///< Z component of orientation quaternion.
+    double orientation_w; ///< W component of orientation quaternion.
+};
+
+/**
+ * @brief Contains coordinate data for the workstation.
+ */
+struct WorkstationData {
+    Coordinate coordinate; ///< Coordinate data of the workstation.
+};
+
+/**
+ * @brief Contains coordinate data for the hotels.
+ */
+struct HotelData {
+    Coordinate coordinate; ///< Coordinate data of the hotels.
+};
+
 #endif  // TASK_DATA_STRUCTURE_HPP

@@ -14,26 +14,7 @@
 #include <unordered_map>
 #include <nlohmann/json.hpp>
 #include <stdexcept>
-
-/**
- * @brief Represents the coordinate information of a workstation.
- */
-struct Coordinate {
-    double position_x; ///< X position of the workstation.
-    double position_y; ///< Y position of the workstation.
-    double position_z; ///< Z position of the workstation.
-    double orientation_x; ///< X component of orientation quaternion.
-    double orientation_y; ///< Y component of orientation quaternion.
-    double orientation_z; ///< Z component of orientation quaternion.
-    double orientation_w; ///< W component of orientation quaternion.
-};
-
-/**
- * @brief Contains coordinate data for the workstation.
- */
-struct WorkstationData {
-    Coordinate coordinate; ///< Coordinate data of the workstation.
-};
+#include "worm_picker_core/tasks/task_data_structure.hpp"
 
 /**
  * @brief Class responsible for parsing workstation data from a JSON file.

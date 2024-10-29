@@ -92,8 +92,14 @@ add_worm_picker_executable(worm_picker_robot
     src/tasks/task_factory.cpp
     src/tasks/worm_picker_controller.cpp
     src/tools/parsers/workstation_data_parser.cpp
+    src/tools/parsers/hotel_data_parser.cpp
     src/tools/timing/execution_timer.cpp
     src/tools/timing/timer_data_collector.cpp
+    src/tasks/generation/task_generator.cpp
+    src/tasks/generation/hotel/generate_pick_plate_task.cpp
+    src/tasks/generation/hotel/generate_place_plate_task.cpp
+    src/tasks/generation/workstation/generate_pick_plate_task.cpp
+    src/tasks/generation/workstation/generate_place_plate_task.cpp
   ARGS
     geometry_msgs
     moveit_core
