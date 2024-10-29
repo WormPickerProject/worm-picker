@@ -9,6 +9,7 @@
 // Licensed under the Apache License, Version 2.0 (the "License");
 
 #include "worm_picker_core/tasks/task_factory.hpp"
+#include "worm_picker_core/tasks/generation/task_generator.hpp"
 
 TaskFactory::TaskFactory(const rclcpp::Node::SharedPtr& node) 
     : worm_picker_node_(node)
@@ -23,10 +24,14 @@ TaskFactory::TaskFactory(const rclcpp::Node::SharedPtr& node)
 
 void TaskFactory::parseData() 
 {
-    const std::string input_directory = "/worm_picker_description/program_data/data_files/workstation_data.json";
+    const std::string workstation_input_directory = "/worm_picker_description/program_data/data_files/workstation_data.json";
+    const std::string hotel_input_directory = "/worm_picker_description/program_data/data_files/hotel_data.json";
+    
+    WorkstationDataParser workstation_parser(workstation_input_directory);
+    workstation_data_map_ = workstation_parser.getWorkstationDataMap();
 
-    WorkstationDataParser parser(input_directory);
-    workstation_data_map_ = parser.getWorkstationDataMap();
+    HotelDataParser hotel_parser(hotel_input_directory);
+    hotel_data_map_ = hotel_parser.getHotelDataMap();
 }
 
 void TaskFactory::setupPlanningScene() 
