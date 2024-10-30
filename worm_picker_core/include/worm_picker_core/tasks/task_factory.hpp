@@ -72,7 +72,14 @@ private:
      * @throws StageCreationFailedException If the stage creation fails.
      */
     void addMoveToPointStage(moveit::task_constructor::Task& task, const std::string& name, const std::shared_ptr<MoveToPointData>& move_to_point_data);
-    
+
+    /** 
+     * @brief Adds a MoveRelative stage to the task.
+     * @param task The MoveIt task to which the stage will be added.
+     * @param name The name of the stage.
+     * @param move_relative_data Shared pointer to the MoveRelativeData containing relative motion information and scaling factors.
+     * @throws StageCreationFailedException If the stage creation fails.
+     */
     void addMoveRelativeStage(moveit::task_constructor::Task& task, const std::string& name, const std::shared_ptr<MoveRelativeData>& move_relative_data);
 
     // Type aliases
@@ -91,6 +98,9 @@ private:
     HotelDataMap hotel_data_map_;                                       ///< Filler, not done 
     std::map<std::string, std::shared_ptr<StageData>> stage_data_map_;  ///< Map of stage names to StageData.
     std::map<std::string, TaskData> task_data_map_;                     ///< Map of task commands to TaskData.
+
+    // Temporary Functions
+    void logDataMaps() const;
 };
 
 #endif // TASK_FACTORY_HPP
