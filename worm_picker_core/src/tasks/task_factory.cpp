@@ -320,41 +320,29 @@ void TaskFactory::addMoveRelativeStage(Task& task, const std::string& name,
 }
 
 // Temporary functions:
-void TaskFactory::logDataMaps() const
+void TaskFactory::logDataMaps() const 
 {
     if (workstation_data_map_.empty()) {
-        RCLCPP_INFO(worm_picker_node_->get_logger(), "\n\n\nWorkstation Data Map is empty.\n\n");
+        RCLCPP_INFO(worm_picker_node_->get_logger(), "\n");
+        RCLCPP_INFO(worm_picker_node_->get_logger(), "********************************************************");
+        RCLCPP_INFO(worm_picker_node_->get_logger(), "* Workstation Data Map is empty.");
+        RCLCPP_INFO(worm_picker_node_->get_logger(), "********************************************************\n");
     } else {
-        RCLCPP_INFO(worm_picker_node_->get_logger(), "\n\n\nLogging Workstation Data Map:");
+        RCLCPP_INFO(worm_picker_node_->get_logger(), "\n");
+        RCLCPP_INFO(worm_picker_node_->get_logger(), "********************************************************");
+        RCLCPP_INFO(worm_picker_node_->get_logger(), "* Logging Workstation Data Map:");
         for (const auto& [workstation_id, workstation_data] : workstation_data_map_) {
-            RCLCPP_INFO(worm_picker_node_->get_logger(), "Workstation ID: %s", workstation_id.c_str());
-            RCLCPP_INFO(worm_picker_node_->get_logger(), "  Position (x, y, z): (%f, %f, %f)", 
+            RCLCPP_INFO(worm_picker_node_->get_logger(), "* Workstation ID: %s", workstation_id.c_str());
+            RCLCPP_INFO(worm_picker_node_->get_logger(), "*   Position (x, y, z): (%f, %f, %f)", 
                         workstation_data.coordinate.position_x, 
                         workstation_data.coordinate.position_y, 
                         workstation_data.coordinate.position_z);
-            RCLCPP_INFO(worm_picker_node_->get_logger(), "  Orientation (qx, qy, qz, qw): (%f, %f, %f, %f)\n\n", 
+            RCLCPP_INFO(worm_picker_node_->get_logger(), "*   Orientation (qx, qy, qz, qw): (%f, %f, %f, %f)", 
                         workstation_data.coordinate.orientation_x, 
                         workstation_data.coordinate.orientation_y, 
                         workstation_data.coordinate.orientation_z, 
                         workstation_data.coordinate.orientation_w);
         }
-    }
-
-    if (hotel_data_map_.empty()) {
-        RCLCPP_INFO(worm_picker_node_->get_logger(), "\n\n\nHotel Data Map is empty.\n\n");
-    } else {
-        RCLCPP_INFO(worm_picker_node_->get_logger(), "\n\n\nLogging Hotel Data Map:");
-        for (const auto& [hotel_id, hotel_data] : hotel_data_map_) {
-            RCLCPP_INFO(worm_picker_node_->get_logger(), "Hotel ID: %s", hotel_id.c_str());
-            RCLCPP_INFO(worm_picker_node_->get_logger(), "  Position (x, y, z): (%f, %f, %f)", 
-                        hotel_data.coordinate.position_x, 
-                        hotel_data.coordinate.position_y, 
-                        hotel_data.coordinate.position_z);
-            RCLCPP_INFO(worm_picker_node_->get_logger(), "  Orientation (qx, qy, qz, qw): (%f, %f, %f, %f)\n\n", 
-                        hotel_data.coordinate.orientation_x, 
-                        hotel_data.coordinate.orientation_y, 
-                        hotel_data.coordinate.orientation_z, 
-                        hotel_data.coordinate.orientation_w);
-        }
+        RCLCPP_INFO(worm_picker_node_->get_logger(), "********************************************************\n");
     }
 }
