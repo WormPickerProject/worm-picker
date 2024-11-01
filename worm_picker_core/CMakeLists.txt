@@ -140,6 +140,8 @@ add_worm_picker_executable(command_networking
 add_worm_picker_executable(plate_calibration
   SOURCES
     src/calibration/plate_calibration.cpp
+    src/tools/robot_utilities.cpp
+    src/tasks/task_data_structure.cpp
   ARGS
     geometry_msgs
     moveit_core
