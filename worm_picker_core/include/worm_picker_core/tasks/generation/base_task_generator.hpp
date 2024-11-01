@@ -13,4 +13,4 @@ public:
     virtual const std::map<std::string, TaskData>& getTaskDataMap() const = 0;
 };
 
-#endif // BASE_TASK_GENERATOR_HPP
+#endif // BASE_TASK_GENERATOR_HPP         
