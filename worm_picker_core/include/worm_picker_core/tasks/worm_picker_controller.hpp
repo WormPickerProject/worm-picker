@@ -41,7 +41,27 @@
 #include "worm_picker_core/exceptions/exceptions.hpp"
 
 /**
- * @brief Class that manages task creation, planning, and execution for the WormPicker project.
+ * @class WormPickerController
+ * @brief Manages the worm picking tasks using ROS 2 services and actions.
+ * 
+ * The WormPickerController class is responsible for initializing the ROS node,
+ * setting up services and actions, and handling task commands for the worm
+ * picking system. It uses the TaskFactory class to create the tasks, and the 
+ * MoveIt Task Constructor to plan and execute tasks based on predefined commands.
+ * 
+ * @note This class requires ROS 2 and MoveIt Task Constructor to be properly set up.
+ * 
+ * @par Example Usage:
+ * @code
+ * rclcpp::NodeOptions options;
+ * auto controller = std::make_shared<WormPickerController>(options);
+ * controller->getBaseInterface();
+ * @endcode
+ * 
+ * @par Dependencies:
+ * - ROS 2
+ * - MoveIt Task Constructor
+ * - Custom messages and services defined in worm_picker_custom_msgs
  */
 class WormPickerController
 {
@@ -53,7 +73,13 @@ public:
      * Sets up services and actions for task commands and task execution.
      * 
      * @param options Node options passed to the ROS 2 node (optional).
-     * @throws NullNodeException If the node initialization fails.
+     * 
+     * @details This constructor initializes the core components required for the
+     * WormPickerController to function. It creates a ROS node with the provided
+     * options, initializes the TaskFactory for creating tasks, and sets up the
+     * TimerDataCollector for recording execution times. Additionally, it sets up
+     * the necessary ROS services and action clients to handle task commands and
+     * execute tasks.
      */
     explicit WormPickerController(const rclcpp::NodeOptions& options = rclcpp::NodeOptions());
 

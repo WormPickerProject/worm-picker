@@ -18,6 +18,7 @@
 
 #include "worm_picker_core/tasks/task_data_structure.hpp"
 #include "worm_picker_core/tools/parsers/workstation_data_parser.hpp"
+#include "worm_picker_core/tools/parsers/hotel_data_parser.hpp"
 #include "worm_picker_core/exceptions/exceptions.hpp"
 
 /** 
@@ -71,20 +72,35 @@ private:
      * @throws StageCreationFailedException If the stage creation fails.
      */
     void addMoveToPointStage(moveit::task_constructor::Task& task, const std::string& name, const std::shared_ptr<MoveToPointData>& move_to_point_data);
-    
+
+    /** 
+     * @brief Adds a MoveRelative stage to the task.
+     * @param task The MoveIt task to which the stage will be added.
+     * @param name The name of the stage.
+     * @param move_relative_data Shared pointer to the MoveRelativeData containing relative motion information and scaling factors.
+     * @throws StageCreationFailedException If the stage creation fails.
+     */
+    void addMoveRelativeStage(moveit::task_constructor::Task& task, const std::string& name, const std::shared_ptr<MoveRelativeData>& move_relative_data);
+
     // Type aliases
     using Task = moveit::task_constructor::Task;
     using JointInterpolationPlanner = moveit::task_constructor::solvers::JointInterpolationPlanner;
     using CartesianPath = moveit::task_constructor::solvers::CartesianPath;
     using MoveToStage = moveit::task_constructor::stages::MoveTo;
+    using MoveRelativeStage = moveit::task_constructor::stages::MoveRelative;
     using CurrentStateStage = moveit::task_constructor::stages::CurrentState;
     using TrajectoryExecutionInfo = moveit::task_constructor::TrajectoryExecutionInfo;
     using WorkstationDataMap = std::unordered_map<std::string, WorkstationData>;
+    using HotelDataMap = std::unordered_map<std::string, HotelData>; 
 
     rclcpp::Node::SharedPtr worm_picker_node_;                          ///< Shared pointer to the WormPicker node.
     WorkstationDataMap workstation_data_map_;                           ///< Map of workstation IDs (e.g., "A1") to `WorkstationData` containing Cartesian `Coordinate` and robot `Joint` positions.
+    HotelDataMap hotel_data_map_;                                       ///< Filler, not done 
     std::map<std::string, std::shared_ptr<StageData>> stage_data_map_;  ///< Map of stage names to StageData.
     std::map<std::string, TaskData> task_data_map_;                     ///< Map of task commands to TaskData.
+
+    // Temporary Functions
+    void logDataMaps() const;
 };
 
 #endif // TASK_FACTORY_HPP

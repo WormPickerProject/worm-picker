@@ -9,6 +9,7 @@
 // Licensed under the Apache License, Version 2.0 (the "License");
 
 #include "worm_picker_core/tasks/task_factory.hpp"
+#include "worm_picker_core/tasks/generation/task_generator.hpp"
 
 TaskFactory::TaskFactory(const rclcpp::Node::SharedPtr& node) 
     : worm_picker_node_(node)
@@ -23,14 +24,23 @@ TaskFactory::TaskFactory(const rclcpp::Node::SharedPtr& node)
 
 void TaskFactory::parseData() 
 {
-    const std::string input_directory = "/worm_picker_description/program_data/data_files/workstation_data.json";
+    const std::string workstation_input_directory = "/worm-picker/worm_picker_description/program_data/data_files/workstation_data.json";
+    const std::string hotel_input_directory = "worm-picker/worm_picker_description/program_data/data_files/hotel_data.json";
+    
+    WorkstationDataParser workstation_parser(workstation_input_directory);
+    workstation_data_map_ = workstation_parser.getWorkstationDataMap();
 
-    WorkstationDataParser parser(input_directory);
-    workstation_data_map_ = parser.getWorkstationDataMap();
+    HotelDataParser hotel_parser(hotel_input_directory);
+    hotel_data_map_ = hotel_parser.getHotelDataMap(); 
+    
+    logDataMaps(); 
 }
 
 void TaskFactory::setupPlanningScene() 
 {
+    TaskGenerator tasks_plans(workstation_data_map_, hotel_data_map_);
+    task_data_map_ = tasks_plans.getGeneratedTaskPlans(); 
+
     auto addMoveToPointData = [this](
         const std::string& name, double x, double y, double z, double qx, double qy, double qz, double qw,
         double velocity_scaling = 0.1, double acceleration_scaling = 0.1) {
@@ -45,6 +55,14 @@ void TaskFactory::setupPlanningScene()
         auto move_to_joint_data = std::make_shared<MoveToJointData>(
             j1, j2, j3, j4, j5, j6, velocity_scaling, acceleration_scaling);
         stage_data_map_[name] = move_to_joint_data;
+    };
+
+    auto addMoveRelativeData = [this](
+        const std::string& name, double dx, double dy, double dz,
+        double velocity_scaling = 0.1, double acceleration_scaling = 0.1) {
+        auto move_relative_data = std::make_shared<MoveRelativeData>(
+            dx, dy, dz, velocity_scaling, acceleration_scaling);
+        stage_data_map_[name] = move_relative_data;
     };
 
     auto addTaskData = [this](
@@ -116,6 +134,10 @@ void TaskFactory::setupPlanningScene()
         0.67248, 0.67246, -0.21860, -0.21860, 0.10000, 0.10000
     );
 
+    addMoveRelativeData("move_relative_x", 0.1, 0.0, 0.0);
+    addMoveRelativeData("move_relative_y", 0.0, 0.1, 0.0);
+    addMoveRelativeData("move_relative_z", 0.0, 0.0, 0.1);
+
     addTaskData("home", { "home" });
     addTaskData("pointA", { "pointA" });
     addTaskData("point1", { "point1" });
@@ -129,6 +151,9 @@ void TaskFactory::setupPlanningScene()
     addTaskData("pickUpPlate", 
         { "home", "point1", "point2", "point3", "point4", "point5", "point6", "point7", "home" }
     );
+    addTaskData("move_relative_x", { "move_relative_x" });
+    addTaskData("move_relative_y", { "move_relative_y" });
+    addTaskData("move_relative_z", { "move_relative_z" });
 }
 
 moveit::task_constructor::Task TaskFactory::createTask(const std::string& command) 
@@ -164,22 +189,30 @@ moveit::task_constructor::Task TaskFactory::createTask(const std::string& comman
     for (const auto& stage_ptr : task_data.stages) {
         std::string stage_name = "stage_" + std::to_string(stage_counter++);
         switch (stage_ptr->getType()) {
-            case StageType::MOVE_TO_JOINT:
-                {
-                    auto move_to_joint_data = std::static_pointer_cast<MoveToJointData>(stage_ptr);
-                    addMoveToJointStage(current_task, stage_name + "_joint_move", move_to_joint_data);
-                    break;
-                }
-            case StageType::MOVE_TO_POINT:
-                {
-                    auto move_to_point_data = std::static_pointer_cast<MoveToPointData>(stage_ptr);
-                    addMoveToPointStage(current_task, stage_name + "_pose_move", move_to_point_data);
-                    break;
-                }
+            case StageType::MOVE_TO_JOINT: 
+            {
+                auto move_to_joint_data = std::static_pointer_cast<MoveToJointData>(stage_ptr);
+                addMoveToJointStage(current_task, stage_name + "_joint_move", move_to_joint_data);
+                break;
+            }
+            case StageType::MOVE_TO_POINT: 
+            {
+                auto move_to_point_data = std::static_pointer_cast<MoveToPointData>(stage_ptr);
+                addMoveToPointStage(current_task, stage_name + "_pose_move", move_to_point_data);
+                break;
+            }
+            case StageType::MOVE_RELATIVE: 
+            {
+                auto move_relative_data = std::static_pointer_cast<MoveRelativeData>(stage_ptr);
+                addMoveRelativeStage(current_task, stage_name + "_relative_move", move_relative_data);
+                break;
+            }
             default:
+            {
                 throw UnknownStageTypeException(
                     "TaskFactory::createTask failed: Unknown StageType."
                 );
+            }
         }
     }
 
@@ -249,4 +282,67 @@ void TaskFactory::addMoveToPointStage(Task& task, const std::string& name,
     }
 
     task.add(std::move(current_stage));
+}
+
+void TaskFactory::addMoveRelativeStage(Task& task, const std::string& name, 
+                                       const std::shared_ptr<MoveRelativeData>& move_relative_data) 
+{
+    geometry_msgs::msg::Vector3Stamped direction_vector;
+    direction_vector.header.frame_id = "eoat_tcp";
+    direction_vector.header.stamp = worm_picker_node_->now();
+    direction_vector.vector.x = move_relative_data->dx;
+    direction_vector.vector.y = move_relative_data->dy;
+    direction_vector.vector.z = move_relative_data->dz;
+
+    auto cartesian_planner = std::make_shared<CartesianPath>();
+    cartesian_planner->setMaxVelocityScalingFactor(move_relative_data->velocity_scaling_factor);
+    cartesian_planner->setMaxAccelerationScalingFactor(move_relative_data->acceleration_scaling_factor);
+    cartesian_planner->setStepSize(.01);
+    cartesian_planner->setMinFraction(0.0);
+
+    auto current_stage = std::make_unique<MoveRelativeStage>(name, cartesian_planner);
+    current_stage->setDirection(direction_vector);
+    current_stage->setGroup("gp4_arm"); 
+    current_stage->setIKFrame("eoat_tcp");
+
+    const std::string controller_name = "follow_joint_trajectory";
+    TrajectoryExecutionInfo execution_info;
+    execution_info.controller_names = {controller_name};
+    current_stage->setProperty("trajectory_execution_info", execution_info);
+
+    if (!current_stage) {
+        throw StageCreationFailedException(
+            "TaskFactory::addMoveRelativeStage failed to create stage: " + name
+        );
+    }
+
+    task.add(std::move(current_stage));
+}
+
+// Temporary functions:
+void TaskFactory::logDataMaps() const 
+{
+    if (workstation_data_map_.empty()) {
+        RCLCPP_INFO(worm_picker_node_->get_logger(), "\n");
+        RCLCPP_INFO(worm_picker_node_->get_logger(), "********************************************************");
+        RCLCPP_INFO(worm_picker_node_->get_logger(), "* Workstation Data Map is empty.");
+        RCLCPP_INFO(worm_picker_node_->get_logger(), "********************************************************\n");
+    } else {
+        RCLCPP_INFO(worm_picker_node_->get_logger(), "\n");
+        RCLCPP_INFO(worm_picker_node_->get_logger(), "********************************************************");
+        RCLCPP_INFO(worm_picker_node_->get_logger(), "* Logging Workstation Data Map:");
+        for (const auto& [workstation_id, workstation_data] : workstation_data_map_) {
+            RCLCPP_INFO(worm_picker_node_->get_logger(), "* Workstation ID: %s", workstation_id.c_str());
+            RCLCPP_INFO(worm_picker_node_->get_logger(), "*   Position (x, y, z): (%f, %f, %f)", 
+                        workstation_data.coordinate.position_x, 
+                        workstation_data.coordinate.position_y, 
+                        workstation_data.coordinate.position_z);
+            RCLCPP_INFO(worm_picker_node_->get_logger(), "*   Orientation (qx, qy, qz, qw): (%f, %f, %f, %f)", 
+                        workstation_data.coordinate.orientation_x, 
+                        workstation_data.coordinate.orientation_y, 
+                        workstation_data.coordinate.orientation_z, 
+                        workstation_data.coordinate.orientation_w);
+        }
+        RCLCPP_INFO(worm_picker_node_->get_logger(), "********************************************************\n");
+    }
 }
