@@ -84,7 +84,7 @@ void TaskFactory::setupPlanningScene()
 
     // Test Points & Joints: 
     addMoveToPointData("homePoint", 
-        0.46200, 0.00000, 0.50500, 0.70711, 0.70711, 0.00000, 0.00000
+        0.37452, 0.00000, 0.44938, 0.70712, 0.0000, 0.70710, 0.00000
     );
     addMoveToPointData("pointA", 
         0.58638, 0.00000, 0.50499, 0.70711, 0.70711, 0.00000, 0.00000
@@ -96,6 +96,9 @@ void TaskFactory::setupPlanningScene()
     // Configuration Points & Joints:
     addMoveToJointData("home", 
         0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 0.1
+    );
+    addMoveToJointData("homeJoint", 
+        0.0, 0.0, 0.0, 0.0, -30.0, 0.0, 0.1, 0.1
     );
 
     // Plate pick and place from hotel: hotel_number = 1, slot_hotel_number = 1 as base
@@ -139,6 +142,8 @@ void TaskFactory::setupPlanningScene()
     addMoveRelativeData("move_relative_z", 0.0, 0.0, 0.1);
 
     addTaskData("home", { "home" });
+    addTaskData("homePoint", { "homePoint" });
+    addTaskData("homeJoint", { "homeJoint" });
     addTaskData("pointA", { "pointA" });
     addTaskData("point1", { "point1" });
     addTaskData("point2", { "point2" });
