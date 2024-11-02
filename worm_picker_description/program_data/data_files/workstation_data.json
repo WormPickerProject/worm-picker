@@ -243,13 +243,13 @@
             },
             "3": {
                 "coordinate": {
-                    "position_x": 0.49012,
-                    "position_y": 0.00025,
-                    "position_z": 0.32501,
-                    "orientation_x": 0.70207,
-                    "orientation_y": 0.00086,
-                    "orientation_z": 0.71210,
-                    "orientation_w": -0.00096
+                    "position_x": 0.48750,
+                    "position_y": 0.00000,
+                    "position_z": 0.32604,
+                    "orientation_x": 0.70726,
+                    "orientation_y": 0.00000,
+                    "orientation_z": 0.70695,
+                    "orientation_w": 0.00000
                 }
             },
             "4": {
