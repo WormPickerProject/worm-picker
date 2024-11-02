@@ -140,6 +140,13 @@ struct TaskData {
      */
     TaskData() = default;
 
+    /** 
+     * @brief Constructs a TaskData with a vector of stage pointers.
+     * @param stages_vec Vector of stages to include in the task.
+     */
+    explicit TaskData(std::vector<std::shared_ptr<StageData>> stages_vec)
+        : stages(std::move(stages_vec)) {}
+
     /**
      * @brief Constructs a TaskData with the given stage data map and stage names.
      * @param stage_data_map Map of stage names to StageData.
