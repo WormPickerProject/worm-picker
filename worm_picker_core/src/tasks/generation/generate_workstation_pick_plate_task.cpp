@@ -61,7 +61,7 @@ std::vector<std::shared_ptr<StageData>> GenerateWorkstationPickPlateTask::create
 
 Coordinate GenerateWorkstationPickPlateTask::calculateDerivedPoint(const Coordinate& coord, char row_letter) const
 {
-    constexpr double XY_OFFSET = 0.046;
+    constexpr double XY_OFFSET = 0.048;
     constexpr double Z_OFFSET = 0.02;
     constexpr double THETA_INCREMENT_DEG = 8.381;
     constexpr double DEGREES_TO_RADIANS = M_PI / 180.0;
