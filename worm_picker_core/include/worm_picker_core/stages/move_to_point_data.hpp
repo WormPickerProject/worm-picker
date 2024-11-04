@@ -41,6 +41,16 @@ public:
                     double ox, double oy, double oz, double ow,
                     double velocity_scaling = 0.1,
                     double acceleration_scaling = 0.1);
+    
+    /**
+     * @brief Creates a MoveIt stage based on the data.
+     * @param name The name of the stage.
+     * @param node Shared pointer to the ROS2 node.
+     * 
+     * @return A unique pointer to the created stage.
+     */
+    std::unique_ptr<moveit::task_constructor::Stage> createStage(const std::string& name,
+                                                                 const rclcpp::Node::SharedPtr& node) const override;
 
     StageType getType() const noexcept override;
 

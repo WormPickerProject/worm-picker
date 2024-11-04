@@ -8,8 +8,10 @@
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 
-#include "worm_picker_core/stages/move_to_point_data.hpp"
+#include <moveit/task_constructor/solvers.h>
+#include <moveit/task_constructor/stages.h>
 #include <tf2/LinearMath/Quaternion.h>
+#include "worm_picker_core/stages/move_to_point_data.hpp"
 
 MoveToPointData::MoveToPointData(double px, double py, double pz,
                                  double ox, double oy, double oz, double ow,
@@ -26,6 +28,38 @@ MoveToPointData::MoveToPointData(double px, double py, double pz,
     qy_ = q.y();
     qz_ = q.z();
     qw_ = q.w();
+}
+
+std::unique_ptr<moveit::task_constructor::Stage> MoveToPointData::createStage(const std::string& name,
+                                                                              const rclcpp::Node::SharedPtr& node) const
+{
+    geometry_msgs::msg::PoseStamped target_pose;
+    target_pose.header.frame_id = "base_link";
+    target_pose.header.stamp = node->now();
+    target_pose.pose.position.x = x_;
+    target_pose.pose.position.y = y_;
+    target_pose.pose.position.z = z_;
+    target_pose.pose.orientation.x = qx_;
+    target_pose.pose.orientation.y = qy_;
+    target_pose.pose.orientation.z = qz_;
+    target_pose.pose.orientation.w = qw_;
+
+    auto cartesian_planner = std::make_shared<moveit::task_constructor::solvers::CartesianPath>();
+    cartesian_planner->setMaxVelocityScalingFactor(velocity_scaling_factor_);
+    cartesian_planner->setMaxAccelerationScalingFactor(acceleration_scaling_factor_);
+    cartesian_planner->setStepSize(.01);
+    cartesian_planner->setMinFraction(0.0);
+
+    auto stage = std::make_unique<moveit::task_constructor::stages::MoveTo>(name, cartesian_planner);
+    stage->setGoal(target_pose);
+    stage->setGroup("gp4_arm");
+    stage->setIKFrame("eoat_tcp");
+
+    moveit::task_constructor::TrajectoryExecutionInfo execution_info;
+    execution_info.controller_names = {"follow_joint_trajectory"};
+    stage->setProperty("trajectory_execution_info", execution_info);
+
+    return stage;
 }
 
 StageType MoveToPointData::getType() const noexcept
