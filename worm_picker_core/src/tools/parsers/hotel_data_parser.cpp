@@ -1,3 +1,8 @@
+// hotel_data_parser.cpp
+//
+// Copyright (c) 2024
+// SPDX-License-Identifier: Apache-2.0
+
 #include "worm_picker_core/tools/parsers/hotel_data_parser.hpp"
 #include <fstream>
 #include <iostream>

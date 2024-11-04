@@ -1,9 +1,15 @@
 // task_generator.hpp
+//
+// Copyright (c) 2024
+// SPDX-License-Identifier: Apache-2.0
 
 #ifndef TASK_GENERATOR_HPP
 #define TASK_GENERATOR_HPP
 
-#include "worm_picker_core/tasks/task_data_structure.hpp"
+#include "worm_picker_core/tasks/task_data.hpp"
+#include "worm_picker_core/stages/move_relative_data.hpp"
+#include "worm_picker_core/stages/move_to_joint_data.hpp"
+#include "worm_picker_core/stages/move_to_point_data.hpp"
 #include "worm_picker_core/tasks/generation/base_task_generator.hpp"
 #include "worm_picker_core/tasks/generation/generate_workstation_pick_plate_task.hpp"
 #include "worm_picker_core/tasks/generation/generate_workstation_place_plate_task.hpp"
