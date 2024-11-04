@@ -2,11 +2,6 @@
 //
 // Copyright (c) 2024
 // SPDX-License-Identifier: Apache-2.0
-//
-// Author: Logan Kaising
-// Additional Contributions: Fang-Yen Lab
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
 
 #ifndef MOVE_RELATIVE_DATA_HPP
 #define MOVE_RELATIVE_DATA_HPP

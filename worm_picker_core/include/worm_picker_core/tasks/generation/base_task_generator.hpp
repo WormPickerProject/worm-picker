@@ -1,4 +1,7 @@
 // base_task_generator.hpp
+//
+// Copyright (c) 2024
+// SPDX-License-Identifier: Apache-2.0
 
 #ifndef BASE_TASK_GENERATOR_HPP
 #define BASE_TASK_GENERATOR_HPP

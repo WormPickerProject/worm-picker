@@ -1,4 +1,7 @@
 // task_generator.cpp
+//
+// Copyright (c) 2024
+// SPDX-License-Identifier: Apache-2.0
 
 #include <rclcpp/rclcpp.hpp>
 #include "worm_picker_core/tasks/generation/task_generator.hpp"

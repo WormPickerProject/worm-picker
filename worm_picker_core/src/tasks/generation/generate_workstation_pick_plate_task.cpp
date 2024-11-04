@@ -1,4 +1,7 @@
 // generate_workstation_pick_plate_task.cpp
+//
+// Copyright (c) 2024
+// SPDX-License-Identifier: Apache-2.0
 
 #include "worm_picker_core/tasks/generation/generate_workstation_pick_plate_task.hpp"
 #include <cmath>

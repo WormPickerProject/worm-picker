@@ -1,4 +1,7 @@
 // generate_hotel_pick_plate_task.hpp 
+//
+// Copyright (c) 2024
+// SPDX-License-Identifier: Apache-2.0
 
 #ifndef GENERATE_HOTEL_PICK_PLATE_TASK_HPP
 #define GENERATE_HOTEL_PICK_PLATE_TASK_HPP

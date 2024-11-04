@@ -1,3 +1,8 @@
+// hotel_data_parser.hpp
+//
+// Copyright (c) 2024
+// SPDX-License-Identifier: Apache-2.0
+
 #ifndef HOTEL_DATA_PARSER_HPP
 #define HOTEL_DATA_PARSER_HPP
 
