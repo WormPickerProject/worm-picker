@@ -174,9 +174,8 @@ moveit::task_constructor::Task TaskFactory::createTask(const std::string& comman
     current_task.setProperty("group", "gp4_arm");
     current_task.setProperty("ik_frame", "eoat_tcp");
 
-    const std::string controller_name = "follow_joint_trajectory";
     TrajectoryExecutionInfo execution_info;
-    execution_info.controller_names = {controller_name};
+    execution_info.controller_names = {"follow_joint_trajectory"};
     current_task.setProperty("trajectory_execution_info", execution_info);
     
     auto current_state_stage = std::make_unique<CurrentStateStage>("current");
@@ -191,137 +190,17 @@ moveit::task_constructor::Task TaskFactory::createTask(const std::string& comman
     
     int stage_counter = 1;
     const TaskData& task_data = it->second;
+
     for (const auto& stage_ptr : task_data.getStages()) {
         std::string stage_name = "stage_" + std::to_string(stage_counter++);
-        switch (stage_ptr->getType()) {
-            case StageType::MOVE_TO_JOINT: 
-            {
-                auto move_to_joint_data = std::static_pointer_cast<MoveToJointData>(stage_ptr);
-                addMoveToJointStage(current_task, stage_name + "_joint_move", move_to_joint_data);
-                break;
-            }
-            case StageType::MOVE_TO_POINT: 
-            {
-                auto move_to_point_data = std::static_pointer_cast<MoveToPointData>(stage_ptr);
-                addMoveToPointStage(current_task, stage_name + "_pose_move", move_to_point_data);
-                break;
-            }
-            case StageType::MOVE_RELATIVE: 
-            {
-                auto move_relative_data = std::static_pointer_cast<MoveRelativeData>(stage_ptr);
-                addMoveRelativeStage(current_task, stage_name + "_relative_move", move_relative_data);
-                break;
-            }
-            default:
-            {
-                throw UnknownStageTypeException(
-                    "TaskFactory::createTask failed: Unknown StageType."
-                );
-            }
+        auto stage = stage_ptr->createStage(stage_name, worm_picker_node_);
+        if (!stage) {
+            throw StageCreationFailedException("Failed to create stage: " + stage_name);
         }
+        current_task.add(std::move(stage));
     }
 
     return current_task;
-}
-
-void TaskFactory::addMoveToJointStage(Task& task, const std::string& name, 
-                                      const std::shared_ptr<MoveToJointData>& move_to_joint_data) 
-{
-    auto joint_interpolation_planner = std::make_shared<JointInterpolationPlanner>();
-    joint_interpolation_planner->setMaxVelocityScalingFactor(move_to_joint_data->getVelocityScalingFactor());
-    joint_interpolation_planner->setMaxAccelerationScalingFactor(move_to_joint_data->getAccelerationScalingFactor());
-    
-    auto current_stage = std::make_unique<MoveToStage>(name, joint_interpolation_planner);
-    current_stage->setGoal(move_to_joint_data->getJointPositions());
-    current_stage->setGroup("gp4_arm");
-    current_stage->setIKFrame("eoat_tcp");
-
-    const std::string controller_name = "follow_joint_trajectory";
-    TrajectoryExecutionInfo execution_info;
-    execution_info.controller_names = {controller_name};
-    current_stage->setProperty("trajectory_execution_info", execution_info);
-
-    if (!current_stage) {
-        throw StageCreationFailedException(
-            "TaskFactory::addMoveToJointStage failed to create stage: " + name
-        );
-    }
-
-    task.add(std::move(current_stage));
-}
-
-void TaskFactory::addMoveToPointStage(Task& task, const std::string& name, 
-                                      const std::shared_ptr<MoveToPointData>& move_to_point_data) 
-{
-    geometry_msgs::msg::PoseStamped target_pose;
-    target_pose.header.frame_id = "base_link";
-    target_pose.header.stamp = worm_picker_node_->now();
-    target_pose.pose.position.x = move_to_point_data->getX();
-    target_pose.pose.position.y = move_to_point_data->getY();
-    target_pose.pose.position.z = move_to_point_data->getZ();
-    target_pose.pose.orientation.x = move_to_point_data->getQX();
-    target_pose.pose.orientation.y = move_to_point_data->getQY();
-    target_pose.pose.orientation.z = move_to_point_data->getQZ();
-    target_pose.pose.orientation.w = move_to_point_data->getQW();
-    
-    auto cartesian_planner = std::make_shared<CartesianPath>();
-    cartesian_planner->setMaxVelocityScalingFactor(move_to_point_data->getVelocityScalingFactor());
-    cartesian_planner->setMaxAccelerationScalingFactor(move_to_point_data->getAccelerationScalingFactor());
-    cartesian_planner->setStepSize(.01);
-    cartesian_planner->setMinFraction(0.0);
-
-    auto current_stage = std::make_unique<MoveToStage>(name, cartesian_planner);
-    current_stage->setGoal(target_pose);
-    current_stage->setGroup("gp4_arm"); 
-    current_stage->setIKFrame("eoat_tcp");
-
-    const std::string controller_name = "follow_joint_trajectory";
-    TrajectoryExecutionInfo execution_info;
-    execution_info.controller_names = {controller_name};
-    current_stage->setProperty("trajectory_execution_info", execution_info);
-
-    if (!current_stage) {
-        throw StageCreationFailedException(
-            "TaskFactory::addMoveToPointStage failed to create stage: " + name
-        );
-    }
-
-    task.add(std::move(current_stage));
-}
-
-void TaskFactory::addMoveRelativeStage(Task& task, const std::string& name, 
-                                       const std::shared_ptr<MoveRelativeData>& move_relative_data) 
-{
-    geometry_msgs::msg::Vector3Stamped direction_vector;
-    direction_vector.header.frame_id = "eoat_tcp";
-    direction_vector.header.stamp = worm_picker_node_->now();
-    direction_vector.vector.x = move_relative_data->getDX();
-    direction_vector.vector.y = move_relative_data->getDY();
-    direction_vector.vector.z = move_relative_data->getDZ();
-
-    auto cartesian_planner = std::make_shared<CartesianPath>();
-    cartesian_planner->setMaxVelocityScalingFactor(move_relative_data->getVelocityScalingFactor());
-    cartesian_planner->setMaxAccelerationScalingFactor(move_relative_data->getAccelerationScalingFactor());
-    cartesian_planner->setStepSize(.01);
-    cartesian_planner->setMinFraction(0.0);
-
-    auto current_stage = std::make_unique<MoveRelativeStage>(name, cartesian_planner);
-    current_stage->setDirection(direction_vector);
-    current_stage->setGroup("gp4_arm"); 
-    current_stage->setIKFrame("eoat_tcp");
-
-    const std::string controller_name = "follow_joint_trajectory";
-    TrajectoryExecutionInfo execution_info;
-    execution_info.controller_names = {controller_name};
-    current_stage->setProperty("trajectory_execution_info", execution_info);
-
-    if (!current_stage) {
-        throw StageCreationFailedException(
-            "TaskFactory::addMoveRelativeStage failed to create stage: " + name
-        );
-    }
-
-    task.add(std::move(current_stage));
 }
 
 // Temporary functions:
