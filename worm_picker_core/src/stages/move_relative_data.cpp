@@ -18,26 +18,32 @@ MoveRelativeData::MoveRelativeData(double delta_x, double delta_y, double delta_
 {
 }
 
-StageType MoveRelativeData::getType() const {
+StageType MoveRelativeData::getType() const noexcept 
+{
     return StageType::MOVE_RELATIVE;
 }
 
-double MoveRelativeData::getDX() const {
+double MoveRelativeData::getDX() const noexcept 
+{
     return dx_;
 }
 
-double MoveRelativeData::getDY() const {
+double MoveRelativeData::getDY() const noexcept 
+{
     return dy_;
 }
 
-double MoveRelativeData::getDZ() const {
+double MoveRelativeData::getDZ() const noexcept 
+{
     return dz_;
 }
 
-double MoveRelativeData::getVelocityScalingFactor() const {
+double MoveRelativeData::getVelocityScalingFactor() const noexcept 
+{
     return velocity_scaling_factor_;
 }
 
-double MoveRelativeData::getAccelerationScalingFactor() const {
+double MoveRelativeData::getAccelerationScalingFactor() const noexcept 
+{
     return acceleration_scaling_factor_;
 }

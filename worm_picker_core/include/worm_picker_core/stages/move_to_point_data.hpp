@@ -42,17 +42,17 @@ public:
                     double velocity_scaling = 0.1,
                     double acceleration_scaling = 0.1);
 
-    StageType getType() const override;
+    StageType getType() const noexcept override;
 
-    double getX() const;
-    double getY() const;
-    double getZ() const;
-    double getQX() const;
-    double getQY() const;
-    double getQZ() const; 
-    double getQW() const;
-    double getVelocityScalingFactor() const; 
-    double getAccelerationScalingFactor() const;
+    double getX() const noexcept;
+    double getY() const noexcept;
+    double getZ() const noexcept;
+    double getQX() const noexcept;
+    double getQY() const noexcept;
+    double getQZ() const noexcept; 
+    double getQW() const noexcept;
+    double getVelocityScalingFactor() const noexcept; 
+    double getAccelerationScalingFactor() const noexcept;
 
 private:
     double x_;                            ///< Position x-coordinate

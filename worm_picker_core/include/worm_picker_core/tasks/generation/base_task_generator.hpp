@@ -8,11 +8,24 @@
 #include "worm_picker_core/stages/move_to_joint_data.hpp"
 #include "worm_picker_core/stages/move_to_point_data.hpp"
 
+/** 
+ * @class BaseTaskGenerator
+ * @brief Abstract base class for task generators.
+ */
 class BaseTaskGenerator 
 {
 public:
     virtual ~BaseTaskGenerator() = default;
+
+    /**
+     * @brief Generates tasks.
+     */
     virtual void generateTasks() = 0;
+
+    /**
+     * @brief Retrieves the generated task data map.
+     * @return Const reference to the task data map.
+     */
     virtual const std::map<std::string, TaskData>& getTaskDataMap() const = 0;
 };
 

@@ -29,7 +29,7 @@ TaskData::TaskData(const std::unordered_map<std::string, std::shared_ptr<StageDa
     }
 }
 
-const std::vector<std::shared_ptr<StageData>>& TaskData::getStages() const 
+const std::vector<std::shared_ptr<StageData>>& TaskData::getStages() const noexcept
 {
     return stages_;
 }

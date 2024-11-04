@@ -42,11 +42,11 @@ public:
                     double joint4, double joint5, double joint6,
                     double velocity_scaling = 0.1, double acceleration_scaling = 0.1);
 
-    StageType getType() const override;
+    StageType getType() const noexcept override;
 
-    const std::map<std::string, double>& getJointPositions() const;
-    double getVelocityScalingFactor() const;
-    double getAccelerationScalingFactor() const;
+    const std::map<std::string, double>& getJointPositions() const noexcept;
+    double getVelocityScalingFactor() const noexcept;
+    double getAccelerationScalingFactor() const noexcept;
 
 private:
     std::map<std::string, double> joint_positions_;  ///< Map of joint names to their positions (in radians).

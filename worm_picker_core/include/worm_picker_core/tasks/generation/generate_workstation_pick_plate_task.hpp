@@ -20,7 +20,7 @@ public:
      * @brief Constructs a GenerateWorkstationPickPlateTask object.
      * @param workstation_data_map A map containing workstation names and their associated data.
      */
-    GenerateWorkstationPickPlateTask(const std::unordered_map<std::string, WorkstationData>& workstation_data_map);
+    explicit GenerateWorkstationPickPlateTask(const std::unordered_map<std::string, WorkstationData>& workstation_data_map);
     
     /** 
      * @brief Generates tasks based on the provided workstation data.
@@ -28,13 +28,13 @@ public:
      * Processes each workstation, calculates derived points, creates movement stages,
      * and stores the resulting tasks in the task data map.
      */
-    void generateTasks();
+    void generateTasks() override;
 
     /** 
      * @brief Retrieves the map of generated task data.
      * @return A constant reference to the map containing task names and their associated data.
      */
-    const std::map<std::string, TaskData>& getTaskDataMap() const;
+    const std::map<std::string, TaskData>& getTaskDataMap() const override;
 
 private:
     /** 

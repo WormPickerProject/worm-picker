@@ -30,7 +30,7 @@ public:
      * @brief Retrieves the type of the stage.
      * @return StageType The type of the stage.
      */
-    virtual StageType getType() const = 0;
+    virtual StageType getType() const noexcept = 0;
 };
 
 #endif // STAGE_DATA_HPP

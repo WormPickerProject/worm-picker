@@ -35,14 +35,13 @@ public:
     MoveRelativeData(double delta_x, double delta_y, double delta_z,
                      double velocity_scaling = 0.1, double acceleration_scaling = 0.1);
 
-    StageType getType() const override;
+    StageType getType() const noexcept override;
 
-    double getDX() const;
-    double getDY() const;
-    double getDZ() const;
-    double getVelocityScalingFactor() const;
-    double getAccelerationScalingFactor() const;
-
+    double getDX() const noexcept;
+    double getDY() const noexcept;
+    double getDZ() const noexcept;
+    double getVelocityScalingFactor() const noexcept;
+    double getAccelerationScalingFactor() const noexcept;
 
 private:
     double dx_;                            ///< Position delta x-coordinate
