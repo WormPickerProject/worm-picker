@@ -2,10 +2,6 @@
 //
 // Copyright (c) 2024
 // SPDX-License-Identifier: Apache-2.0
-//
-// Author: Logan Kaising
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
 
 #ifndef WORM_PICKER_CONTROLLER_HPP
 #define WORM_PICKER_CONTROLLER_HPP
@@ -34,7 +30,6 @@
 #include <tf2_eigen/tf2_eigen.hpp>
 
 // WormPicker application includes
-#include "worm_picker_core/tasks/task_data_structure.hpp"
 #include "worm_picker_core/tasks/task_factory.hpp"
 #include "worm_picker_core/tools/timing/execution_timer.hpp"
 #include "worm_picker_core/tools/timing/timer_data_collector.hpp"

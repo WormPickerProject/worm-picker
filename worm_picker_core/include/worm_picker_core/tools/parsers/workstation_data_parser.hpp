@@ -2,10 +2,6 @@
 //
 // Copyright (c) 2024
 // SPDX-License-Identifier: Apache-2.0
-//
-// Author: Logan Kaising
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
 
 #ifndef WORKSTATION_DATA_PARSER_HPP
 #define WORKSTATION_DATA_PARSER_HPP
@@ -14,7 +10,7 @@
 #include <unordered_map>
 #include <nlohmann/json.hpp>
 #include <stdexcept>
-#include "worm_picker_core/tasks/task_data_structure.hpp"
+#include "worm_picker_core/common/coordinate.hpp"
 
 /**
  * @brief Class responsible for parsing workstation data from a JSON file.

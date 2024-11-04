@@ -1,5 +1,9 @@
 // task_generator.cpp
+//
+// Copyright (c) 2024
+// SPDX-License-Identifier: Apache-2.0
 
+#include <rclcpp/rclcpp.hpp>
 #include "worm_picker_core/tasks/generation/task_generator.hpp"
 
 TaskGenerator::TaskGenerator(const std::unordered_map<std::string, WorkstationData>& workstation_map,
@@ -51,7 +55,7 @@ void TaskGenerator::logDataMap() const
         RCLCPP_INFO(logger, "* Task Name: %s", task_name.c_str());
 
         int stage_number = 1;
-        for (const auto& stage_ptr : task_data.stages) {
+        for (const auto& stage_ptr : task_data.getStages()) {
             StageType stage_type = stage_ptr->getType();
             std::string stage_type_str;
 
@@ -75,27 +79,27 @@ void TaskGenerator::logDataMap() const
             if (stage_type == StageType::MOVE_TO_POINT) {
                 auto move_to_point_data = std::dynamic_pointer_cast<MoveToPointData>(stage_ptr);
                 if (move_to_point_data) {
-                    RCLCPP_INFO(logger, "*     Position: (%f, %f, %f)", move_to_point_data->x, move_to_point_data->y, move_to_point_data->z);
-                    RCLCPP_INFO(logger, "*     Orientation: (%f, %f, %f, %f)", move_to_point_data->qx, move_to_point_data->qy, move_to_point_data->qz, move_to_point_data->qw);
-                    RCLCPP_INFO(logger, "*     Velocity Scaling: %f", move_to_point_data->velocity_scaling_factor);
-                    RCLCPP_INFO(logger, "*     Acceleration Scaling: %f", move_to_point_data->acceleration_scaling_factor);
+                    RCLCPP_INFO(logger, "*     Position: (%f, %f, %f)", move_to_point_data->getX(), move_to_point_data->getY(), move_to_point_data->getZ());
+                    RCLCPP_INFO(logger, "*     Orientation: (%f, %f, %f, %f)", move_to_point_data->getQX(), move_to_point_data->getQY(), move_to_point_data->getQZ(), move_to_point_data->getQW());
+                    RCLCPP_INFO(logger, "*     Velocity Scaling: %f", move_to_point_data->getVelocityScalingFactor());
+                    RCLCPP_INFO(logger, "*     Acceleration Scaling: %f", move_to_point_data->getAccelerationScalingFactor());
                 }
             } else if (stage_type == StageType::MOVE_TO_JOINT) {
                 auto move_to_joint_data = std::dynamic_pointer_cast<MoveToJointData>(stage_ptr);
                 if (move_to_joint_data) {
                     RCLCPP_INFO(logger, "*     Joint Positions:");
-                    for (const auto& joint_entry : move_to_joint_data->joint_positions) {
+                    for (const auto& joint_entry : move_to_joint_data->getJointPositions()) {
                         RCLCPP_INFO(logger, "*       %s: %f", joint_entry.first.c_str(), joint_entry.second);
                     }
-                    RCLCPP_INFO(logger, "*     Velocity Scaling: %f", move_to_joint_data->velocity_scaling_factor);
-                    RCLCPP_INFO(logger, "*     Acceleration Scaling: %f", move_to_joint_data->acceleration_scaling_factor);
+                    RCLCPP_INFO(logger, "*     Velocity Scaling: %f", move_to_joint_data->getVelocityScalingFactor());
+                    RCLCPP_INFO(logger, "*     Acceleration Scaling: %f", move_to_joint_data->getAccelerationScalingFactor());
                 }
             } else if (stage_type == StageType::MOVE_RELATIVE) {
                 auto move_relative_data = std::dynamic_pointer_cast<MoveRelativeData>(stage_ptr);
                 if (move_relative_data) {
-                    RCLCPP_INFO(logger, "*     Delta Position: (%f, %f, %f)", move_relative_data->dx, move_relative_data->dy, move_relative_data->dz);
-                    RCLCPP_INFO(logger, "*     Velocity Scaling: %f", move_relative_data->velocity_scaling_factor);
-                    RCLCPP_INFO(logger, "*     Acceleration Scaling: %f", move_relative_data->acceleration_scaling_factor);
+                    RCLCPP_INFO(logger, "*     Delta Position: (%f, %f, %f)", move_relative_data->getDX(), move_relative_data->getDY(), move_relative_data->getDZ());
+                    RCLCPP_INFO(logger, "*     Velocity Scaling: %f", move_relative_data->getVelocityScalingFactor());
+                    RCLCPP_INFO(logger, "*     Acceleration Scaling: %f", move_relative_data->getAccelerationScalingFactor());
                 }
             }
 

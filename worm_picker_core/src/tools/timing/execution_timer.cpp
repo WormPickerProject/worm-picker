@@ -2,10 +2,6 @@
 //
 // Copyright (c) 2024
 // SPDX-License-Identifier: Apache-2.0
-//
-// Author: Logan Kaising
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
 
 #include "worm_picker_core/tools/timing/execution_timer.hpp"
 
