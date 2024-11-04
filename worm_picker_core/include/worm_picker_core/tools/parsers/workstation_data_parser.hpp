@@ -14,7 +14,7 @@
 #include <unordered_map>
 #include <nlohmann/json.hpp>
 #include <stdexcept>
-#include "worm_picker_core/tasks/task_data_structure.hpp"
+#include "worm_picker_core/common/coordinate.hpp"
 
 /**
  * @brief Class responsible for parsing workstation data from a JSON file.

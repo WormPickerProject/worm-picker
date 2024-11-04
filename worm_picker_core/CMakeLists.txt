@@ -88,7 +88,6 @@ endfunction()
 ## Worm Picker Robot
 add_worm_picker_executable(worm_picker_robot
   SOURCES
-    src/tasks/task_data_structure.cpp
     src/tasks/task_factory.cpp
     src/tasks/worm_picker_controller.cpp
     src/tools/parsers/workstation_data_parser.cpp
@@ -100,6 +99,11 @@ add_worm_picker_executable(worm_picker_robot
     src/tasks/generation/generate_hotel_place_plate_task.cpp
     src/tasks/generation/generate_workstation_pick_plate_task.cpp
     src/tasks/generation/generate_workstation_place_plate_task.cpp
+    src/stages/move_relative_data.cpp
+    src/stages/move_to_joint_data.cpp
+    src/stages/move_to_point_data.cpp
+    src/tasks/task_data.cpp
+    src/common/coordinate.cpp
   ARGS
     geometry_msgs
     moveit_core
@@ -118,7 +122,7 @@ add_worm_picker_executable(worm_picker_robot
 ## Service Client
 add_worm_picker_executable(dev_command_interface
   SOURCES
-    src/tools/dev_command_interface.cpp
+    src/common/dev_command_interface.cpp
   ARGS
     rclcpp
     worm_picker_custom_msgs

@@ -4,6 +4,7 @@
 #define GENERATE_WORKSTATION_PICK_PLATE_TASK_HPP
 
 #include "worm_picker_core/tasks/generation/base_task_generator.hpp"
+#include "worm_picker_core/common/coordinate.hpp"
 
 /** 
  * @class GenerateWorkstationPickPlateTask

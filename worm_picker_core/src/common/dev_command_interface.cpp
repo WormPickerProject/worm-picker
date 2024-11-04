@@ -7,7 +7,7 @@
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 
-#include "worm_picker_core/tools/dev_command_interface.hpp"
+#include "worm_picker_core/common/dev_command_interface.hpp"
 
 DevCommandInterface::DevCommandInterface(int argc, char **argv) 
     : service_name_("/task_command")

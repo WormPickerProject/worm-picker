@@ -191,7 +191,7 @@ moveit::task_constructor::Task TaskFactory::createTask(const std::string& comman
     
     int stage_counter = 1;
     const TaskData& task_data = it->second;
-    for (const auto& stage_ptr : task_data.stages) {
+    for (const auto& stage_ptr : task_data.getStages()) {
         std::string stage_name = "stage_" + std::to_string(stage_counter++);
         switch (stage_ptr->getType()) {
             case StageType::MOVE_TO_JOINT: 
@@ -228,11 +228,11 @@ void TaskFactory::addMoveToJointStage(Task& task, const std::string& name,
                                       const std::shared_ptr<MoveToJointData>& move_to_joint_data) 
 {
     auto joint_interpolation_planner = std::make_shared<JointInterpolationPlanner>();
-    joint_interpolation_planner->setMaxVelocityScalingFactor(move_to_joint_data->velocity_scaling_factor);
-    joint_interpolation_planner->setMaxAccelerationScalingFactor(move_to_joint_data->acceleration_scaling_factor);
+    joint_interpolation_planner->setMaxVelocityScalingFactor(move_to_joint_data->getVelocityScalingFactor());
+    joint_interpolation_planner->setMaxAccelerationScalingFactor(move_to_joint_data->getAccelerationScalingFactor());
     
     auto current_stage = std::make_unique<MoveToStage>(name, joint_interpolation_planner);
-    current_stage->setGoal(move_to_joint_data->joint_positions);
+    current_stage->setGoal(move_to_joint_data->getJointPositions());
     current_stage->setGroup("gp4_arm");
     current_stage->setIKFrame("eoat_tcp");
 
@@ -256,17 +256,17 @@ void TaskFactory::addMoveToPointStage(Task& task, const std::string& name,
     geometry_msgs::msg::PoseStamped target_pose;
     target_pose.header.frame_id = "base_link";
     target_pose.header.stamp = worm_picker_node_->now();
-    target_pose.pose.position.x = move_to_point_data->x;
-    target_pose.pose.position.y = move_to_point_data->y;
-    target_pose.pose.position.z = move_to_point_data->z;
-    target_pose.pose.orientation.x = move_to_point_data->qx;
-    target_pose.pose.orientation.y = move_to_point_data->qy;
-    target_pose.pose.orientation.z = move_to_point_data->qz;
-    target_pose.pose.orientation.w = move_to_point_data->qw;
+    target_pose.pose.position.x = move_to_point_data->getX();
+    target_pose.pose.position.y = move_to_point_data->getY();
+    target_pose.pose.position.z = move_to_point_data->getZ();
+    target_pose.pose.orientation.x = move_to_point_data->getQX();
+    target_pose.pose.orientation.y = move_to_point_data->getQY();
+    target_pose.pose.orientation.z = move_to_point_data->getQZ();
+    target_pose.pose.orientation.w = move_to_point_data->getQW();
     
     auto cartesian_planner = std::make_shared<CartesianPath>();
-    cartesian_planner->setMaxVelocityScalingFactor(move_to_point_data->velocity_scaling_factor);
-    cartesian_planner->setMaxAccelerationScalingFactor(move_to_point_data->acceleration_scaling_factor);
+    cartesian_planner->setMaxVelocityScalingFactor(move_to_point_data->getVelocityScalingFactor());
+    cartesian_planner->setMaxAccelerationScalingFactor(move_to_point_data->getAccelerationScalingFactor());
     cartesian_planner->setStepSize(.01);
     cartesian_planner->setMinFraction(0.0);
 
@@ -295,13 +295,13 @@ void TaskFactory::addMoveRelativeStage(Task& task, const std::string& name,
     geometry_msgs::msg::Vector3Stamped direction_vector;
     direction_vector.header.frame_id = "eoat_tcp";
     direction_vector.header.stamp = worm_picker_node_->now();
-    direction_vector.vector.x = move_relative_data->dx;
-    direction_vector.vector.y = move_relative_data->dy;
-    direction_vector.vector.z = move_relative_data->dz;
+    direction_vector.vector.x = move_relative_data->getDX();
+    direction_vector.vector.y = move_relative_data->getDY();
+    direction_vector.vector.z = move_relative_data->getDZ();
 
     auto cartesian_planner = std::make_shared<CartesianPath>();
-    cartesian_planner->setMaxVelocityScalingFactor(move_relative_data->velocity_scaling_factor);
-    cartesian_planner->setMaxAccelerationScalingFactor(move_relative_data->acceleration_scaling_factor);
+    cartesian_planner->setMaxVelocityScalingFactor(move_relative_data->getVelocityScalingFactor());
+    cartesian_planner->setMaxAccelerationScalingFactor(move_relative_data->getAccelerationScalingFactor());
     cartesian_planner->setStepSize(.01);
     cartesian_planner->setMinFraction(0.0);
 
@@ -339,14 +339,14 @@ void TaskFactory::logDataMaps() const
         for (const auto& [workstation_id, workstation_data] : workstation_data_map_) {
             RCLCPP_INFO(worm_picker_node_->get_logger(), "* Workstation ID: %s", workstation_id.c_str());
             RCLCPP_INFO(worm_picker_node_->get_logger(), "*   Position (x, y, z): (%f, %f, %f)", 
-                        workstation_data.coordinate.position_x, 
-                        workstation_data.coordinate.position_y, 
-                        workstation_data.coordinate.position_z);
+                        workstation_data.getCoordinate().getPositionX(), 
+                        workstation_data.getCoordinate().getPositionY(), 
+                        workstation_data.getCoordinate().getPositionZ());
             RCLCPP_INFO(worm_picker_node_->get_logger(), "*   Orientation (qx, qy, qz, qw): (%f, %f, %f, %f)", 
-                        workstation_data.coordinate.orientation_x, 
-                        workstation_data.coordinate.orientation_y, 
-                        workstation_data.coordinate.orientation_z, 
-                        workstation_data.coordinate.orientation_w);
+                        workstation_data.getCoordinate().getOrientationX(), 
+                        workstation_data.getCoordinate().getOrientationY(), 
+                        workstation_data.getCoordinate().getOrientationZ(), 
+                        workstation_data.getCoordinate().getOrientationW());
         }
         RCLCPP_INFO(worm_picker_node_->get_logger(), "********************************************************\n");
     }

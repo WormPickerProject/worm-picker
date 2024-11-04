@@ -1,0 +1,56 @@
+// move_relative_data.hpp
+//
+// Copyright (c) 2024
+// SPDX-License-Identifier: Apache-2.0
+//
+// Author: Logan Kaising
+// Additional Contributions: Fang-Yen Lab
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+
+#ifndef MOVE_RELATIVE_DATA_HPP
+#define MOVE_RELATIVE_DATA_HPP
+
+#include "worm_picker_core/stages/stage_data.hpp"
+
+/**
+ * @class MoveRelativeData
+ * @brief Represents data for a relative move stage.
+ */
+class MoveRelativeData : public StageData {
+public:
+    /**
+     * @brief Default constructor.
+     */
+    MoveRelativeData() = default;
+
+    /**
+     * @brief Constructs a MoveRelativeData with the given parameters.
+     * @param delta_x Position delta x-coordinate.
+     * @param delta_y Position delta y-coordinate.
+     * @param delta_z Position delta z-coordinate.
+     * @param velocity_scaling Velocity scaling factor (default: 0.1).
+     * @param acceleration_scaling Acceleration scaling factor (default: 0.1).
+     */
+    MoveRelativeData(double delta_x, double delta_y, double delta_z,
+                     double velocity_scaling = 0.1, double acceleration_scaling = 0.1);
+
+    StageType getType() const override;
+
+    double getDX() const;
+    double getDY() const;
+    double getDZ() const;
+    double getVelocityScalingFactor() const;
+    double getAccelerationScalingFactor() const;
+
+
+private:
+    double dx_;                            ///< Position delta x-coordinate
+    double dy_;                            ///< Position delta y-coordinate
+    double dz_;                            ///< Position delta z-coordinate
+    double velocity_scaling_factor_;       ///< Velocity scaling factor
+    double acceleration_scaling_factor_;   ///< Acceleration scaling factor
+
+};
+
+#endif // MOVE_RELATIVE_DATA_HPP

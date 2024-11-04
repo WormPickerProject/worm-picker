@@ -16,10 +16,14 @@
 #include <moveit/task_constructor/stages.h>
 #include <moveit/task_constructor/solvers.h>
 
-#include "worm_picker_core/tasks/task_data_structure.hpp"
 #include "worm_picker_core/tools/parsers/workstation_data_parser.hpp"
 #include "worm_picker_core/tools/parsers/hotel_data_parser.hpp"
 #include "worm_picker_core/exceptions/exceptions.hpp"
+
+#include "worm_picker_core/tasks/task_data.hpp"
+#include "worm_picker_core/stages/move_relative_data.hpp"
+#include "worm_picker_core/stages/move_to_joint_data.hpp"
+#include "worm_picker_core/stages/move_to_point_data.hpp"
 
 /** 
  * @brief Factory class to create MoveIt tasks based on predefined commands.
@@ -96,7 +100,7 @@ private:
     rclcpp::Node::SharedPtr worm_picker_node_;                          ///< Shared pointer to the WormPicker node.
     WorkstationDataMap workstation_data_map_;                           ///< Map of workstation IDs (e.g., "A1") to `WorkstationData` containing Cartesian `Coordinate` and robot `Joint` positions.
     HotelDataMap hotel_data_map_;                                       ///< Filler, not done 
-    std::map<std::string, std::shared_ptr<StageData>> stage_data_map_;  ///< Map of stage names to StageData.
+    std::unordered_map<std::string, std::shared_ptr<StageData>> stage_data_map_;  ///< Map of stage names to StageData.
     std::map<std::string, TaskData> task_data_map_;                     ///< Map of task commands to TaskData.
 
     // Temporary Functions

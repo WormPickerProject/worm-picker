@@ -3,7 +3,7 @@
 
 #include <string>
 #include <unordered_map>
-#include "worm_picker_core/tasks/task_data_structure.hpp"
+#include "worm_picker_core/common/coordinate.hpp"
 
 /**
  * @brief Class responsible for (placeholder) parsing hotel data from a JSON file.
