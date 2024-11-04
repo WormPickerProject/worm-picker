@@ -27,18 +27,22 @@ MoveToJointData::MoveToJointData(double joint1, double joint2, double joint3,
     joint_positions_["joint_6"] = joint6 * deg_to_rad;
 }
 
-StageType MoveToJointData::getType() const {
+StageType MoveToJointData::getType() const noexcept
+{
     return StageType::MOVE_TO_JOINT;
 }
 
-const std::map<std::string, double>& MoveToJointData::getJointPositions() const {
+const std::map<std::string, double>& MoveToJointData::getJointPositions() const noexcept 
+{
     return joint_positions_;
 }
 
-double MoveToJointData::getVelocityScalingFactor() const {
+double MoveToJointData::getVelocityScalingFactor() const noexcept 
+{
     return velocity_scaling_factor_;
 }
 
-double MoveToJointData::getAccelerationScalingFactor() const {
+double MoveToJointData::getAccelerationScalingFactor() const noexcept 
+{
     return acceleration_scaling_factor_;
 }

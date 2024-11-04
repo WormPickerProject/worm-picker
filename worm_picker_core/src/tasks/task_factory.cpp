@@ -168,11 +168,11 @@ moveit::task_constructor::Task TaskFactory::createTask(const std::string& comman
     }
 
     Task current_task;
-    current_task.stages()->setName("dynamic_task");
+    current_task.stages()->setName(command);
     current_task.loadRobotModel(worm_picker_node_);
 
-    const std::string arm_group_name = "gp4_arm";
-    current_task.setProperty("group", arm_group_name);
+    current_task.setProperty("group", "gp4_arm");
+    current_task.setProperty("ik_frame", "eoat_tcp");
 
     const std::string controller_name = "follow_joint_trajectory";
     TrajectoryExecutionInfo execution_info;

@@ -43,7 +43,7 @@ public:
     TaskData(const std::unordered_map<std::string, std::shared_ptr<StageData>>& stage_data_map,
              const std::vector<std::string>& stage_names);
 
-    const std::vector<std::shared_ptr<StageData>>& getStages() const;
+    const std::vector<std::shared_ptr<StageData>>& getStages() const noexcept;
 
 private:
     std::vector<std::shared_ptr<StageData>> stages_;

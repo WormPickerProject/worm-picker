@@ -28,52 +28,52 @@ MoveToPointData::MoveToPointData(double px, double py, double pz,
     qw_ = q.w();
 }
 
-StageType MoveToPointData::getType() const 
+StageType MoveToPointData::getType() const noexcept
 {
     return StageType::MOVE_TO_POINT;
 }
 
-double MoveToPointData::getX() const 
+double MoveToPointData::getX() const noexcept
 {
     return x_;
 }
 
-double MoveToPointData::getY() const 
+double MoveToPointData::getY() const noexcept
 {
     return y_;
 }
 
-double MoveToPointData::getZ() const 
+double MoveToPointData::getZ() const noexcept
 {
     return z_;
 }
 
-double MoveToPointData::getQX() const 
+double MoveToPointData::getQX() const noexcept
 {
     return qx_;
 }
 
-double MoveToPointData::getQY() const 
+double MoveToPointData::getQY() const noexcept
 {
     return qy_;
 }
 
-double MoveToPointData::getQZ() const 
+double MoveToPointData::getQZ() const noexcept
 {
     return qz_;
 }
 
-double MoveToPointData::getQW() const 
+double MoveToPointData::getQW() const noexcept
 {
     return qw_;
 }
 
-double MoveToPointData::getVelocityScalingFactor() const 
+double MoveToPointData::getVelocityScalingFactor() const noexcept
 {
     return velocity_scaling_factor_;
 }
 
-double MoveToPointData::getAccelerationScalingFactor() const 
+double MoveToPointData::getAccelerationScalingFactor() const noexcept
 {
     return acceleration_scaling_factor_;
 }

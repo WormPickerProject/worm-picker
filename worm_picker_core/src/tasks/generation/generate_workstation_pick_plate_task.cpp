@@ -5,7 +5,9 @@
 
 GenerateWorkstationPickPlateTask::GenerateWorkstationPickPlateTask(
     const std::unordered_map<std::string, WorkstationData>& workstation_data_map)
-    : workstation_data_map_(workstation_data_map) {}
+    : workstation_data_map_(workstation_data_map) 
+{
+}
 
 void GenerateWorkstationPickPlateTask::generateTasks() 
 {
@@ -13,12 +15,9 @@ void GenerateWorkstationPickPlateTask::generateTasks()
         auto [row_letter, col_number] = parseWorkstationName(workstation_name);
         
         std::string task_name = generateTaskName(row_letter, col_number);
-        std::vector<std::shared_ptr<StageData>> stages = createStagesForTask(workstation_data, row_letter);
+        auto stages = createStagesForTask(workstation_data, row_letter);
 
-        task_data_map_.emplace(
-            std::move(task_name),
-            TaskData{std::move(stages)}
-        );
+        task_data_map_.emplace(std::move(task_name), TaskData{std::move(stages)});
     }
 }
 
@@ -50,7 +49,7 @@ std::vector<std::shared_ptr<StageData>> GenerateWorkstationPickPlateTask::create
     Coordinate derived_position = calculateDerivedPoint(data.getCoordinate(), row_letter);
 
     std::vector<std::shared_ptr<StageData>> stages;
-    stages.reserve(5); 
+    stages.reserve(4); 
 
     stages.emplace_back(createMoveToPointStage(derived_position));
     stages.emplace_back(std::make_shared<MoveRelativeData>(MOVE_DOWN, 0.0, 0.0));
