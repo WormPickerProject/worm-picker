@@ -3,7 +3,10 @@
 #ifndef BASE_TASK_GENERATOR_HPP
 #define BASE_TASK_GENERATOR_HPP
 
-#include "worm_picker_core/tasks/task_data_structure.hpp"
+#include "worm_picker_core/tasks/task_data.hpp"
+#include "worm_picker_core/stages/move_relative_data.hpp"
+#include "worm_picker_core/stages/move_to_joint_data.hpp"
+#include "worm_picker_core/stages/move_to_point_data.hpp"
 
 class BaseTaskGenerator 
 {

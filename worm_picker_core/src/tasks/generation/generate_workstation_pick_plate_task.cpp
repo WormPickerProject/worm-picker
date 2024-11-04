@@ -1,6 +1,7 @@
 // generate_workstation_pick_plate_task.cpp
 
 #include "worm_picker_core/tasks/generation/generate_workstation_pick_plate_task.hpp"
+#include <cmath>
 
 GenerateWorkstationPickPlateTask::GenerateWorkstationPickPlateTask(
     const std::unordered_map<std::string, WorkstationData>& workstation_data_map)
@@ -46,7 +47,7 @@ std::vector<std::shared_ptr<StageData>> GenerateWorkstationPickPlateTask::create
     constexpr double MOVE_FORWARD = 0.04;
     constexpr double MOVE_UP = 0.03;
 
-    Coordinate derived_position = calculateDerivedPoint(data.coordinate, row_letter);
+    Coordinate derived_position = calculateDerivedPoint(data.getCoordinate(), row_letter);
 
     std::vector<std::shared_ptr<StageData>> stages;
     stages.reserve(5); 
@@ -70,20 +71,20 @@ Coordinate GenerateWorkstationPickPlateTask::calculateDerivedPoint(const Coordin
     int row_index = static_cast<int>(row_letter - 'A');
     double theta_rad = (THETA_INCREMENT_DEG * (row_index - REFERENCE_ROW_INDEX)) * DEGREES_TO_RADIANS;
 
-    double adjusted_x = coord.position_x - (XY_OFFSET * std::cos(theta_rad));
-    double adjusted_y = coord.position_y - (XY_OFFSET * std::sin(theta_rad));
-    double adjusted_z = coord.position_z + Z_OFFSET;
+    double adjusted_x = coord.getPositionX() - (XY_OFFSET * std::cos(theta_rad));
+    double adjusted_y = coord.getPositionY() - (XY_OFFSET * std::sin(theta_rad));
+    double adjusted_z = coord.getPositionZ() + Z_OFFSET;
 
     return { adjusted_x, adjusted_y, adjusted_z, 
-             coord.orientation_x, coord.orientation_y, 
-             coord.orientation_z, coord.orientation_w };
+             coord.getOrientationX(), coord.getOrientationY(), 
+             coord.getOrientationZ(), coord.getOrientationW() };
 }
 
 std::shared_ptr<StageData> GenerateWorkstationPickPlateTask::createMoveToPointStage(const Coordinate& coord) const
 {
     return std::make_shared<MoveToPointData>(
-        coord.position_x, coord.position_y, coord.position_z,
-        coord.orientation_x, coord.orientation_y, 
-        coord.orientation_z, coord.orientation_w
+        coord.getPositionX(), coord.getPositionY(), coord.getPositionZ(),
+        coord.getOrientationX(), coord.getOrientationY(), 
+        coord.getOrientationZ(), coord.getOrientationW()
     );
 }
