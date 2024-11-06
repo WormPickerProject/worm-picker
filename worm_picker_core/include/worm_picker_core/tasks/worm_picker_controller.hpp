@@ -31,19 +31,19 @@
 
 /**
  * @class WormPickerController
- * @brief Enhanced controller for managing automated worm picking tasks using ROS 2 services and 
+ * @brief Enhanced controller for managing automated worm picking tasks using ROS 2 services and
  *        actions.
  * 
  * @details
- * The WormPickerController class integrates with MoveIt Task Constructor to plan and execute 
- * complex motion sequences required for precise worm manipulation. It uses ROS 2 actions and 
- * services to handle task commands and coordinate execution while maintaining timing data and 
+ * The WormPickerController class integrates with MoveIt Task Constructor to plan and execute
+ * complex motion sequences required for precise worm manipulation. It uses ROS 2 actions and
+ * services to handle task commands and coordinate execution while maintaining timing data and
  * managing task-related parameters.
  */
 class WormPickerController
 {
 public:
-    /** 
+    /**
      * @brief Status codes representing the result of task execution.
      */
     enum class TaskExecutionStatus {
