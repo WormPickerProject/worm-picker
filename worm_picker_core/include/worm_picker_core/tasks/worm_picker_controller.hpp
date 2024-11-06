@@ -134,7 +134,7 @@ private:
      * @param response Task command response indicating the success of the task execution.
      */
     void handleTaskCommand(std::shared_ptr<const TaskCommandRequest> request,
-                          std::shared_ptr<TaskCommandResponse> response);
+                           std::shared_ptr<TaskCommandResponse> response);
 
     /**
      * @brief Executes a task based on a command string.
@@ -157,9 +157,8 @@ private:
      * @param command Task command string associated with the execution.
      * @return TaskExecutionStatus indicating whether the execution succeeded or failed.
      */
-    TaskExecutionStatus checkExecutionResult(
-        const moveit_msgs::msg::MoveItErrorCodes& result,
-        std::string_view command);
+    TaskExecutionStatus checkExecutionResult(const moveit_msgs::msg::MoveItErrorCodes& result,
+                                             std::string_view command);
 
     /// Shared pointer to the main ROS 2 node for managing the WormPicker system.
     rclcpp::Node::SharedPtr worm_picker_node_;
