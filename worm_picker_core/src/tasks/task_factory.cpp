@@ -10,22 +10,37 @@ TaskFactory::TaskFactory(const rclcpp::Node::SharedPtr& node)
     : worm_picker_node_(node)
 { 
     if (!worm_picker_node_) {
-        throw NullNodeException("TaskFactory initialization failed: worm_picker_node_ is null.");
+        throw TaskFactoryError(
+            TaskFactoryError::ErrorCode::InvalidConfiguration,
+            "TaskFactory initialization failed: worm_picker_node_ is null."
+        );
     }
 
+    declareParameters();
     parseData();
     setupPlanningScene();
 }
 
+void TaskFactory::declareParameters() {
+    const std::vector<std::pair<std::string, rclcpp::ParameterValue>> default_parameters{
+        {"workstation_config_file", rclcpp::ParameterValue(std::string(CONFIG_PATH) + "/workstation_data.json")},
+        {"hotel_config_file", rclcpp::ParameterValue(std::string(CONFIG_PATH) + "/hotel_data.json")}
+    };
+
+    for (const auto& [name, default_value] : default_parameters) {
+        worm_picker_node_->declare_parameter(name, default_value);
+    }
+}
+
 void TaskFactory::parseData() 
 {
-    const std::string workstation_input_directory = "/worm-picker/worm_picker_description/program_data/data_files/workstation_data.json";
-    const std::string hotel_input_directory = "/worm-picker/worm_picker_description/program_data/data_files/hotel_data.json";
-    
-    WorkstationDataParser workstation_parser(workstation_input_directory);
+    const auto workstation_file = worm_picker_node_->get_parameter("workstation_config_file").as_string();
+    const auto hotel_file = worm_picker_node_->get_parameter("hotel_config_file").as_string();
+
+    WorkstationDataParser workstation_parser(workstation_file);
     workstation_data_map_ = workstation_parser.getWorkstationDataMap();
 
-    HotelDataParser hotel_parser(hotel_input_directory);
+    HotelDataParser hotel_parser(hotel_file);
     hotel_data_map_ = hotel_parser.getHotelDataMap(); 
     
     logDataMaps(); 
@@ -65,19 +80,17 @@ void TaskFactory::setupPlanningScene()
         task_data_map_[name] = TaskData(stage_data_map_, stage_names);
     };
 
-    // Parameters:
-    double hotel_number = 1;  // Currently not used
+    // Soon to be replaced with stages and tasks down below.
+    double hotel_number = 1;
     double slot_hotel_number = 1;
     double flat_manipulator_angle = -36.0;
     double initial_arc_hotel = -56.9;
     double hotel_to_hotel_angle = 19.4;
     double base_z_position = 0.39075;
     double plate_to_plate_hotel = 0.026925;
-
     double z_displacement = (slot_hotel_number - 1) * plate_to_plate_hotel;
     double arc_hotel_displacement = (hotel_number - 1) * hotel_to_hotel_angle;
 
-    // Test Points & Joints: 
     addMoveToPointData("homePoint", 
         0.37452, 0.00000, 0.44938, 0.70712, 0.0000, 0.70710, 0.00000
     );
@@ -87,56 +100,42 @@ void TaskFactory::setupPlanningScene()
     addMoveToJointData("jointS", 
         10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 0.1
     );
-
-    // Configuration Points & Joints:
     addMoveToJointData("home", 
         0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 0.1
     );
     addMoveToJointData("homeJoint", 
         0.0, 0.0, 0.0, 0.0, -30.0, 0.0, 0.1, 0.1
     );
-
-    // Plate pick and place from hotel: hotel_number = 1, slot_hotel_number = 1 as base
-    // Flat manipulator position
     addMoveToJointData("point1", 
         0.0, 0.0, 0.0, 0.0, flat_manipulator_angle, 0.0, 0.2, 0.1
     );
-    // Facing plate hotel
     addMoveToJointData("point2", 
         initial_arc_hotel - arc_hotel_displacement, 0.0, 0.0, 0.0, 
         flat_manipulator_angle, 0.0, 0.2, 0.1
     );
-    // Below plate level
     addMoveToPointData("point3",  
         0.20225, -0.31025, base_z_position + z_displacement, 
         0.91163, 0.27090, -0.08805, -0.29630, 0.20000, 0.10000
     ); 
-    // Forward - below plate
     addMoveToPointData("point4",  
         0.24286, -0.37257, base_z_position + z_displacement, 
         0.91162, 0.27089, -0.08809, -0.29633, 0.05000, 0.10000
     );
-    // Pick up plate
     addMoveToPointData("point5",  
         0.24286, -0.37257, 0.40110 + z_displacement, 
         0.91163, 0.27089, -0.08805, -0.29631, 0.05000, 0.10000
     );
-    // Retrieve plate
     addMoveToPointData("point6",  
         0.17422, -0.26728, 0.40110 + z_displacement, 
         0.91162, 0.27087, -0.08806, -0.29635, 0.20000, 0.10000
     );
-    // Center robot
     addMoveToPointData("point7",  
         0.31905, 0.00000, 0.40110 + z_displacement, 
         0.67248, 0.67246, -0.21860, -0.21860, 0.10000, 0.10000
     );
-
-    addMoveRelativeData("move_relative_x", 0.1, 0.0, 0.0);
-    addMoveRelativeData("move_relative_y", 0.0, 0.1, 0.0);
-    addMoveRelativeData("move_relative_z", 0.0, 0.0, 0.1);
-
-    addTaskData("home", { "home" });
+    addMoveRelativeData("moveRelativeX", 0.1, 0.0, 0.0);
+    addMoveRelativeData("moveRelativeY", 0.0, 0.1, 0.0);
+    addMoveRelativeData("moveRelativeZ", 0.0, 0.0, 0.1);
     addTaskData("homePoint", { "homePoint" });
     addTaskData("homeJoint", { "homeJoint" });
     addTaskData("pointA", { "pointA" });
@@ -148,54 +147,120 @@ void TaskFactory::setupPlanningScene()
     addTaskData("point6", { "point6" });
     addTaskData("point7", { "point7" });
     addTaskData("jointS", { "jointS" });
+    addTaskData("moveRelativeX", { "moveRelativeX" });
+    addTaskData("moveRelativeY", { "moveRelativeY" });
+    addTaskData("moveRelativeZ", { "moveRelativeZ" });
     addTaskData("pickUpPlate", 
         { "home", "point1", "point2", "point3", "point4", "point5", "point6", "point7", "home" }
     );
-    addTaskData("move_relative_x", { "move_relative_x" });
-    addTaskData("move_relative_y", { "move_relative_y" });
-    addTaskData("move_relative_z", { "move_relative_z" });
+
+    // // Manually added stages. 
+    // addMoveToJointData("home", 
+    //     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.1,  0.1
+    // );
+    // addMoveToPointData("coordPoint1",  
+    //     0.00000,  0.00000,  0.00000,  0.00000,  0.00000,  0.00000,  0.00000,  0.1,  0.1
+    // );
+    // addMoveToPointData("coordPoint2",  
+    //     0.00000,  0.00000,  0.00000,  0.00000,  0.00000,  0.00000,  0.00000,  0.1,  0.1
+    // );
+    // addMoveToPointData("coordPoint3",  
+    //     0.00000,  0.00000,  0.00000,  0.00000,  0.00000,  0.00000,  0.00000,  0.1,  0.1
+    // );
+    // addMoveToJointData("jointPoint1",  
+    //     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.1,  0.1
+    // );
+    // addMoveToJointData("jointPoint2",  
+    //     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.1,  0.1
+    // );
+    // addMoveToJointData("jointPoint3",  
+    //     0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.1,  0.1
+    // );
+    // addMoveRelativeData("moveRelativeX", 0.1, 0.0, 0.0);
+    // addMoveRelativeData("moveRelativeY", 0.0, 0.1, 0.0);
+    // addMoveRelativeData("moveRelativeZ", 0.0, 0.0, 0.1);
+
+    // // Manually added tasks. 
+    // addTaskData("home", { "home" });
+    // addTaskData("coordPoint1", { "coordPoint1" });
+    // addTaskData("coordPoint2", { "coordPoint2" });
+    // addTaskData("coordPoint3", { "coordPoint3" });
+    // addTaskData("jointPoint1", { "jointPoint1" });
+    // addTaskData("jointPoint2", { "jointPoint2" });
+    // addTaskData("jointPoint3", { "jointPoint3" });
+    // addTaskData("moveRelativeX", { "moveRelativeX" });
+    // addTaskData("moveRelativeY", { "moveRelativeY" });
+    // addTaskData("moveRelativeZ", { "moveRelativeZ" });
+    // addTaskData("pointSequence", { "coordPoint1", "coordPoint2", "coordPoint3" });
+    // addTaskData("jointSequence", { "jointPoint1", "jointPoint2", "jointPoint3" });
+    // addTaskData("relativeSequence", { "moveRelativeX", "moveRelativeY", "moveRelativeZ" });
+    // addTaskData("mixedPointJoint", { "coordPoint1", "jointPoint2", "coordPoint3" });
+    // addTaskData("mixedPointRelative", { "coordPoint1", "moveRelativeX" "coordPoint2"});
+    // addTaskData("mixedJointPoint", { "jointPoint1", "coordPoint2", "jointPoint3" });
+    // addTaskData("mixedJointRelative", { "jointPoint1", "moveRelativeY", "jointPoint2" });
+    // addTaskData("mixedRelativePoint", { "moveRelativex", "coordPoint1", "moveRelativeY" });
+    // addTaskData("mixedRelativeJoint", { "moveRelativeY", "jointPoint1", "moveRelativeZ" });
+    // addTaskData("allStageSequence", 
+    //     {"home", "coordPoint1", "jointPoint1", "moveRelativeX", "coordPoint2", "jointPoint2",
+    //      "moveRelativeY", "coordPoint3", "jointPoint3", "moveRelativeZ"}
+    // );
 }
 
-moveit::task_constructor::Task TaskFactory::createTask(const std::string& command) 
+moveit::task_constructor::Task TaskFactory::createTask(std::string_view command) 
 {
     if (!worm_picker_node_) {
-        throw NullNodeException("TaskFactory::createTask failed: node_ is null.");
+        throw TaskFactoryError(
+            TaskFactoryError::ErrorCode::InvalidConfiguration,
+            "TaskFactory::createTask failed: node_ is null."
+        );
     }
 
-    Task current_task;
-    current_task.stages()->setName(command);
-    current_task.loadRobotModel(worm_picker_node_);
-
-    current_task.setProperty("group", "gp4_arm");
-    current_task.setProperty("ik_frame", "eoat_tcp");
-
-    TrajectoryExecutionInfo execution_info;
-    execution_info.controller_names = {"follow_joint_trajectory"};
-    current_task.setProperty("trajectory_execution_info", execution_info);
+    auto task = createBaseTask(command);
     
     auto current_state_stage = std::make_unique<CurrentStateStage>("current");
-    current_task.add(std::move(current_state_stage));
+    task.add(std::move(current_state_stage));
 
-    auto it = task_data_map_.find(command);
+    auto it = task_data_map_.find(std::string(command));
     if (it == task_data_map_.end()) {
-        throw TaskCommandNotFoundException(
-            "TaskFactory::createTask failed: Command '" + command + "' not found."
+        throw TaskFactoryError(
+            TaskFactoryError::ErrorCode::TaskCreationFailed,
+            fmt::format("Command '{}' not found", command)
         );
     }
     
-    int stage_counter = 1;
     const TaskData& task_data = it->second;
+    int stage_counter = 1;
 
     for (const auto& stage_ptr : task_data.getStages()) {
-        std::string stage_name = "stage_" + std::to_string(stage_counter++);
+        const std::string stage_name = fmt::format("stage_{}", stage_counter++);
         auto stage = stage_ptr->createStage(stage_name, worm_picker_node_);
+
         if (!stage) {
-            throw StageCreationFailedException("Failed to create stage: " + stage_name);
+            throw TaskFactoryError(
+                TaskFactoryError::ErrorCode::StageCreationFailed,
+                fmt::format("Failed to create stage: {}", stage_name)
+            );
         }
-        current_task.add(std::move(stage));
+
+        task.add(std::move(stage));
     }
 
-    return current_task;
+    return task;
+}
+
+moveit::task_constructor::Task TaskFactory::createBaseTask(std::string_view command) {
+    Task task;
+    task.stages()->setName(std::string(command));
+    task.loadRobotModel(worm_picker_node_);
+    
+    task.setProperty("group", "gp4_arm");
+    task.setProperty("ik_frame", "eoat_tcp");
+    
+    TrajectoryExecutionInfo execution_info;
+    execution_info.controller_names = {"follow_joint_trajectory"};
+    task.setProperty("trajectory_execution_info", execution_info);
+    
+    return task;
 }
 
 // Temporary functions:
