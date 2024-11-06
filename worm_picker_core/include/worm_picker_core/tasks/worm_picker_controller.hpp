@@ -79,8 +79,7 @@ private:
     static constexpr const char* NODE_NAME = "worm_picker_controller";
 
     /// Path for storing timer log data.
-    static constexpr const char* TIMER_LOG_PATH = 
-        "/worm-picker/worm_picker_description/program_data/timer_log";
+    static constexpr const char* TIMER_LOG_PATH = "/worm-picker/worm_picker_description/program_data/timer_log";
 
     /// Name of the action used to execute task solutions.
     static constexpr const char* EXECUTE_TASK_ACTION_NAME = "/execute_task_solution";
