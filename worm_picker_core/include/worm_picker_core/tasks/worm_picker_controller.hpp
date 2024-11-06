@@ -31,7 +31,8 @@
 
 /**
  * @class WormPickerController
- * @brief Enhanced controller for managing automated worm picking tasks using ROS 2 services and actions.
+ * @brief Enhanced controller for managing automated worm picking tasks using ROS 2 services and 
+ *        actions.
  * 
  * @details
  * The WormPickerController class integrates with MoveIt Task Constructor to plan and execute 
@@ -57,7 +58,8 @@ public:
     /**
      * @brief Constructs a new WormPickerController.
      * 
-     * Initializes the controller, setting up ROS 2 services, actions, and parameters for worm picking tasks.
+     * Initializes the controller, setting up ROS 2 services, actions, and parameters for worm 
+     * picking tasks.
      * 
      * @param options Node options for ROS 2, allowing customization of node parameters.
      */
@@ -77,7 +79,8 @@ private:
     static constexpr const char* NODE_NAME = "worm_picker_controller";
 
     /// Path for storing timer log data.
-    static constexpr const char* TIMER_LOG_PATH = "/worm-picker/worm_picker_description/program_data/timer_log";
+    static constexpr const char* TIMER_LOG_PATH = 
+        "/worm-picker/worm_picker_description/program_data/timer_log";
 
     /// Name of the action used to execute task solutions.
     static constexpr const char* EXECUTE_TASK_ACTION_NAME = "/execute_task_solution";
@@ -86,10 +89,10 @@ private:
     static constexpr const char* TASK_COMMAND_SERVICE_NAME = "/task_command";
 
     /// Alias for the action type used in executing task solutions.
-    using ExecuteTaskSolutionAction = moveit_task_constructor_msgs::action::ExecuteTaskSolution;
+    using ExecTaskSolutionAction = moveit_task_constructor_msgs::action::ExecuteTaskSolution;
 
     /// Shared pointer type for the action client.
-    using ExecuteTaskSolutionClientPtr = rclcpp_action::Client<ExecuteTaskSolutionAction>::SharedPtr;
+    using ExecTaskSolutionClientPtr = rclcpp_action::Client<ExecTaskSolutionAction>::SharedPtr;
 
     /// Alias for the service type handling task commands.
     using TaskCommandService = worm_picker_custom_msgs::srv::TaskCommand;
@@ -137,10 +140,12 @@ private:
     /**
      * @brief Executes a task based on a command string.
      * 
-     * Manages the creation, planning, and execution stages for the specified command, recording timing data.
+     * Manages the creation, planning, and execution stages for the specified command, recording 
+     * timing data.
      * 
      * @param command Task command string specifying the task to execute.
-     * @return TaskExecutionStatus indicating whether the task succeeded, failed in planning, or failed in execution.
+     * @return TaskExecutionStatus indicating whether the task succeeded, failed in planning, or 
+     *         failed in execution.
      */
     TaskExecutionStatus doTask(std::string_view command);
 
@@ -167,7 +172,7 @@ private:
     std::shared_ptr<TimerDataCollector> timer_data_collector_;
 
     /// Action client for communicating with the task execution server.
-    ExecuteTaskSolutionClientPtr execute_task_action_client_;
+    ExecTaskSolutionClientPtr execute_task_action_client_;
 
     /// Service for handling task command requests via ROS 2.
     rclcpp::Service<TaskCommandService>::SharedPtr task_command_service_;

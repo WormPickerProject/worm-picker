@@ -34,7 +34,7 @@ rclcpp::node_interfaces::NodeBaseInterface::SharedPtr WormPickerController::getB
 
 void WormPickerController::setupServicesAndActions() 
 {
-    execute_task_action_client_ = rclcpp_action::create_client<ExecuteTaskSolutionAction>(
+    execute_task_action_client_ = rclcpp_action::create_client<ExecTaskSolutionAction>(
         worm_picker_node_,
         EXECUTE_TASK_ACTION_NAME
     );
