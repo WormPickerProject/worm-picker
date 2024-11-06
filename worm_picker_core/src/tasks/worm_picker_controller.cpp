@@ -5,12 +5,26 @@
 
 #include "worm_picker_core/tasks/worm_picker_controller.hpp"
 
-WormPickerController::WormPickerController(const rclcpp::NodeOptions& options) 
-    : worm_picker_node_{ std::make_shared<rclcpp::Node>("worm_picker_controller", options) },
-      task_factory_{ std::make_shared<TaskFactory>(worm_picker_node_) },
-      timer_data_collector_{ std::make_shared<TimerDataCollector>("/worm-picker/worm_picker_description/program_data/timer_log") }
+WormPickerController::WormPickerController(const rclcpp::NodeOptions& options)
+    : worm_picker_node_{std::make_shared<rclcpp::Node>(NODE_NAME, options)},
+      task_factory_{std::make_shared<TaskFactory>(worm_picker_node_)},
+      timer_data_collector_{std::make_shared<TimerDataCollector>(TIMER_LOG_PATH)}
 {
+    declareParameters();
     setupServicesAndActions();
+}
+
+void WormPickerController::declareParameters()
+{
+    const std::vector<std::pair<std::string, rclcpp::ParameterValue>> default_parameters{
+        {"action_server_timeout_sec", rclcpp::ParameterValue(3)},
+        {"max_retries", rclcpp::ParameterValue(10)},
+        {"planning_attempts", rclcpp::ParameterValue(5)}
+    };
+
+    for (const auto& [name, default_value] : default_parameters) {
+        worm_picker_node_->declare_parameter(name, default_value);
+    }
 }
 
 rclcpp::node_interfaces::NodeBaseInterface::SharedPtr WormPickerController::getBaseInterface() 
@@ -21,14 +35,15 @@ rclcpp::node_interfaces::NodeBaseInterface::SharedPtr WormPickerController::getB
 void WormPickerController::setupServicesAndActions() 
 {
     execute_task_action_client_ = rclcpp_action::create_client<ExecuteTaskSolutionAction>(
-        worm_picker_node_, "/execute_task_solution"
+        worm_picker_node_,
+        EXECUTE_TASK_ACTION_NAME
     );
 
     execute_task_wait_thread_ = std::jthread(&WormPickerController::waitForActionServer, this);
 
     task_command_service_ = worm_picker_node_->create_service<TaskCommandService>(
-        "/task_command",
-        [this](const std::shared_ptr<TaskCommandRequest> request, 
+        TASK_COMMAND_SERVICE_NAME,
+        [this](std::shared_ptr<const TaskCommandRequest> request,
                std::shared_ptr<TaskCommandResponse> response) {
             handleTaskCommand(request, response);
         }
@@ -37,44 +52,47 @@ void WormPickerController::setupServicesAndActions()
 
 void WormPickerController::waitForActionServer() 
 {
+    const int max_retries = worm_picker_node_->get_parameter("max_retries").as_int();
+    const int timeout_sec = worm_picker_node_->get_parameter("action_server_timeout_sec").as_int();
     int retry_count = 0;
-    const int max_retries = 10;
 
     while (rclcpp::ok() && retry_count < max_retries) {
-        if (execute_task_action_client_->wait_for_action_server(std::chrono::seconds(3))) {
+        if (execute_task_action_client_->wait_for_action_server(std::chrono::seconds(timeout_sec))) {
+            server_ready_.store(true);
             break;
-        } else {
-            retry_count++;
-        }
+        } 
+        retry_count++;
     }
 }
 
-void WormPickerController::handleTaskCommand(const std::shared_ptr<TaskCommandRequest> request,
-                                             std::shared_ptr<TaskCommandResponse> response) 
+void WormPickerController::handleTaskCommand(
+    std::shared_ptr<const TaskCommandRequest> request,
+    std::shared_ptr<TaskCommandResponse> response) 
 {
     try {
-        if (!execute_task_action_client_->wait_for_action_server(std::chrono::seconds(0))) {
+        if (!server_ready_.load()) {
             throw ActionServerUnavailableException(
-                "Action server '/execute_task_solution' is not available."
+                "Action server '" + std::string(EXECUTE_TASK_ACTION_NAME) + "' is not available."
             );
         }
 
-        doTask(request->command);
-        response->success = true;
+        const auto status = doTask(request->command);
+        response->success = (status == TaskExecutionStatus::Success);
     } catch (const std::exception& e) {
         RCLCPP_ERROR(worm_picker_node_->get_logger(), "Error in handleTaskCommand: %s", e.what());
         response->success = false;
     }
 }
 
-void WormPickerController::doTask(const std::string& command) 
+WormPickerController::TaskExecutionStatus WormPickerController::doTask(std::string_view command) 
 {
+    const auto planning_attempts = worm_picker_node_->get_parameter("planning_attempts").as_int();
     std::vector<std::pair<std::string, double>> timer_results;
     moveit_msgs::msg::MoveItErrorCodes execution_result;
 
     {
         ExecutionTimer timer("Create Task Timer");
-        current_task_ = task_factory_->createTask(command);
+        current_task_ = task_factory_->createTask(std::string(command));
         timer_results.emplace_back(timer.getName(), timer.stop());
     }
 
@@ -86,8 +104,8 @@ void WormPickerController::doTask(const std::string& command)
 
     {
         ExecutionTimer timer("Plan Task Timer");
-        if (!current_task_.plan(5)) {
-            throw TaskPlanningFailedException("Task planning failed for command: " + command);
+        if (!current_task_.plan(planning_attempts)) {
+            return TaskExecutionStatus::PlanningFailed;
         }
         timer_results.emplace_back(timer.getName(), timer.stop());
     }
@@ -95,10 +113,7 @@ void WormPickerController::doTask(const std::string& command)
     {
         ExecutionTimer timer("Execute Task Timer");
         if (current_task_.solutions().empty()) {
-            throw TaskExecutionFailedException(
-                "No solutions found for task execution for command: " + command,
-                -1
-            );
+            return TaskExecutionStatus::PlanningFailed;
         }
 
         current_task_.introspection().publishSolution(*current_task_.solutions().front());
@@ -106,29 +121,38 @@ void WormPickerController::doTask(const std::string& command)
         timer_results.emplace_back(timer.getName(), timer.stop());
     }
 
-    timer_data_collector_->recordTimerData(command, timer_results);
+    timer_data_collector_->recordTimerData(std::string(command), timer_results);
+    return checkExecutionResult(execution_result, command);
+}
 
-    if (execution_result.val != moveit_msgs::msg::MoveItErrorCodes::SUCCESS) {
-        throw TaskExecutionFailedException(
-            "Task execution failed with error code: " + std::to_string(execution_result.val) +
-            " for command: " + command,
-            execution_result.val
+WormPickerController::TaskExecutionStatus WormPickerController::checkExecutionResult(
+    const moveit_msgs::msg::MoveItErrorCodes& result,
+    std::string_view command) 
+{
+    if (result.val != moveit_msgs::msg::MoveItErrorCodes::SUCCESS) {
+        RCLCPP_ERROR(
+            worm_picker_node_->get_logger(),
+            "Task execution failed: %s (code: %d)", std::string(command).c_str(), result.val
         );
+        return TaskExecutionStatus::ExecutionFailed;
     }
+    return TaskExecutionStatus::Success;
 }
 
 int main(int argc, char **argv) 
 {
     rclcpp::init(argc, argv);
 
-    auto worm_picker_node = std::make_shared<WormPickerController>(
+    auto worm_picker_controller = std::make_shared<WormPickerController>(
         rclcpp::NodeOptions().automatically_declare_parameters_from_overrides(true));
+    
     rclcpp::executors::MultiThreadedExecutor executor;
+    executor.add_node(worm_picker_controller->getBaseInterface());
 
-    executor.add_node(worm_picker_node->getBaseInterface());
     executor.spin();
-    executor.remove_node(worm_picker_node->getBaseInterface());
 
-    worm_picker_node.reset();
+    executor.remove_node(worm_picker_controller->getBaseInterface());
+    rclcpp::shutdown();
+
     return 0;
 }
