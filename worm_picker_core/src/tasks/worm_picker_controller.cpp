@@ -52,12 +52,14 @@ void WormPickerController::setupServicesAndActions()
 
 void WormPickerController::waitForActionServer() 
 {
+    using std::chrono::seconds;
+
     const int max_retries = worm_picker_node_->get_parameter("max_retries").as_int();
     const int timeout_sec = worm_picker_node_->get_parameter("action_server_timeout_sec").as_int();
     int retry_count = 0;
 
     while (rclcpp::ok() && retry_count < max_retries) {
-        if (execute_task_action_client_->wait_for_action_server(std::chrono::seconds(timeout_sec))) {
+        if (execute_task_action_client_->wait_for_action_server(seconds(timeout_sec))) {
             server_ready_.store(true);
             break;
         } 
@@ -71,7 +73,7 @@ void WormPickerController::handleTaskCommand(
 {
     try {
         if (!server_ready_.load()) {
-            throw ActionServerUnavailableException(
+            throw std::runtime_error(
                 "Action server '" + std::string(EXECUTE_TASK_ACTION_NAME) + "' is not available."
             );
         }
@@ -97,13 +99,8 @@ WormPickerController::TaskExecutionStatus WormPickerController::doTask(std::stri
     }
 
     {
-        ExecutionTimer timer("Initialize Task Timer");
+        ExecutionTimer timer("Initialize and Plan Task Timer");
         current_task_.init();
-        timer_results.emplace_back(timer.getName(), timer.stop());
-    }
-
-    {
-        ExecutionTimer timer("Plan Task Timer");
         if (!current_task_.plan(planning_attempts)) {
             return TaskExecutionStatus::PlanningFailed;
         }
