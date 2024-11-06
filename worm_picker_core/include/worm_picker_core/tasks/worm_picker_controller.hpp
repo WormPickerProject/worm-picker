@@ -6,30 +6,24 @@
 #ifndef WORM_PICKER_CONTROLLER_HPP
 #define WORM_PICKER_CONTROLLER_HPP
 
-// ROS Core and Action includes
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_action/rclcpp_action.hpp>
 
-// ROS Service includes
 #include <std_srvs/srv/trigger.hpp>
 #include <worm_picker_custom_msgs/srv/task_command.hpp>
 
-// MoveIt Task Constructor includes
 #include <moveit/task_constructor/task.h>
 #include <moveit/task_constructor/solvers.h>
 #include <moveit/task_constructor/stages.h>
 #include <moveit_task_constructor_msgs/action/execute_task_solution.hpp>
 
-// MoveIt Core and Planning includes
 #include <moveit/robot_model/robot_model.h>
 #include <moveit/planning_scene/planning_scene.h>
 #include <moveit/planning_scene_interface/planning_scene_interface.h>
 
-// TF2 includes 
 #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 #include <tf2_eigen/tf2_eigen.hpp>
 
-// WormPicker application includes
 #include "worm_picker_core/tasks/task_factory.hpp"
 #include "worm_picker_core/tools/timing/execution_timer.hpp"
 #include "worm_picker_core/tools/timing/timer_data_collector.hpp"
@@ -37,115 +31,159 @@
 
 /**
  * @class WormPickerController
- * @brief Manages the worm picking tasks using ROS 2 services and actions.
+ * @brief Enhanced controller for managing automated worm picking tasks using ROS 2 services and
+ *        actions.
  * 
- * The WormPickerController class is responsible for initializing the ROS node,
- * setting up services and actions, and handling task commands for the worm
- * picking system. It uses the TaskFactory class to create the tasks, and the 
- * MoveIt Task Constructor to plan and execute tasks based on predefined commands.
- * 
- * @note This class requires ROS 2 and MoveIt Task Constructor to be properly set up.
- * 
- * @par Example Usage:
- * @code
- * rclcpp::NodeOptions options;
- * auto controller = std::make_shared<WormPickerController>(options);
- * controller->getBaseInterface();
- * @endcode
- * 
- * @par Dependencies:
- * - ROS 2
- * - MoveIt Task Constructor
- * - Custom messages and services defined in worm_picker_custom_msgs
+ * @details
+ * The WormPickerController class integrates with MoveIt Task Constructor to plan and execute
+ * complex motion sequences required for precise worm manipulation. It uses ROS 2 actions and
+ * services to handle task commands and coordinate execution while maintaining timing data and
+ * managing task-related parameters.
  */
 class WormPickerController
 {
 public:
     /**
-     * @brief Constructs the WormPickerController object.
+     * @brief Status codes representing the result of task execution.
+     */
+    enum class TaskExecutionStatus {
+        /// Task executed successfully.
+        Success,
+        /// Task planning phase failed.
+        PlanningFailed,
+        /// Task execution phase failed.
+        ExecutionFailed
+    };
+
+    /**
+     * @brief Constructs a new WormPickerController.
      * 
-     * Initializes the ROS node, task factory, and timer data collector.
-     * Sets up services and actions for task commands and task execution.
+     * Initializes the controller, setting up ROS 2 services, actions, and parameters for worm 
+     * picking tasks.
      * 
-     * @param options Node options passed to the ROS 2 node (optional).
-     * 
-     * @details This constructor initializes the core components required for the
-     * WormPickerController to function. It creates a ROS node with the provided
-     * options, initializes the TaskFactory for creating tasks, and sets up the
-     * TimerDataCollector for recording execution times. Additionally, it sets up
-     * the necessary ROS services and action clients to handle task commands and
-     * execute tasks.
+     * @param options Node options for ROS 2, allowing customization of node parameters.
      */
     explicit WormPickerController(const rclcpp::NodeOptions& options = rclcpp::NodeOptions());
 
     /**
-     * @brief Retrieves the base interface of the node.
+     * @brief Retrieves the base interface of the ROS 2 node.
      * 
-     * Provides access to the core interfaces of the node, including 
-     * communication interfaces.
+     * Provides access to the core node interface required for communication and ROS 2 integration.
      * 
-     * @return A shared pointer to the NodeBaseInterface.
+     * @return Shared pointer to the node base interface.
      */
     rclcpp::node_interfaces::NodeBaseInterface::SharedPtr getBaseInterface();
+
 private:
+    /// ROS 2 node name for WormPickerController.
+    static constexpr const char* NODE_NAME = "worm_picker_controller";
+
+    /// Path for storing timer log data.
+    static constexpr const char* TIMER_LOG_PATH = "/worm-picker/worm_picker_description/program_data/timer_log";
+
+    /// Name of the action used to execute task solutions.
+    static constexpr const char* EXECUTE_TASK_ACTION_NAME = "/execute_task_solution";
+
+    /// Name of the service for handling task commands.
+    static constexpr const char* TASK_COMMAND_SERVICE_NAME = "/task_command";
+
+    /// Alias for the action type used in executing task solutions.
+    using ExecTaskSolutionAction = moveit_task_constructor_msgs::action::ExecuteTaskSolution;
+
+    /// Shared pointer type for the action client.
+    using ExecTaskSolutionClientPtr = rclcpp_action::Client<ExecTaskSolutionAction>::SharedPtr;
+
+    /// Alias for the service type handling task commands.
+    using TaskCommandService = worm_picker_custom_msgs::srv::TaskCommand;
+
+    /// Type for task command requests.
+    using TaskCommandRequest = TaskCommandService::Request;
+
+    /// Type for task command responses.
+    using TaskCommandResponse = TaskCommandService::Response;
+
     /**
-     * @brief Initializes ROS services and action clients for task commands and execution.
+     * @brief Declares parameters required by the WormPickerController.
      * 
-     * Sets up the task command service and action client to interact with
-     * the '/execute_task_solution' action server.
+     * Sets up default parameters for controlling task retries, timeouts, and planning attempts.
+     */
+    void declareParameters();
+
+    /**
+     * @brief Initializes ROS 2 services and action clients.
+     * 
+     * Configures the service for task command handling and sets up the action client
+     * to communicate with the task execution server.
      */
     void setupServicesAndActions();
 
     /**
-     * @brief Waits for the '/execute_task_solution' action server to become available.
+     * @brief Waits for the task execution action server to become available.
      * 
-     * Polls the action server and retries a limited number of times if the
-     * server is not available.
+     * Continuously checks the availability of the action server, retrying based on
+     * the configured timeout and retry parameters.
      */
     void waitForActionServer();
 
     /**
-     * @brief Handles incoming task commands through the ROS service interface.
+     * @brief Processes incoming task commands received via ROS 2 service interface.
      * 
-     * Processes requests to create, plan, and execute tasks based on the 
-     * command string received in the request. Responds with success or failure.
+     * Executes a specified task based on the command received, reporting success or failure.
      * 
-     * @param request Incoming task command request.
-     * @param response Response to the service request indicating success or failure.
-     * @throws ActionServerUnavailableException If the action server is unavailable during the command.
-     * @throws TaskPlanningFailedException If task planning fails.
-     * @throws TaskExecutionFailedException If task execution fails.
+     * @param request Task command request containing the command to execute.
+     * @param response Task command response indicating the success of the task execution.
      */
-    void handleTaskCommand(const std::shared_ptr<worm_picker_custom_msgs::srv::TaskCommand::Request> request,
-                           std::shared_ptr<worm_picker_custom_msgs::srv::TaskCommand::Response> response);
+    void handleTaskCommand(std::shared_ptr<const TaskCommandRequest> request,
+                          std::shared_ptr<TaskCommandResponse> response);
 
     /**
-     * @brief Executes a task based on the provided command string.
+     * @brief Executes a task based on a command string.
      * 
-     * Creates, initializes, plans, and executes the task. Collects timing data
-     * for the task execution process and throws exceptions for failures during
-     * planning or execution stages.
+     * Manages the creation, planning, and execution stages for the specified command, recording 
+     * timing data.
      * 
-     * @param command The task command to be processed.
-     * @throws TaskPlanningFailedException If task planning fails.
-     * @throws TaskExecutionFailedException If task execution fails.
+     * @param command Task command string specifying the task to execute.
+     * @return TaskExecutionStatus indicating whether the task succeeded, failed in planning, or 
+     *         failed in execution.
      */
-    void doTask(const std::string& command);
+    TaskExecutionStatus doTask(std::string_view command);
 
-    // Type aliases
-    using ExecuteTaskSolutionAction = moveit_task_constructor_msgs::action::ExecuteTaskSolution;
-    using ExecuteTaskSolutionClientPtr = rclcpp_action::Client<ExecuteTaskSolutionAction>::SharedPtr;
-    using TaskCommandService = worm_picker_custom_msgs::srv::TaskCommand;
-    using TaskCommandRequest = TaskCommandService::Request;
-    using TaskCommandResponse = TaskCommandService::Response;
+    /**
+     * @brief Evaluates the result of task execution.
+     * 
+     * Checks the result code of the executed task and logs any failure reasons.
+     * 
+     * @param result MoveIt error codes representing the outcome of the task.
+     * @param command Task command string associated with the execution.
+     * @return TaskExecutionStatus indicating whether the execution succeeded or failed.
+     */
+    TaskExecutionStatus checkExecutionResult(
+        const moveit_msgs::msg::MoveItErrorCodes& result,
+        std::string_view command);
 
-    rclcpp::Node::SharedPtr worm_picker_node_;                             ///< ROS 2 node responsible for the WormPicker system.
-    std::shared_ptr<TaskFactory> task_factory_;                            ///< Factory object for creating and managing tasks.
-    std::shared_ptr<TimerDataCollector> timer_data_collector_;             ///< Utility for collecting and recording task timing data.
-    ExecuteTaskSolutionClientPtr execute_task_action_client_;              ///< Action client for executing task solutions.
-    std::jthread execute_task_wait_thread_;                                ///< Thread for waiting for the '/execute_task_solution' action server.
-    rclcpp::Service<TaskCommandService>::SharedPtr task_command_service_;  ///< Service for handling task command requests.
-    moveit::task_constructor::Task current_task_;                          ///< The current task being processed.
+    /// Shared pointer to the main ROS 2 node for managing the WormPicker system.
+    rclcpp::Node::SharedPtr worm_picker_node_;
+
+    /// Factory for creating and managing tasks based on commands.
+    std::shared_ptr<TaskFactory> task_factory_;
+
+    /// Collector for timing data related to task execution.
+    std::shared_ptr<TimerDataCollector> timer_data_collector_;
+
+    /// Action client for communicating with the task execution server.
+    ExecTaskSolutionClientPtr execute_task_action_client_;
+
+    /// Service for handling task command requests via ROS 2.
+    rclcpp::Service<TaskCommandService>::SharedPtr task_command_service_;
+
+    /// The currently active task being processed.
+    moveit::task_constructor::Task current_task_;
+
+    /// Thread for continuously monitoring the action server's availability.
+    std::jthread execute_task_wait_thread_;
+
+    /// Flag indicating whether the action server is available.
+    std::atomic<bool> server_ready_{false};
 };
 
 #endif  // WORM_PICKER_CONTROLLER_HPP

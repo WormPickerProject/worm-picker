@@ -70,4 +70,21 @@ public:
         : std::invalid_argument(message) {}
 };
 
+class TaskFactoryError : public std::runtime_error {
+public:
+    enum class ErrorCode {
+        InvalidConfiguration,
+        TaskCreationFailed,
+        StageCreationFailed,
+        InvalidParameter
+    };
+    
+    TaskFactoryError(ErrorCode code, const std::string& message)
+        : std::runtime_error(message), code_(code) {}
+    
+    ErrorCode getErrorCode() const { return code_; }
+private:
+    ErrorCode code_;
+};
+
 #endif // EXCEPTIONS_HPP
