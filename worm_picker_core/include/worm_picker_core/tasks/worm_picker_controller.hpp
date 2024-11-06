@@ -70,7 +70,7 @@ public:
      * 
      * @return Shared pointer to the node base interface.
      */
-    [[nodiscard]] rclcpp::node_interfaces::NodeBaseInterface::SharedPtr getBaseInterface();
+    rclcpp::node_interfaces::NodeBaseInterface::SharedPtr getBaseInterface();
 
 private:
     /// ROS 2 node name for WormPickerController.
@@ -142,7 +142,7 @@ private:
      * @param command Task command string specifying the task to execute.
      * @return TaskExecutionStatus indicating whether the task succeeded, failed in planning, or failed in execution.
      */
-    [[nodiscard]] TaskExecutionStatus doTask(std::string_view command);
+    TaskExecutionStatus doTask(std::string_view command);
 
     /**
      * @brief Evaluates the result of task execution.
@@ -153,7 +153,7 @@ private:
      * @param command Task command string associated with the execution.
      * @return TaskExecutionStatus indicating whether the execution succeeded or failed.
      */
-    [[nodiscard]] TaskExecutionStatus checkExecutionResult(
+    TaskExecutionStatus checkExecutionResult(
         const moveit_msgs::msg::MoveItErrorCodes& result,
         std::string_view command);
 
