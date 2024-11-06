@@ -67,9 +67,8 @@ void WormPickerController::waitForActionServer()
     }
 }
 
-void WormPickerController::handleTaskCommand(
-    std::shared_ptr<const TaskCommandRequest> request,
-    std::shared_ptr<TaskCommandResponse> response) 
+void WormPickerController::handleTaskCommand(std::shared_ptr<const TaskCommandRequest> request,
+                                             std::shared_ptr<TaskCommandResponse> response) 
 {
     try {
         if (!server_ready_.load()) {
