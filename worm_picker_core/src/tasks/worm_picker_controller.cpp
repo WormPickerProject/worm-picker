@@ -92,7 +92,7 @@ WormPickerController::TaskExecutionStatus WormPickerController::doTask(std::stri
 
     {
         ExecutionTimer timer("Create Task Timer");
-        current_task_ = task_factory_->createTask(std::string(command));
+        current_task_ = task_factory_->createTask(command);
         timer_results.emplace_back(timer.getName(), timer.stop());
     }
 
