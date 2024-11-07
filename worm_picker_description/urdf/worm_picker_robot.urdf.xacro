@@ -1,25 +1,79 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://ros.org/wiki/xacro" name="worm_picker_robot">
   
+  <!-- Define the 'use_sim' argument with a default value -->
+  <xacro:arg name="use_sim" default="false"/>
+  
   <!-- Include necessary Xacro files -->
   <xacro:include filename="$(find worm_picker_description)/urdf/gp4_macro.xacro" />
   <xacro:include filename="$(find worm_picker_description)/urdf/workcell_macro.xacro" />
   
   <!-- Create 'world' link -->
   <link name="world"/>
-
+  
   <!-- Instantiate the GP4 robot macro with no prefix -->
   <xacro:motoman_gp4 prefix=""/>
-
+  
   <!-- Connect robot base_link to world -->
   <joint name="world-base_link" type="fixed">
     <origin xyz="0 0 0" rpy="0 0 0"/>
     <parent link="world"/>
     <child link="base_link"/>
   </joint>
-
+  
   <!-- Instantiate the workcell macro with prefix "workcell_" -->
   <xacro:workcell prefix="workcell_"/>
-
+  
+  <!-- Conditionally include ros2_control -->
+  <xacro:if value="$(arg use_sim)d">
+    <xacro:property name="initial_positions" value="${load_yaml('$(find worm_picker_moveit_config)/config/initial_positions.yaml')['initial_positions']}" />
+    <ros2_control name="WormPickerHardware" type="system">
+      <hardware>
+        <plugin>mock_components/GenericSystem</plugin>
+      </hardware>
+      <joint name="joint_1">
+        <command_interface name="position"/>
+        <state_interface name="position">
+          <param name="initial_value">${initial_positions['joint_1']}</param>
+        </state_interface>
+        <state_interface name="velocity"/>
+      </joint>
+      <joint name="joint_2">
+        <command_interface name="position"/>
+        <state_interface name="position">
+          <param name="initial_value">${initial_positions['joint_2']}</param>
+        </state_interface>
+        <state_interface name="velocity"/>
+      </joint>
+      <joint name="joint_3">
+        <command_interface name="position"/>
+        <state_interface name="position">
+          <param name="initial_value">${initial_positions['joint_3']}</param>
+        </state_interface>
+        <state_interface name="velocity"/>
+      </joint>
+      <joint name="joint_4">
+        <command_interface name="position"/>
+        <state_interface name="position">
+          <param name="initial_value">${initial_positions['joint_4']}</param>
+        </state_interface>
+        <state_interface name="velocity"/>
+      </joint>
+      <joint name="joint_5">
+        <command_interface name="position"/>
+        <state_interface name="position">
+          <param name="initial_value">${initial_positions['joint_5']}</param>
+        </state_interface>
+        <state_interface name="velocity"/>
+      </joint>
+      <joint name="joint_6">
+        <command_interface name="position"/>
+        <state_interface name="position">
+          <param name="initial_value">${initial_positions['joint_6']}</param>
+        </state_interface>
+        <state_interface name="velocity"/>
+      </joint>
+    </ros2_control>
+  </xacro:if>
 </robot>
 
