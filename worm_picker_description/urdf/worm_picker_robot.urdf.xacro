@@ -25,7 +25,7 @@
   <xacro:workcell prefix="workcell_"/>
   
   <!-- Conditionally include ros2_control -->
-  <xacro:if value="$(arg use_sim)d">
+  <xacro:if value="$(arg use_sim)">
     <xacro:property name="initial_positions" value="${load_yaml('$(find worm_picker_moveit_config)/config/initial_positions.yaml')['initial_positions']}" />
     <ros2_control name="WormPickerHardware" type="system">
       <hardware>

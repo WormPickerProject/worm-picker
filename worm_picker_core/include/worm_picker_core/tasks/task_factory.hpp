@@ -53,9 +53,47 @@ public:
      * @return Task The constructed MoveIt task ready for planning and execution.
      * @throws TaskFactoryError if task creation fails due to an invalid command or other setup issues.
      */
-    [[nodiscard]] moveit::task_constructor::Task createTask(std::string_view command);
+    moveit::task_constructor::Task createTask(std::string_view command);
 
 private:
+    /**
+     * @brief Configuration structure for robot movement parameters.
+     */
+    struct StageConfig { 
+        /// The unique identifier for the movement configuration
+        std::string name;
+
+        /// Enumeration defining the types of movement configurations.
+        enum class Type { 
+            JOINT,    /// Joint space movement configuration
+            POINT,    /// Cartesian space point movement configuration
+            RELATIVE  /// Relative movement configuration
+        };
+
+        /// The type of movement this configuration represents
+        Type type;
+
+        /// Vector containing stage parameters (joint values, coordinates, or relative distances)
+        std::vector<double> parameters;
+
+        /// Scaling factor for movement velocity (range: 0.0 to 1.0)
+        double velocity_scaling = 0.1;
+
+        /// Scaling factor for movement acceleration (range: 0.0 to 1.0)
+        double acceleration_scaling = 0.1;
+    };
+
+    /**
+     * @brief Configuration structure for task sequences.
+     */
+    struct TaskConfig {
+        /// The unique identifier for the task sequence
+        std::string name;
+
+        /// Ordered list of stage names that comprise the task sequence
+        std::vector<std::string> stages;
+    };
+
     /// Path to configuration files for workstation and hotel data.
     static constexpr char CONFIG_PATH[] = "/worm-picker/worm_picker_description/program_data/data_files";
 
@@ -93,13 +131,13 @@ private:
      */
     void parseData();
 
-    /** 
-     * @brief Sets up the planning scene by initializing stages and tasks.
+    /**
+     * @brief Initializes and populates the task map with predefined stages and tasks.
      * 
-     * Prepares the environment and configures necessary stages to execute tasks, allowing
-     * for detailed planning and execution within the task framework.
+     * Configures joint, point, and relative movements and defines task sequences, 
+     * enabling the task framework to use this data for planning and execution.
      */
-    void setupPlanningScene();
+    void initializeTaskMap();
 
     /**
      * @brief Creates a base task with the specified command name.
