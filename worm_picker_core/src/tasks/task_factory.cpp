@@ -5,10 +5,11 @@
 
 #include "worm_picker_core/tasks/task_factory.hpp"
 #include "worm_picker_core/tasks/generation/task_generator.hpp"
+#include "worm_picker_core/tools/parsers/defined_tasks_parser.hpp"
 
 TaskFactory::TaskFactory(const rclcpp::Node::SharedPtr& node) 
-    : worm_picker_node_(node)
-{ 
+    : worm_picker_node_(node) { 
+
     if (!worm_picker_node_) {
         throw TaskFactoryError(
             TaskFactoryError::ErrorCode::InvalidConfiguration,
@@ -17,7 +18,6 @@ TaskFactory::TaskFactory(const rclcpp::Node::SharedPtr& node)
     }
 
     declareParameters();
-    parseData();
     initializeTaskMap();
 }
 
@@ -28,7 +28,13 @@ void TaskFactory::declareParameters()
          rclcpp::ParameterValue(std::string(CONFIG_PATH) + "/workstation_data.json")},
         
         {"hotel_config_file", 
-         rclcpp::ParameterValue(std::string(CONFIG_PATH) + "/hotel_data.json")}
+         rclcpp::ParameterValue(std::string(CONFIG_PATH) + "/hotel_data.json")}, 
+        
+        {"defined_stages_file", 
+         rclcpp::ParameterValue(std::string(CONFIG_PATH) + "/defined_stages.json")},
+        
+        {"defined_tasks_file", 
+         rclcpp::ParameterValue(std::string(CONFIG_PATH) + "/defined_tasks.json")}
     };
 
     for (const auto& [name, default_value] : default_parameters) {
@@ -36,110 +42,34 @@ void TaskFactory::declareParameters()
     }
 }
 
-void TaskFactory::parseData() 
-{
-    const auto workstation_file = worm_picker_node_
-        ->get_parameter("workstation_config_file").as_string();
-    const auto hotel_file = worm_picker_node_
-        ->get_parameter("hotel_config_file").as_string();
-
-    WorkstationDataParser workstation_parser(workstation_file);
-    workstation_data_map_ = workstation_parser.getWorkstationDataMap();
-
-    HotelDataParser hotel_parser(hotel_file);
-    hotel_data_map_ = hotel_parser.getHotelDataMap(); 
-    
-    logDataMaps(); 
-}
-
 void TaskFactory::initializeTaskMap() 
 {
-    TaskGenerator tasks_plans(workstation_data_map_, hotel_data_map_);
-    task_data_map_ = tasks_plans.getGeneratedTaskPlans();
+    const std::string workstation_config_file = 
+        worm_picker_node_->get_parameter("workstation_config_file").as_string();
+    const std::string hotel_config_file = 
+        worm_picker_node_->get_parameter("hotel_config_file").as_string();
+    const std::string defined_stages_file = 
+        worm_picker_node_->get_parameter("defined_stages_file").as_string();
+    const std::string defined_tasks_file = 
+        worm_picker_node_->get_parameter("defined_tasks_file").as_string();
 
-    using Type = StageConfig::Type;
-    static constexpr auto JOINT = Type::JOINT;
-    static constexpr auto POINT = Type::POINT;
-    static constexpr auto RELATIVE = Type::RELATIVE;
+    const WorkstationDataParser workstation_parser{workstation_config_file};
+    const auto workstation_data_map = workstation_parser.getWorkstationDataMap();
 
-    const std::vector<StageConfig> stages = {
-        {"home", JOINT, {0.0, 0.0, 0.0, 0.0, 0.0, 0.0}},
-        {"jointPoint1", JOINT, {-2.0, -11.0, 21.0, 0.0, -62.0, 0.0}},
-        {"jointPoint2", JOINT, {15.0, 7.0, 23.0, 18.0, -48.0, -20.0}},
-        {"jointPoint3", JOINT, {-28.0, 28.0, 23.0, -43.0, -37.0, 52.0}},
-        {"homeEndFactor", JOINT, {0.0, 0.0, 0.0, 0.0, 0.0, -30.0}},
-        {"swapEndFactor:1", JOINT, {0.0, 0.0, 0.0, 0.0, 0.0, 0.0}},
-        {"swapEndFactor:2", JOINT, {0.0, 0.0, 0.0, 0.0, 0.0, -90.0}},
-        {"coordPoint1", POINT, {0.47424, 0.01732, 0.48122, 0.70712, 0.0, 0.7071, 0.0}},
-        {"coordPoint2", POINT, {0.39007, -0.11781, 0.44918, 0.70712, 0.0, 0.7071, 0.0}},
-        {"coordPoint3", POINT, {0.40111, 0.25094, 0.42120, 0.70712, 0.0, 0.7071, 0.0}},
-        {"moveRelativeX", RELATIVE, {0.1, 0.0, 0.0}},
-        {"moveRelativeY", RELATIVE, {0.0, 0.1, 0.0}},
-        {"moveRelativeZ", RELATIVE, {0.0, 0.0, 0.1}}
-    };
+    const HotelDataParser hotel_parser{hotel_config_file};
+    const auto hotel_data_map = hotel_parser.getHotelDataMap();
 
-    const std::vector<TaskConfig> tasks = {
-        {"home", { "home" }},
-        {"coordPoint1", { "coordPoint1" }},
-        {"coordPoint2", { "coordPoint2" }},
-        {"coordPoint3", { "coordPoint3" }},
-        {"jointPoint1", { "jointPoint1" }},
-        {"jointPoint2", { "jointPoint2" }},
-        {"jointPoint3", { "jointPoint3" }},
-        {"homeEndFactor", { "homeEndFactor" }},
-        {"swapEndFactor:1", { "swapEndFactor:1" }},
-        {"swapEndFactor:2", { "swapEndFactor:2" }},
-        {"moveRelativeX", { "moveRelativeX" }},
-        {"moveRelativeY", { "moveRelativeY" }},
-        {"moveRelativeZ", { "moveRelativeZ" }},
-        {"pointSequence", {"coordPoint1", "coordPoint2", "coordPoint3"}},
-        {"jointSequence", {"jointPoint1", "jointPoint2", "jointPoint3"}},
-        {"relativeSequence", {"moveRelativeX", "moveRelativeY", "moveRelativeZ"}},
-        {"mixedPointJoint", {"coordPoint1", "jointPoint2", "coordPoint3"}},
-        {"mixedPointRelative", {"coordPoint1", "moveRelativeX", "coordPoint2"}},
-        {"mixedJointPoint", {"jointPoint1", "coordPoint2", "jointPoint3"}},
-        {"mixedJointRelative", {"jointPoint1", "moveRelativeY", "jointPoint2"}},
-        {"mixedRelativePoint", {"moveRelativeX", "coordPoint1", "moveRelativeY"}},
-        {"mixedRelativeJoint", {"moveRelativeY", "jointPoint1", "moveRelativeZ"}},
-        {"allStageSequence", 
-            {"home", "coordPoint1", "jointPoint1", "moveRelativeX", "coordPoint2", 
-             "jointPoint2", "moveRelativeY", "coordPoint3", "jointPoint3", "moveRelativeZ"}}
-    };
+    const DefinedTasksGenerator defined_tasks_parser{defined_stages_file, defined_tasks_file};
+    const auto defined_tasks_map = defined_tasks_parser.getDefinedTasksMap();
 
-    for (const auto& stage : stages) {
-        switch (stage.type) {
-            case JOINT: {
-                auto data = std::make_shared<MoveToJointData>(
-                    stage.parameters[0], stage.parameters[1], stage.parameters[2],
-                    stage.parameters[3], stage.parameters[4], stage.parameters[5],
-                    stage.velocity_scaling, stage.acceleration_scaling
-                );
-                stage_data_map_[stage.name] = data;
-                break;
-            }
-            case POINT: {
-                auto data = std::make_shared<MoveToPointData>(
-                    stage.parameters[0], stage.parameters[1], stage.parameters[2],
-                    stage.parameters[3], stage.parameters[4], stage.parameters[5], 
-                    stage.parameters[6], stage.velocity_scaling, stage.acceleration_scaling
-                );
-                stage_data_map_[stage.name] = data;
-                break;
-            }
-            case RELATIVE: {
-                auto data = std::make_shared<MoveRelativeData>(
-                    stage.parameters[0], stage.parameters[1], stage.parameters[2],
-                    stage.velocity_scaling, stage.acceleration_scaling
-                );
-                stage_data_map_[stage.name] = data;
-                break;
-            }
-        }
-    }
+    const TaskGenerator task_plans{workstation_data_map, hotel_data_map};
+    const auto generated_task_map = task_plans.getGeneratedTaskPlans();
 
-    for (const auto& task : tasks) {
-        task_data_map_[task.name] = TaskData(stage_data_map_, task.stages);
-    }
+    task_data_map_.clear();
+    task_data_map_.insert(defined_tasks_map.begin(), defined_tasks_map.end());
+    task_data_map_.insert(generated_task_map.begin(), generated_task_map.end());
+
+    logTaskMap(); // Temporary function
 }
 
 moveit::task_constructor::Task TaskFactory::createTask(std::string_view command) 
@@ -200,29 +130,108 @@ moveit::task_constructor::Task TaskFactory::createBaseTask(std::string_view comm
 }
 
 // Temporary functions:
-void TaskFactory::logDataMaps() const 
+void TaskFactory::logTaskMap() const 
 {
-    if (workstation_data_map_.empty()) {
-        RCLCPP_INFO(worm_picker_node_->get_logger(), "\n");
-        RCLCPP_INFO(worm_picker_node_->get_logger(), "********************************************************");
-        RCLCPP_INFO(worm_picker_node_->get_logger(), "* Workstation Data Map is empty.");
-        RCLCPP_INFO(worm_picker_node_->get_logger(), "********************************************************\n");
-    } else {
-        RCLCPP_INFO(worm_picker_node_->get_logger(), "\n");
-        RCLCPP_INFO(worm_picker_node_->get_logger(), "********************************************************");
-        RCLCPP_INFO(worm_picker_node_->get_logger(), "* Logging Workstation Data Map:");
-        for (const auto& [workstation_id, workstation_data] : workstation_data_map_) {
-            RCLCPP_INFO(worm_picker_node_->get_logger(), "* Workstation ID: %s", workstation_id.c_str());
-            RCLCPP_INFO(worm_picker_node_->get_logger(), "*   Position (x, y, z): (%f, %f, %f)", 
-                        workstation_data.getCoordinate().getPositionX(), 
-                        workstation_data.getCoordinate().getPositionY(), 
-                        workstation_data.getCoordinate().getPositionZ());
-            RCLCPP_INFO(worm_picker_node_->get_logger(), "*   Orientation (qx, qy, qz, qw): (%f, %f, %f, %f)", 
-                        workstation_data.getCoordinate().getOrientationX(), 
-                        workstation_data.getCoordinate().getOrientationY(), 
-                        workstation_data.getCoordinate().getOrientationZ(), 
-                        workstation_data.getCoordinate().getOrientationW());
+    auto logger = rclcpp::get_logger("TaskFactory");
+
+    RCLCPP_INFO(logger, "*****************************************************************************");
+    RCLCPP_INFO(logger, "* Task Data Map Contents:");
+
+    for (const auto& task_entry : task_data_map_) {
+        const std::string& task_name = task_entry.first;
+        const TaskData& task_data = task_entry.second;
+
+        RCLCPP_INFO(logger, "* Task '%s' Stages:", task_name.c_str());
+
+        int stage_number = 1;
+        for (const auto& stage_ptr : task_data.getStages()) {
+            StageType stage_type = stage_ptr->getType();
+            std::string stage_type_str;
+
+            switch (stage_type) {
+                case StageType::MOVE_TO_POINT: stage_type_str = "MOVE_TO_POINT"; break;
+                case StageType::MOVE_TO_JOINT: stage_type_str = "MOVE_TO_JOINT"; break;
+                case StageType::MOVE_RELATIVE: stage_type_str = "MOVE_RELATIVE"; break;
+                default: stage_type_str = "UNKNOWN"; break;
+            }
+
+            auto formatNumber = [](double value) -> std::string {
+                char buffer[16];
+                snprintf(buffer, sizeof(buffer), "%s%0.2f", (value >= 0 ? " " : ""), value);
+                return std::string(buffer);
+            };
+
+            auto formatVelAcc = [](double value) -> std::string {
+                char buffer[16];
+                snprintf(buffer, sizeof(buffer), "%.2f", value);
+                return std::string(buffer);
+            };
+
+            int stage_num_len = std::to_string(stage_number).length();
+            std::string continuation_indent(28 + (stage_num_len - 1), ' ');
+
+            if (stage_type == StageType::MOVE_TO_POINT) {
+                auto move_to_point_data = std::dynamic_pointer_cast<MoveToPointData>(stage_ptr);
+                if (move_to_point_data) {
+                    RCLCPP_INFO(logger, "*   [Stage %d] %s: Pos(%s, %s, %s)", 
+                        stage_number,
+                        stage_type_str.c_str(),
+                        formatNumber(move_to_point_data->getX()).c_str(),
+                        formatNumber(move_to_point_data->getY()).c_str(),
+                        formatNumber(move_to_point_data->getZ()).c_str());
+                    RCLCPP_INFO(logger, "*%sOri(%s, %s, %s, %s)",
+                        continuation_indent.c_str(),
+                        formatNumber(move_to_point_data->getQX()).c_str(),
+                        formatNumber(move_to_point_data->getQY()).c_str(),
+                        formatNumber(move_to_point_data->getQZ()).c_str(),
+                        formatNumber(move_to_point_data->getQW()).c_str());
+                    RCLCPP_INFO(logger, "*%sVel: %s; Acc: %s",
+                        continuation_indent.c_str(),
+                        formatVelAcc(move_to_point_data->getVelocityScalingFactor()).c_str(),
+                        formatVelAcc(move_to_point_data->getAccelerationScalingFactor()).c_str());
+                }
+            } else if (stage_type == StageType::MOVE_TO_JOINT) {
+                auto move_to_joint_data = std::dynamic_pointer_cast<MoveToJointData>(stage_ptr);
+                if (move_to_joint_data) {
+                    std::stringstream joints_ss;
+                    joints_ss << "Joints(";
+                    bool first = true;
+                    for (const auto& joint_entry : move_to_joint_data->getJointPositions()) {
+                        if (!first) joints_ss << ", ";
+                        joints_ss << formatNumber(joint_entry.second);
+                        first = false;
+                    }
+                    joints_ss << ")";
+                    
+                    RCLCPP_INFO(logger, "*   [Stage %d] %s: %s",
+                        stage_number,
+                        stage_type_str.c_str(),
+                        joints_ss.str().c_str());
+                    RCLCPP_INFO(logger, "*%sVel: %s; Acc: %s",
+                        continuation_indent.c_str(),
+                        formatVelAcc(move_to_joint_data->getVelocityScalingFactor()).c_str(),
+                        formatVelAcc(move_to_joint_data->getAccelerationScalingFactor()).c_str());
+                }
+            } else if (stage_type == StageType::MOVE_RELATIVE) {
+                auto move_relative_data = std::dynamic_pointer_cast<MoveRelativeData>(stage_ptr);
+                if (move_relative_data) {
+                    RCLCPP_INFO(logger, "*   [Stage %d] %s: Delta(%s, %s, %s)",
+                        stage_number,
+                        stage_type_str.c_str(),
+                        formatNumber(move_relative_data->getDX()).c_str(),
+                        formatNumber(move_relative_data->getDY()).c_str(),
+                        formatNumber(move_relative_data->getDZ()).c_str());
+                    RCLCPP_INFO(logger, "*%sVel: %s; Acc: %s",
+                        continuation_indent.c_str(),
+                        formatVelAcc(move_relative_data->getVelocityScalingFactor()).c_str(),
+                        formatVelAcc(move_relative_data->getAccelerationScalingFactor()).c_str());
+                }
+            }
+
+            stage_number++;
         }
-        RCLCPP_INFO(worm_picker_node_->get_logger(), "********************************************************\n");
+        RCLCPP_INFO(logger, "*");
     }
+
+    RCLCPP_INFO(logger, "*****************************************************************************");
 }

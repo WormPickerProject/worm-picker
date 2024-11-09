@@ -56,44 +56,6 @@ public:
     moveit::task_constructor::Task createTask(std::string_view command);
 
 private:
-    /**
-     * @brief Configuration structure for robot movement parameters.
-     */
-    struct StageConfig { 
-        /// The unique identifier for the movement configuration
-        std::string name;
-
-        /// Enumeration defining the types of movement configurations.
-        enum class Type { 
-            JOINT,    /// Joint space movement configuration
-            POINT,    /// Cartesian space point movement configuration
-            RELATIVE  /// Relative movement configuration
-        };
-
-        /// The type of movement this configuration represents
-        Type type;
-
-        /// Vector containing stage parameters (joint values, coordinates, or relative distances)
-        std::vector<double> parameters;
-
-        /// Scaling factor for movement velocity (range: 0.0 to 1.0)
-        double velocity_scaling = 0.1;
-
-        /// Scaling factor for movement acceleration (range: 0.0 to 1.0)
-        double acceleration_scaling = 0.1;
-    };
-
-    /**
-     * @brief Configuration structure for task sequences.
-     */
-    struct TaskConfig {
-        /// The unique identifier for the task sequence
-        std::string name;
-
-        /// Ordered list of stage names that comprise the task sequence
-        std::vector<std::string> stages;
-    };
-
     /// Path to configuration files for workstation and hotel data.
     static constexpr char CONFIG_PATH[] = "/worm-picker/worm_picker_description/program_data/data_files";
 
@@ -106,15 +68,6 @@ private:
     /// Alias for the execution information used in trajectory planning.
     using TrajectoryExecutionInfo = moveit::task_constructor::TrajectoryExecutionInfo;
 
-    /// Map of workstation IDs to workstation data, including Cartesian coordinates.
-    using WorkstationDataMap = std::unordered_map<std::string, WorkstationData>;
-
-    /// Map of hotel data IDs to hotel data, used as a placeholder for future development.
-    using HotelDataMap = std::unordered_map<std::string, HotelData>;
-
-    /// Shared pointer type for stage data, used in task stages.
-    using StageDataPtr = std::shared_ptr<StageData>;
-
     /**
      * @brief Declares the parameters required by the TaskFactory.
      * 
@@ -122,14 +75,6 @@ private:
      * required for the TaskFactory to operate correctly.
      */
     void declareParameters();
-
-    /** 
-     * @brief Parses workstation and hotel data from their respective JSON files.
-     * 
-     * Loads the data required for workstation and hotel operations from configuration files
-     * and stores them in their corresponding data maps.
-     */
-    void parseData();
 
     /**
      * @brief Initializes and populates the task map with predefined stages and tasks.
@@ -153,20 +98,11 @@ private:
     /// Shared pointer to the WormPicker node, responsible for ROS 2 communication.
     rclcpp::Node::SharedPtr worm_picker_node_;
 
-    /// Map linking workstation IDs (e.g., "A1") to WorkstationData, containing Cartesian coordinates and robot joint positions.
-    WorkstationDataMap workstation_data_map_;
-
-    /// Placeholder map for hotel data, to be populated with HotelData in future development.
-    HotelDataMap hotel_data_map_;
-
-    /// Map linking stage names to shared pointers of StageData, used in task staging.
-    std::unordered_map<std::string, StageDataPtr> stage_data_map_;
-
     /// Map associating task commands with TaskData, defining data required for specific tasks.
     std::map<std::string, TaskData> task_data_map_;
 
     // Temporary Functions
-    void logDataMaps() const;
+    void logTaskMap() const;
 };
 
 #endif // TASK_FACTORY_HPP
