@@ -31,9 +31,6 @@ private:
     void generateAndAggregateTasks(const std::vector<std::unique_ptr<BaseTaskGenerator>>& generators); 
 
     std::map<std::string, TaskData> task_data_map_;
-
-    // Temporary Functions:
-    void logDataMap() const;
 };
 
 #endif // TASK_GENERATOR_HPP

@@ -1,0 +1,94 @@
+[
+    {
+        "name": "home",
+        "stages": ["home"]
+    },
+    {
+        "name": "coordPoint1",
+        "stages": ["coordPoint1"]
+    },
+    {
+        "name": "coordPoint2",
+        "stages": ["coordPoint2"]
+    },
+    {
+        "name": "coordPoint3",
+        "stages": ["coordPoint3"]
+    },
+    {
+        "name": "jointPoint1",
+        "stages": ["jointPoint1"]
+    },
+    {
+        "name": "jointPoint2",
+        "stages": ["jointPoint2"]
+    },
+    {
+        "name": "jointPoint3",
+        "stages": ["jointPoint3"]
+    },
+    {
+        "name": "homeEndFactor",
+        "stages": ["homeEndFactor"]
+    },
+    {
+        "name": "swapEndFactor:1",
+        "stages": ["swapEndFactor:1"]
+    },
+    {
+        "name": "swapEndFactor:2",
+        "stages": ["swapEndFactor:2"]
+    },
+    {
+        "name": "moveRelativeX",
+        "stages": ["moveRelativeX"]
+    },
+    {
+        "name": "moveRelativeY",
+        "stages": ["moveRelativeY"]
+    },
+    {
+        "name": "moveRelativeZ",
+        "stages": ["moveRelativeZ"]
+    },
+    {
+        "name": "pointSequence",
+        "stages": ["coordPoint1", "coordPoint2", "coordPoint3"]
+    },
+    {
+        "name": "jointSequence",
+        "stages": ["jointPoint1", "jointPoint2", "jointPoint3"]
+    },
+    {
+        "name": "relativeSequence",
+        "stages": ["moveRelativeX", "moveRelativeY", "moveRelativeZ"]
+    },
+    {
+        "name": "mixedPointJoint",
+        "stages": ["coordPoint1", "jointPoint2", "coordPoint3"]
+    },
+    {
+        "name": "mixedPointRelative",
+        "stages": ["coordPoint1", "moveRelativeX", "coordPoint2"]
+    },
+    {
+        "name": "mixedJointPoint",
+        "stages": ["jointPoint1", "coordPoint2", "jointPoint3"]
+    },
+    {
+        "name": "mixedJointRelative",
+        "stages": ["jointPoint1", "moveRelativeY", "jointPoint2"]
+    },
+    {
+        "name": "mixedRelativePoint",
+        "stages": ["moveRelativeX", "coordPoint1", "moveRelativeY"]
+    },
+    {
+        "name": "mixedRelativeJoint",
+        "stages": ["moveRelativeY", "jointPoint1", "moveRelativeZ"]
+    },
+    {
+        "name": "allStageSequence",
+        "stages": ["home", "coordPoint1", "jointPoint1", "moveRelativeX", "coordPoint2", "jointPoint2", "moveRelativeY", "coordPoint3", "jointPoint3", "moveRelativeZ"]
+    }
+]

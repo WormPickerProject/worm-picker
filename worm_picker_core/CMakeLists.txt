@@ -104,6 +104,7 @@ add_worm_picker_executable(worm_picker_robot
     src/stages/move_to_point_data.cpp
     src/tasks/task_data.cpp
     src/common/coordinate.cpp
+    src/tools/parsers/defined_tasks_parser.cpp
   ARGS
     geometry_msgs
     moveit_core
