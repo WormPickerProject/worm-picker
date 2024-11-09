@@ -12,12 +12,17 @@
 class GenerateWorkstationPlacePlateTask : public BaseTaskGenerator 
 {
 public:
-    GenerateWorkstationPlacePlateTask(const std::unordered_map<std::string, WorkstationData>& workstation_map);
-
+    explicit GenerateWorkstationPlacePlateTask(const std::unordered_map<std::string, WorkstationData>& workstation_map);
     void generateTasks() override;
     const std::map<std::string, TaskData>& getTaskDataMap() const override;
 
 private:
+    std::pair<char, int> parseWorkstationName(const std::string& name) const;
+    std::string generateTaskName(char row_letter, int col_number) const;
+    std::vector<std::shared_ptr<StageData>> createStagesForTask(const WorkstationData& data, char row_letter) const;
+    Coordinate calculateDerivedPoint(const Coordinate& coord, char row_letter) const;
+    std::shared_ptr<StageData> createMoveToPointStage(const Coordinate& coord) const;
+
     const std::unordered_map<std::string, WorkstationData>& workstation_data_map_;
     std::map<std::string, TaskData> task_data_map_;
 };

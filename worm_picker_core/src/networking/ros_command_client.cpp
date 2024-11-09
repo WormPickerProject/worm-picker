@@ -10,24 +10,22 @@ RosCommandClient::RosCommandClient(int argc, char **argv)
     rclcpp::init(argc, argv);
     ros_node_instance_ = rclcpp::Node::make_shared("ros_command_client");
 
-    task_command_client_ = ros_node_instance_->create_client<
-        worm_picker_custom_msgs::srv::TaskCommand>("/task_command");
-    start_trajectory_mode_client_ = ros_node_instance_->create_client
-        <motoros2_interfaces::srv::StartTrajMode>("/start_traj_mode");
-    stop_trajectory_mode_client_ = ros_node_instance_->create_client<
-        std_srvs::srv::Trigger>("/stop_traj_mode");
+    task_command_client_ = ros_node_instance_->create_client<worm_picker_custom_msgs::srv::TaskCommand>("/task_command");
+    start_trajectory_mode_client_ = ros_node_instance_->create_client<motoros2_interfaces::srv::StartTrajMode>("/start_traj_mode");
+    stop_trajectory_mode_client_ = ros_node_instance_->create_client<std_srvs::srv::Trigger>("/stop_traj_mode");
 
     initializeSocketCommandHandlers();
 }
 
 void RosCommandClient::initializeSocketCommandHandlers() 
 {
-    auto self = shared_from_this();
+    // auto self = shared_from_this();
 
-    socket_command_function_map_["startWormPicker"] = [self](std::function<void(bool)> result_callback) { 
-        RCLCPP_INFO(self->ros_node_instance_->get_logger(), "Start robot command received. Starting robot.");
+    socket_command_function_map_["startWormPicker"] = [this](std::function<void(bool)> result_callback) { 
+        RCLCPP_INFO(ros_node_instance_->get_logger(), "Start robot command received. Starting robot.");
         auto start_request = std::make_shared<motoros2_interfaces::srv::StartTrajMode::Request>();
-        self->start_trajectory_mode_client_->async_send_request(
+        auto self = shared_from_this();
+        start_trajectory_mode_client_->async_send_request(
             start_request,
             [self, result_callback](
                 rclcpp::Client<motoros2_interfaces::srv::StartTrajMode>::SharedFuture start_future
@@ -78,8 +76,8 @@ void RosCommandClient::initializeSocketCommandHandlers()
     //     result_callback(true);
     // };
 
-    socket_command_function_map_["quit"] = [self](std::function<void(bool)> result_callback) { 
-        RCLCPP_INFO(self->ros_node_instance_->get_logger(), "Quit command received. Shutting down.");
+    socket_command_function_map_["quit"] = [this](std::function<void(bool)> result_callback) { 
+        RCLCPP_INFO(ros_node_instance_->get_logger(), "Quit command received. Shutting down.");
         rclcpp::shutdown();
         result_callback(true);
     };

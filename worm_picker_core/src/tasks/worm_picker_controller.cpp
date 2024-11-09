@@ -5,7 +5,7 @@
 
 #include "worm_picker_core/tasks/worm_picker_controller.hpp"
 
-WormPickerController::WormPickerController(const rclcpp::NodeOptions& options)
+WormPickerController::WormPickerController(const rclcpp::NodeOptions& options) 
     : worm_picker_node_{std::make_shared<rclcpp::Node>(NODE_NAME, options)},
       task_factory_{std::make_shared<TaskFactory>(worm_picker_node_)},
       timer_data_collector_{std::make_shared<TimerDataCollector>(TIMER_LOG_PATH)}
@@ -14,7 +14,7 @@ WormPickerController::WormPickerController(const rclcpp::NodeOptions& options)
     setupServicesAndActions();
 }
 
-void WormPickerController::declareParameters()
+void WormPickerController::declareParameters() 
 {
     const std::vector<std::pair<std::string, rclcpp::ParameterValue>> default_parameters{
         {"action_server_timeout_sec", rclcpp::ParameterValue(3)},

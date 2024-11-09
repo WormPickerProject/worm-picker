@@ -34,8 +34,7 @@ public:
      */
     MoveToPointData(double px, double py, double pz,
                     double ox, double oy, double oz, double ow,
-                    double velocity_scaling = 0.1,
-                    double acceleration_scaling = 0.1);
+                    double velocity_scaling = 0.1, double acceleration_scaling = 0.1);
     
     /**
      * @brief Creates a MoveIt stage based on the data.
