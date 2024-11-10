@@ -6,22 +6,21 @@
 #include <rclcpp/rclcpp.hpp>
 #include "worm_picker_core/tasks/generation/task_generator.hpp"
 
-TaskGenerator::TaskGenerator(const std::unordered_map<std::string, WorkstationData>& workstation_map,
-                             const std::unordered_map<std::string, HotelData>& hotel_map)
+TaskGenerator::TaskGenerator(const WorkstationMap& workstation_map, const HotelMap& hotel_map) 
+    : task_data_map_{ generateTasks(initializeGenerators(workstation_map, hotel_map)) } 
 {
-    auto generators = initializeGenerators(workstation_map, hotel_map);
-    generateAndAggregateTasks(generators);
 }
 
-const std::map<std::string, TaskData>& TaskGenerator::getGeneratedTaskPlans() const
+const TaskGenerator::TaskMap& TaskGenerator::getGeneratedTaskPlans() const 
 {
     return task_data_map_;
 }
 
-std::vector<std::unique_ptr<BaseTaskGenerator>> TaskGenerator::initializeGenerators(const std::unordered_map<std::string, WorkstationData>& workstation_map,
-                                                                                    const std::unordered_map<std::string, HotelData>& hotel_map) 
+TaskGenerator::GeneratorList TaskGenerator::initializeGenerators(
+    const WorkstationMap& workstation_map,
+    const HotelMap& hotel_map) 
 {
-    std::vector<std::unique_ptr<BaseTaskGenerator>> generators;
+    GeneratorList generators;
     generators.emplace_back(std::make_unique<GenerateWorkstationPickPlateTask>(workstation_map));
     generators.emplace_back(std::make_unique<GenerateWorkstationPlacePlateTask>(workstation_map));
     generators.emplace_back(std::make_unique<GenerateHotelPickPlateTask>(hotel_map));
@@ -29,11 +28,20 @@ std::vector<std::unique_ptr<BaseTaskGenerator>> TaskGenerator::initializeGenerat
     return generators;
 }
 
-void TaskGenerator::generateAndAggregateTasks(const std::vector<std::unique_ptr<BaseTaskGenerator>>& generators) 
+void TaskGenerator::aggregateTasksFromGenerator(TaskMap& task_map, const Generator& generator) 
 {
-    for (const auto& generator : generators) {
+    const auto& generated_tasks = generator->getTaskDataMap();
+    task_map.insert(generated_tasks.begin(), generated_tasks.end());
+}
+
+TaskGenerator::TaskMap TaskGenerator::generateTasks(const GeneratorList& generators) 
+{
+    TaskMap task_map;
+
+    std::ranges::for_each(generators, [&task_map](const auto& generator) {
         generator->generateTasks();
-        const auto& generated_tasks = generator->getTaskDataMap();
-        task_data_map_.insert(generated_tasks.begin(), generated_tasks.end());
-    }
+        aggregateTasksFromGenerator(task_map, generator);
+    });
+
+    return task_map;
 }
