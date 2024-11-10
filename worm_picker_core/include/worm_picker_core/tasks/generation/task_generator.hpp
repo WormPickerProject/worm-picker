@@ -19,18 +19,26 @@
 class TaskGenerator
 {
 public:
-    TaskGenerator(const std::unordered_map<std::string, WorkstationData>& workstation_data_map,
-                  const std::unordered_map<std::string, HotelData>& hotel_data_map);
+    using WorkstationMap = std::unordered_map<std::string, WorkstationData>;
+    using HotelMap = std::unordered_map<std::string, HotelData>;
+    using TaskMap = std::map<std::string, TaskData>;
 
-    const std::map<std::string, TaskData>& getGeneratedTaskPlans() const;
+    explicit TaskGenerator(const WorkstationMap& workstation_map, const HotelMap& hotel_map);
+
+    const TaskMap& getGeneratedTaskPlans() const;
 
 private:
-    std::vector<std::unique_ptr<BaseTaskGenerator>> initializeGenerators(const std::unordered_map<std::string, WorkstationData>& workstation_map,
-                                                                         const std::unordered_map<std::string, HotelData>& hotel_map);
-    
-    void generateAndAggregateTasks(const std::vector<std::unique_ptr<BaseTaskGenerator>>& generators); 
+    using Generator = std::unique_ptr<BaseTaskGenerator>;
+    using GeneratorList = std::vector<Generator>;
 
-    std::map<std::string, TaskData> task_data_map_;
+    static GeneratorList initializeGenerators(const WorkstationMap& workstation_map, 
+                                              const HotelMap& hotel_map);
+    
+    static void aggregateTasksFromGenerator(TaskMap& task_map, const Generator& generator);
+
+    static TaskMap generateTasks(const GeneratorList& generators); 
+
+    TaskMap task_data_map_;
 };
 
 #endif // TASK_GENERATOR_HPP
