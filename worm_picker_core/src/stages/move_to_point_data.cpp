@@ -28,6 +28,8 @@ MoveToPointData::MoveToPointData(double px, double py, double pz,
 std::unique_ptr<moveit::task_constructor::Stage> MoveToPointData::createStage(const std::string& name,
                                                                               const rclcpp::Node::SharedPtr& node) const
 {
+    const std::string current_end_effector = node->get_parameter("end_effector").as_string();
+
     geometry_msgs::msg::PoseStamped target_pose;
     target_pose.header.frame_id = "base_link";
     target_pose.header.stamp = node->now();
@@ -48,7 +50,7 @@ std::unique_ptr<moveit::task_constructor::Stage> MoveToPointData::createStage(co
     auto stage = std::make_unique<moveit::task_constructor::stages::MoveTo>(name, cartesian_planner);
     stage->setGoal(target_pose);
     stage->setGroup("gp4_arm");
-    stage->setIKFrame("eoat_tcp");
+    stage->setIKFrame(current_end_effector);
 
     moveit::task_constructor::TrajectoryExecutionInfo execution_info;
     execution_info.controller_names = {"follow_joint_trajectory"};
