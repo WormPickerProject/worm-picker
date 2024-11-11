@@ -59,7 +59,7 @@ def launch_setup(context, *args, **kwargs):
             pkg_worm_picker_moveit, "config", "ros2_controllers_sim.yaml"
         ),
         "rviz_config": os.path.join(
-            pkg_worm_picker_moveit, "rviz", "moveit_task_desktop.rviz"
+            pkg_worm_picker_moveit, "rviz", "wormpicker_config.rviz"
         ),
     }
 

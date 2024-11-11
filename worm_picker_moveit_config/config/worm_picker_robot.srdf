@@ -2,16 +2,14 @@
 <robot name="worm_picker_robot">
     <!-- Groups -->
     <group name="gp4_arm">
-        <joint name="joint_1"/>
-        <joint name="joint_2"/>
-        <joint name="joint_3"/>
-        <joint name="joint_4"/>
-        <joint name="joint_5"/>
-        <joint name="joint_6"/>
-        <joint name="joint_6-flange"/>
-        <joint name="flange-eoat"/>
-        <joint name="eoat-eoat_tcp"/>
+        <chain base_link="base_link" tip_link="flange"/>
     </group>
+
+    <!-- EOAT End Effector -->
+    <end_effector name="eoat" parent_link="flange" parent_group="gp4_arm" link="eoat_tcp"/>
+
+    <!-- Wormpick End Effector -->
+    <end_effector name="wormpick" parent_link="flange" parent_group="gp4_arm" link="wormpick_tcp"/>
 
     <!-- Group States -->
     <group_state name="all-zeros" group="gp4_arm">

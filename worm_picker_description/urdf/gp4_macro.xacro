@@ -153,20 +153,12 @@
     </joint>
     <!-- end of joint list -->
 
-    <!-- ROS-Industrial 'flange' frame -->
+    <!-- 'flange' frame -->
     <link name="${prefix}flange"/>
     <joint name="${prefix}joint_6-flange" type="fixed">
       <origin xyz="0.072 0 0" rpy="0 0 0"/>
       <parent link="${prefix}joint_6"/>
       <child link="${prefix}flange"/>
-    </joint>
-
-    <!-- ROS-Industrial 'tool0' frame -->
-    <link name="${prefix}tool0"/>
-    <joint name="${prefix}flange-tool0" type="fixed">
-      <origin xyz="0 0 0" rpy="${radians(180)} ${radians(-90)} 0"/>
-      <parent link="${prefix}flange"/>
-      <child link="${prefix}tool0"/>
     </joint>
 
     <!-- End Effector -->
@@ -199,6 +191,22 @@
       <origin xyz="0.079 0 -0.0925" rpy="${radians(0)} ${radians(-60.0)} ${radians(180)}"/>
       <parent link="${prefix}eoat"/>
       <child link="${prefix}eoat_tcp"/> 
+    </joint>
+
+    <!-- WORMPICK -->
+    <link name="${prefix}wormpick"/>
+    <joint name="${prefix}flange-wormpick" type="fixed">
+      <origin xyz="0 0 0" rpy="${radians(0)} ${radians(0)} ${radians(0)}"/>
+      <parent link="${prefix}flange"/>
+      <child link="${prefix}wormpick"/>
+    </joint>
+
+    <!-- WORMPICK TCP -->
+    <link name="${prefix}wormpick_tcp"/>
+    <joint name="${prefix}wormpick-${prefix}wormpick_tcp" type="fixed">
+      <origin xyz="-0.05 -0.15 0.00" rpy="${radians(-90.0)} ${radians(0.0)} ${radians(0.0)}"/>
+      <parent link="${prefix}wormpick"/>
+      <child link="${prefix}wormpick_tcp"/> 
     </joint>
     
     <!-- ROS base_link to Robot Manufacturer World Coordinates transform -->
