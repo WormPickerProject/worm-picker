@@ -27,7 +27,7 @@ MoveToJointData::MoveToJointData(double joint1, double joint2, double joint3,
 std::unique_ptr<moveit::task_constructor::Stage> MoveToJointData::createStage(const std::string& name,
                                                                               const rclcpp::Node::SharedPtr& node) const
 {
-    (void)node;  // Suppress unused parameter warning
+    const std::string current_end_effector = node->get_parameter("end_effector").as_string();
 
     auto joint_planner = std::make_shared<moveit::task_constructor::solvers::JointInterpolationPlanner>();
     joint_planner->setMaxVelocityScalingFactor(velocity_scaling_factor_);
@@ -36,7 +36,7 @@ std::unique_ptr<moveit::task_constructor::Stage> MoveToJointData::createStage(co
     auto stage = std::make_unique<moveit::task_constructor::stages::MoveTo>(name, joint_planner);
     stage->setGoal(joint_positions_);
     stage->setGroup("gp4_arm");
-    stage->setIKFrame("eoat_tcp");
+    stage->setIKFrame(current_end_effector);
 
     moveit::task_constructor::TrajectoryExecutionInfo execution_info;
     execution_info.controller_names = {"follow_joint_trajectory"};

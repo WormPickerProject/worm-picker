@@ -18,8 +18,10 @@ MoveRelativeData::MoveRelativeData(double delta_x, double delta_y, double delta_
 std::unique_ptr<moveit::task_constructor::Stage> MoveRelativeData::createStage(const std::string& name,
                                                                                const rclcpp::Node::SharedPtr& node) const
 {
+    const std::string current_end_effector = node->get_parameter("end_effector").as_string();
+
     geometry_msgs::msg::Vector3Stamped direction_vector;
-    direction_vector.header.frame_id = "eoat_tcp";
+    direction_vector.header.frame_id = current_end_effector;
     direction_vector.header.stamp = node->now();
     direction_vector.vector.x = dx_;
     direction_vector.vector.y = dy_;
@@ -34,7 +36,7 @@ std::unique_ptr<moveit::task_constructor::Stage> MoveRelativeData::createStage(c
     auto stage = std::make_unique<moveit::task_constructor::stages::MoveRelative>(name, cartesian_planner);
     stage->setDirection(direction_vector);
     stage->setGroup("gp4_arm");
-    stage->setIKFrame("eoat_tcp");
+    stage->setIKFrame(current_end_effector);
 
     moveit::task_constructor::TrajectoryExecutionInfo execution_info;
     execution_info.controller_names = {"follow_joint_trajectory"};
