@@ -7,105 +7,51 @@
 #include "worm_picker_core/tasks/generation/task_generator.hpp"
 #include "worm_picker_core/tools/parsers/defined_tasks_parser.hpp"
 
-TaskFactory::TaskFactory(const rclcpp::Node::SharedPtr& node) 
-    : worm_picker_node_(node) { 
-
+TaskFactory::TaskFactory(const NodePtr& node) 
+    : worm_picker_node_(node) 
+{ 
     if (!worm_picker_node_) {
-        throw TaskFactoryError(
+        throw TaskFactoryError{
             TaskFactoryError::ErrorCode::InvalidConfiguration,
             "TaskFactory initialization failed: worm_picker_node_ is null."
-        );
+        };
     }
 
-    declareParameters();
     initializeTaskMap();
 }
 
-void TaskFactory::declareParameters() 
-{
-    const std::vector<std::pair<std::string, rclcpp::ParameterValue>> default_parameters{
-        {"workstation_config_file", 
-         rclcpp::ParameterValue(std::string(CONFIG_PATH) + "/workstation_data.json")},
-        
-        {"hotel_config_file", 
-         rclcpp::ParameterValue(std::string(CONFIG_PATH) + "/hotel_data.json")}, 
-        
-        {"defined_stages_file", 
-         rclcpp::ParameterValue(std::string(CONFIG_PATH) + "/defined_stages.json")},
-        
-        {"defined_tasks_file", 
-         rclcpp::ParameterValue(std::string(CONFIG_PATH) + "/defined_tasks.json")}
-    };
-
-    for (const auto& [name, default_value] : default_parameters) {
-        worm_picker_node_->declare_parameter(name, default_value);
-    }
-}
-
-void TaskFactory::initializeTaskMap() 
-{
-    const std::string workstation_config_file = 
-        worm_picker_node_->get_parameter("workstation_config_file").as_string();
-    const std::string hotel_config_file = 
-        worm_picker_node_->get_parameter("hotel_config_file").as_string();
-    const std::string defined_stages_file = 
-        worm_picker_node_->get_parameter("defined_stages_file").as_string();
-    const std::string defined_tasks_file = 
-        worm_picker_node_->get_parameter("defined_tasks_file").as_string();
-
-    const WorkstationDataParser workstation_parser{workstation_config_file};
-    const auto workstation_data_map = workstation_parser.getWorkstationDataMap();
-
-    const HotelDataParser hotel_parser{hotel_config_file};
-    const auto hotel_data_map = hotel_parser.getHotelDataMap();
-
-    const DefinedTasksGenerator defined_tasks_parser{defined_stages_file, defined_tasks_file};
-    const auto defined_tasks_map = defined_tasks_parser.getDefinedTasksMap();
-
-    const TaskGenerator task_plans{workstation_data_map, hotel_data_map};
-    const auto generated_task_map = task_plans.getGeneratedTaskPlans();
-
-    task_data_map_.clear();
-    task_data_map_.insert(defined_tasks_map.begin(), defined_tasks_map.end());
-    task_data_map_.insert(generated_task_map.begin(), generated_task_map.end());
-
-    logTaskMap(); // Temporary function
-}
-
-moveit::task_constructor::Task TaskFactory::createTask(std::string_view command) 
+TaskFactory::Task TaskFactory::createTask(std::string_view command) 
 {
     if (!worm_picker_node_) {
-        throw TaskFactoryError(
+        throw TaskFactoryError{
             TaskFactoryError::ErrorCode::InvalidConfiguration,
             "TaskFactory::createTask failed: node_ is null."
-        );
+        };
     }
 
     auto task = createBaseTask(command);
-    
-    auto current_state_stage = std::make_unique<CurrentStateStage>("current");
-    task.add(std::move(current_state_stage));
+    task.add(std::make_unique<CurrentStateStage>("current"));
 
-    auto it = task_data_map_.find(std::string(command));
+    const auto it = task_data_map_.find(std::string{command});
     if (it == task_data_map_.end()) {
-        throw TaskFactoryError(
+        throw TaskFactoryError{
             TaskFactoryError::ErrorCode::TaskCreationFailed,
             fmt::format("Command '{}' not found", command)
-        );
+        };
     }
     
-    const TaskData& task_data = it->second;
-    int stage_counter = 1;
+    const auto& task_data = it->second;
+    int stage_counter{1};
 
     for (const auto& stage_ptr : task_data.getStages()) {
-        const std::string stage_name = fmt::format("stage_{}", stage_counter++);
+        const auto stage_name = fmt::format("stage_{}", stage_counter++);
         auto stage = stage_ptr->createStage(stage_name, worm_picker_node_);
 
         if (!stage) {
-            throw TaskFactoryError(
+            throw TaskFactoryError{
                 TaskFactoryError::ErrorCode::StageCreationFailed,
                 fmt::format("Failed to create stage: {}", stage_name)
-            );
+            };
         }
 
         task.add(std::move(stage));
@@ -114,13 +60,46 @@ moveit::task_constructor::Task TaskFactory::createTask(std::string_view command)
     return task;
 }
 
-moveit::task_constructor::Task TaskFactory::createBaseTask(std::string_view command) {
+void TaskFactory::initializeTaskMap() 
+{
+    const auto workstation_config_file = 
+        worm_picker_node_->get_parameter("workstation_config_file").as_string();
+    const auto hotel_config_file = 
+        worm_picker_node_->get_parameter("hotel_config_file").as_string();
+    const auto defined_stages_file = 
+        worm_picker_node_->get_parameter("defined_stages_file").as_string();
+    const auto defined_tasks_file = 
+        worm_picker_node_->get_parameter("defined_tasks_file").as_string();
+
+    const WorkstationDataParser workstation_parser{workstation_config_file};
+    const auto& workstation_data_map = workstation_parser.getWorkstationDataMap();
+
+    const HotelDataParser hotel_parser{hotel_config_file};
+    const auto& hotel_data_map = hotel_parser.getHotelDataMap();
+
+    const DefinedTasksGenerator defined_tasks_parser{defined_stages_file, defined_tasks_file};
+    const auto& defined_tasks_map = defined_tasks_parser.getDefinedTasksMap();
+
+    const TaskGenerator task_plans{workstation_data_map, hotel_data_map};
+    const auto& generated_task_map = task_plans.getGeneratedTaskPlans();
+
+    task_data_map_.clear();
+    task_data_map_.insert(defined_tasks_map.begin(), defined_tasks_map.end());
+    task_data_map_.insert(generated_task_map.begin(), generated_task_map.end());
+
+    logTaskMap(); // Temporary debug function
+}
+
+moveit::task_constructor::Task TaskFactory::createBaseTask(std::string_view command) 
+{
     Task task;
-    task.stages()->setName(std::string(command));
+    task.stages()->setName(std::string{command});
     task.loadRobotModel(worm_picker_node_);
     
     task.setProperty("group", "gp4_arm");
-    task.setProperty("ik_frame", "eoat_tcp");
+    const std::string current_end_effector = 
+        worm_picker_node_->get_parameter("end_effector").as_string();
+    task.setProperty("ik_frame", current_end_effector);
     
     TrajectoryExecutionInfo execution_info;
     execution_info.controller_names = {"follow_joint_trajectory"};
@@ -129,8 +108,7 @@ moveit::task_constructor::Task TaskFactory::createBaseTask(std::string_view comm
     return task;
 }
 
-// Temporary functions:
-void TaskFactory::logTaskMap() const 
+void TaskFactory::logTaskMap()
 {
     auto logger = rclcpp::get_logger("TaskFactory");
 
