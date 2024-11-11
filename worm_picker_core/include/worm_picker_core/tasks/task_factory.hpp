@@ -88,8 +88,8 @@ private:
     void logTaskMap();
  
     // Member Variables
-    NodePtr worm_picker_node_;     /// ROS 2 node for communication
-    TaskDataMap task_data_map_;    /// Map of task commands to task data
+    NodePtr worm_picker_node_;     ///< ROS 2 node for communication
+    TaskDataMap task_data_map_;    ///< Map of task commands to task data
 };
 
 #endif // TASK_FACTORY_HPP
