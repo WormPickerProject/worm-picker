@@ -37,15 +37,15 @@ TaskManager::TaskExecutionStatus TaskManager::executeTask(std::string_view comma
     }
 
     TimerResults timer_results;
-    Task current_task;
+    Task task;
 
     {
         ExecutionTimer create_timer{"Create Task Timer"};
-        current_task = task_factory_->createTask(command);
+        task = task_factory_->createTask(command);
         timer_results.emplace_back(create_timer.getName(), create_timer.stop());
     }
 
-    const auto status = performTask(current_task, command, timer_results);
+    const auto status = performTask(task, command, timer_results);
     timer_data_collector_->recordTimerData(std::string(command), timer_results);
     
     return status;
