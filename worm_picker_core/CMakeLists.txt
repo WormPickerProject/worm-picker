@@ -89,7 +89,7 @@ endfunction()
 add_worm_picker_executable(worm_picker_robot
   SOURCES
     src/tasks/task_factory.cpp
-    src/tasks/worm_picker_controller.cpp
+    # src/tasks/worm_picker_controller.cpp
     src/tools/parsers/workstation_data_parser.cpp
     src/tools/parsers/hotel_data_parser.cpp
     src/tools/timing/execution_timer.cpp
@@ -99,12 +99,18 @@ add_worm_picker_executable(worm_picker_robot
     src/tasks/generation/generate_hotel_place_plate_task.cpp
     src/tasks/generation/generate_workstation_pick_plate_task.cpp
     src/tasks/generation/generate_workstation_place_plate_task.cpp
+    src/tasks/generation/generate_hover_worm_pick_task.cpp
     src/stages/move_relative_data.cpp
     src/stages/move_to_joint_data.cpp
     src/stages/move_to_point_data.cpp
     src/tasks/task_data.cpp
     src/common/coordinate.cpp
     src/tools/parsers/defined_tasks_parser.cpp
+    src/tasks/controllers/parameter_manager.cpp
+    src/tasks/controllers/task_manager.cpp
+    src/tasks/controllers/action_client_manager.cpp
+    src/tasks/controllers/service_handler.cpp
+    src/tasks/controllers/worm_picker_controller.cpp
   ARGS
     geometry_msgs
     moveit_core

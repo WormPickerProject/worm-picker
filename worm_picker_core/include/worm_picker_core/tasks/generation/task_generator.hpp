@@ -15,6 +15,7 @@
 #include "worm_picker_core/tasks/generation/generate_workstation_place_plate_task.hpp"
 #include "worm_picker_core/tasks/generation/generate_hotel_pick_plate_task.hpp"
 #include "worm_picker_core/tasks/generation/generate_hotel_place_plate_task.hpp"
+#include "worm_picker_core/tasks/generation/generate_hover_worm_pick_task.hpp"
 
 class TaskGenerator
 {
