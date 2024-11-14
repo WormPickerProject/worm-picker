@@ -8,9 +8,6 @@
 TimerDataCollector::TimerDataCollector(const NodePtr& node)
     : data_(nlohmann::json::array())
 {
-    if (!node) {
-        throw std::invalid_argument("Node pointer cannot be null");
-    }
     initializeOutputDirectory(node);
 }
 
@@ -57,7 +54,7 @@ void TimerDataCollector::recordTimerData(const std::string& command_name,
 void TimerDataCollector::saveDataToFile() const
 {
     std::lock_guard<std::mutex> lock(data_mutex_);
-    const auto file_path = output_path_ / "/timer_data.json";
+    const std::filesystem::path file_path(output_path_.string() + "/timer_data.json");
 
     std::ofstream file(file_path);
     if (!file) {
