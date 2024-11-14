@@ -52,6 +52,18 @@
         "stages": ["moveRelativeZ"]
     },
     {
+        "name": "X",
+        "stages": ["moveRelativeX"]
+    },
+    {
+        "name": "Y",
+        "stages": ["moveRelativeY"]
+    },
+    {
+        "name": "Z",
+        "stages": ["moveRelativeZ"]
+    },
+    {
         "name": "pointSequence",
         "stages": ["coordPoint1", "coordPoint2", "coordPoint3"]
     },

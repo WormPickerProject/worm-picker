@@ -23,6 +23,7 @@ TaskGenerator::GeneratorList TaskGenerator::initializeGenerators(
     GeneratorList generators;
     generators.emplace_back(std::make_unique<GenerateWorkstationPickPlateTask>(workstation_map));
     generators.emplace_back(std::make_unique<GenerateWorkstationPlacePlateTask>(workstation_map));
+    generators.emplace_back(std::make_unique<GenerateHoverWormPickTask>(workstation_map));
     generators.emplace_back(std::make_unique<GenerateHotelPickPlateTask>(hotel_map));
     generators.emplace_back(std::make_unique<GenerateHotelPlacePlateTask>(hotel_map));
     return generators;

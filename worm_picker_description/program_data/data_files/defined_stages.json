@@ -72,21 +72,21 @@
     {
         "name": "moveRelativeX",
         "type": "RELATIVE",
-        "parameters": [0.1, 0.0, 0.0],
+        "parameters": [0.0005, 0.0, 0.0],
         "velocity_scaling": 0.1,
         "acceleration_scaling": 0.1
     },
     {
         "name": "moveRelativeY",
         "type": "RELATIVE",
-        "parameters": [0.0, 0.1, 0.0],
+        "parameters": [0.0, 0.0005, 0.0],
         "velocity_scaling": 0.1,
         "acceleration_scaling": 0.1
     },
     {
         "name": "moveRelativeZ",
         "type": "RELATIVE",
-        "parameters": [0.0, 0.0, 0.1],
+        "parameters": [0.0, 0.0, 0.0005],
         "velocity_scaling": 0.1,
         "acceleration_scaling": 0.1
     }
