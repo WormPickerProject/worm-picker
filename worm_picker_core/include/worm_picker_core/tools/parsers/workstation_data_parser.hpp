@@ -10,7 +10,7 @@
 #include <unordered_map>
 #include <nlohmann/json.hpp>
 #include <stdexcept>
-#include "worm_picker_core/common/coordinate.hpp"
+#include "worm_picker_core/common/data_types/workstation_data.hpp"
 
 /**
  * @brief Class responsible for parsing workstation data from a JSON file.

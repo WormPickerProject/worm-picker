@@ -3,13 +3,10 @@
 // Copyright (c) 2024
 // SPDX-License-Identifier: Apache-2.0
 
-#include <rclcpp/rclcpp.hpp>
 #include "worm_picker_core/tasks/generation/task_generator.hpp"
 
 TaskGenerator::TaskGenerator(const WorkstationMap& workstation_map, const HotelMap& hotel_map) 
-    : task_data_map_{ generateTasks(initializeGenerators(workstation_map, hotel_map)) } 
-{
-}
+    : task_data_map_{ generateTasks(initializeGenerators(workstation_map, hotel_map)) } {}
 
 const TaskGenerator::TaskMap& TaskGenerator::getGeneratedTaskPlans() const 
 {
@@ -18,18 +15,29 @@ const TaskGenerator::TaskMap& TaskGenerator::getGeneratedTaskPlans() const
 
 TaskGenerator::GeneratorList TaskGenerator::initializeGenerators(
     const WorkstationMap& workstation_map,
-    const HotelMap& hotel_map) 
+    const HotelMap& hotel_map)
 {
     GeneratorList generators;
-    generators.emplace_back(std::make_unique<GenerateWorkstationPickPlateTask>(workstation_map));
-    generators.emplace_back(std::make_unique<GenerateWorkstationPlacePlateTask>(workstation_map));
-    generators.emplace_back(std::make_unique<GenerateHoverWormPickTask>(workstation_map));
-    generators.emplace_back(std::make_unique<GenerateHotelPickPlateTask>(hotel_map));
-    generators.emplace_back(std::make_unique<GenerateHotelPlacePlateTask>(hotel_map));
+
+    generators.emplace_back(std::make_unique<GenerateWorkstationTaskGenerator>(
+        workstation_map, GenerateWorkstationTaskGenerator::TaskType::PickPlate));
+
+    generators.emplace_back(std::make_unique<GenerateWorkstationTaskGenerator>(
+        workstation_map, GenerateWorkstationTaskGenerator::TaskType::PlacePlate));
+
+    generators.emplace_back(std::make_unique<GenerateWorkstationTaskGenerator>(
+        workstation_map, GenerateWorkstationTaskGenerator::TaskType::HoverWormPick));
+
+    generators.emplace_back(std::make_unique<GenerateHotelTaskGenerator>(
+        hotel_map, GenerateHotelTaskGenerator::TaskType::PickPlate));
+
+    generators.emplace_back(std::make_unique<GenerateHotelTaskGenerator>(
+        hotel_map, GenerateHotelTaskGenerator::TaskType::PlacePlate));
+
     return generators;
 }
 
-void TaskGenerator::aggregateTasksFromGenerator(TaskMap& task_map, const Generator& generator) 
+void TaskGenerator::aggregateTasksFromGenerator(TaskMap& task_map, const GeneratorPtr& generator)
 {
     const auto& generated_tasks = generator->getTaskDataMap();
     task_map.insert(generated_tasks.begin(), generated_tasks.end());
