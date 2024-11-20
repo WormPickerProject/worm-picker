@@ -67,12 +67,12 @@ void TaskFactory::initializeTaskMap()
     const auto& hotel_data_map = hotel_parser.getHotelDataMap();
 
     const DefinedTasksGenerator defined_tasks_parser{defined_stages_file, defined_tasks_file};
-    const auto& defined_tasks_map = defined_tasks_parser.getDefinedTasksMap();
+    // const auto& defined_tasks_map = defined_tasks_parser.getDefinedTasksMap();
 
     const TaskGenerator task_plans{workstation_data_map, hotel_data_map};
     const auto& generated_task_map = task_plans.getGeneratedTaskPlans();
 
-    task_data_map_.insert(defined_tasks_map.begin(), defined_tasks_map.end());
+    // task_data_map_.insert(defined_tasks_map.begin(), defined_tasks_map.end());
     task_data_map_.insert(generated_task_map.begin(), generated_task_map.end());
 
     logTaskMap(); // Temporary debug function
