@@ -13,7 +13,7 @@ TaskData GenerateRelativeMovementTask::parseCommand(std::string_view command)
     
     return TaskData{
         std::vector<std::shared_ptr<StageData>>{
-            std::make_shared<MoveRelativeData>(x, y, z)
+            std::make_shared<MoveRelativeData>(x, y, z, 1.0, 1.0)
         }
     };
 }
