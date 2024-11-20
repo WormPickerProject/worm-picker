@@ -72,14 +72,13 @@ void TaskFactory::initializeTaskMap()
     const TaskGenerator task_plans{workstation_data_map, hotel_data_map};
     const auto& generated_task_map = task_plans.getGeneratedTaskPlans();
 
-    task_data_map_.clear();
     task_data_map_.insert(defined_tasks_map.begin(), defined_tasks_map.end());
     task_data_map_.insert(generated_task_map.begin(), generated_task_map.end());
 
     logTaskMap(); // Temporary debug function
 }
 
-moveit::task_constructor::Task TaskFactory::createBaseTask(std::string_view command) 
+TaskFactory::Task TaskFactory::createBaseTask(std::string_view command) 
 {
     Task task;
     task.stages()->setName(std::string{command});

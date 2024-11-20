@@ -23,7 +23,7 @@ void GenerateHoverWormPickTask::generateTasks()
     }
 }
 
-const std::map<std::string, TaskData>& GenerateHoverWormPickTask::getTaskDataMap() const 
+const std::unordered_map<std::string, TaskData>& GenerateHoverWormPickTask::getTaskDataMap() const 
 {
     return task_data_map_;
 }

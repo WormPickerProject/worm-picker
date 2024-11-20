@@ -23,7 +23,7 @@ void GenerateWorkstationPlacePlateTask::generateTasks()
     }
 }
 
-const std::map<std::string, TaskData>& GenerateWorkstationPlacePlateTask::getTaskDataMap() const 
+const std::unordered_map<std::string, TaskData>& GenerateWorkstationPlacePlateTask::getTaskDataMap() const 
 {
     return task_data_map_;
 }

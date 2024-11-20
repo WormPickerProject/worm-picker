@@ -15,7 +15,7 @@ class GenerateHoverWormPickTask : public BaseTaskGenerator
 public:
     explicit GenerateHoverWormPickTask(const std::unordered_map<std::string, WorkstationData>& workstation_map);
     void generateTasks() override;
-    const std::map<std::string, TaskData>& getTaskDataMap() const override;
+    const std::unordered_map<std::string, TaskData>& getTaskDataMap() const override;
 
 private:
     std::pair<char, int> parseWorkstationName(const std::string& name) const;
@@ -25,7 +25,7 @@ private:
     std::shared_ptr<StageData> createMoveToPointStage(const Coordinate& coord) const;
 
     const std::unordered_map<std::string, WorkstationData>& workstation_data_map_;
-    std::map<std::string, TaskData> task_data_map_;
+    std::unordered_map<std::string, TaskData> task_data_map_;
 };
 
 #endif // GENERATE_HOVER_WORM_PICK_TASK_HPP

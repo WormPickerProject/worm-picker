@@ -15,11 +15,11 @@ public:
     GenerateHotelPickPlateTask(const std::unordered_map<std::string, HotelData>& hotel_map);
 
     void generateTasks() override;
-    const std::map<std::string, TaskData>& getTaskDataMap() const override;
+    const std::unordered_map<std::string, TaskData>& getTaskDataMap() const override;
 
 private:
     const std::unordered_map<std::string, HotelData>& hotel_data_map_;
-    std::map<std::string, TaskData> task_data_map_;
+    std::unordered_map<std::string, TaskData> task_data_map_;
 };
 
 #endif // GENERATE_HOTEL_PICK_PLATE_TASK_HPP

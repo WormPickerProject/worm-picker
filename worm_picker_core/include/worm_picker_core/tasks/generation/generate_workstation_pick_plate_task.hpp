@@ -37,7 +37,7 @@ public:
      * @brief Retrieves the map of generated task data.
      * @return A constant reference to the map containing task names and their associated data.
      */
-    const std::map<std::string, TaskData>& getTaskDataMap() const override;
+    const std::unordered_map<std::string, TaskData>& getTaskDataMap() const override;
 
 private:
     /** 
@@ -79,7 +79,7 @@ private:
     std::shared_ptr<StageData> createMoveToPointStage(const Coordinate& coord) const;
 
     std::unordered_map<std::string, WorkstationData> workstation_data_map_; ///< Map of workstation names to their corresponding data.
-    std::map<std::string, TaskData> task_data_map_; ///< Map of generated task names to their corresponding task data.
+    std::unordered_map<std::string, TaskData> task_data_map_; ///< Map of generated task names to their corresponding task data.
 };
 
 #endif // GENERATE_WORKSTATION_PICK_PLATE_TASK_HPP

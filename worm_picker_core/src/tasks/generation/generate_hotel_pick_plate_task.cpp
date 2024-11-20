@@ -15,7 +15,7 @@ void GenerateHotelPickPlateTask::generateTasks()
     // Implement task generation logic for hotel pick plate tasks
 }
 
-const std::map<std::string, TaskData>& GenerateHotelPickPlateTask::getTaskDataMap() const
+const std::unordered_map<std::string, TaskData>& GenerateHotelPickPlateTask::getTaskDataMap() const
 {
     return task_data_map_;
 }

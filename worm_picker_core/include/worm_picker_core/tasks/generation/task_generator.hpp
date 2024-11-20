@@ -22,7 +22,7 @@ class TaskGenerator
 public:
     using WorkstationMap = std::unordered_map<std::string, WorkstationData>;
     using HotelMap = std::unordered_map<std::string, HotelData>;
-    using TaskMap = std::map<std::string, TaskData>;
+    using TaskMap = std::unordered_map<std::string, TaskData>;
 
     explicit TaskGenerator(const WorkstationMap& workstation_map, const HotelMap& hotel_map);
 
