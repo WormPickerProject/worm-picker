@@ -29,7 +29,7 @@ public:
      * @brief Retrieves the generated task data map.
      * @return Const reference to the task data map.
      */
-    virtual const std::map<std::string, TaskData>& getTaskDataMap() const = 0;
+    virtual const std::unordered_map<std::string, TaskData>& getTaskDataMap() const = 0;
 };
 
 #endif // BASE_TASK_GENERATOR_HPP

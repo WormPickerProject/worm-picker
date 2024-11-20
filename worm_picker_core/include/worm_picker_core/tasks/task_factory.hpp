@@ -64,7 +64,7 @@ private:
     // Private Type Aliases
     using CurrentStateStage = moveit::task_constructor::stages::CurrentState;
     using TrajectoryExecutionInfo = moveit::task_constructor::TrajectoryExecutionInfo;
-    using TaskDataMap = std::map<std::string, TaskData>;
+    using TaskDataMap = std::unordered_map<std::string, TaskData>;
 
     /**
      * @brief Initializes and populates the task map with predefined stages and tasks
