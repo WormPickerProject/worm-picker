@@ -6,15 +6,13 @@
 #include "worm_picker_core/tasks/task_factory.hpp"
 #include "worm_picker_core/tasks/generation/task_generator.hpp"
 #include "worm_picker_core/tools/parsers/defined_tasks_parser.hpp"
+#include "worm_picker_core/tasks/generation/generate_relative_movement_task.hpp"
 
 TaskFactory::TaskFactory(const NodePtr& node) 
     : worm_picker_node_(node) 
 { 
     if (!worm_picker_node_) {
-        throw TaskFactoryError{
-            TaskFactoryError::ErrorCode::InvalidConfiguration,
-            "TaskFactory initialization failed: worm_picker_node_ is null."
-        };
+        throw std::runtime_error("TaskFactory initialization failed: worm_picker_node_ is null.");
     }
 
     initializeTaskMap();
@@ -22,38 +20,29 @@ TaskFactory::TaskFactory(const NodePtr& node)
 
 TaskFactory::Task TaskFactory::createTask(std::string_view command) 
 {
-    if (!worm_picker_node_) {
-        throw TaskFactoryError{
-            TaskFactoryError::ErrorCode::InvalidConfiguration,
-            "TaskFactory::createTask failed: node_ is null."
-        };
-    }
-
     auto task = createBaseTask(command);
     task.add(std::make_unique<CurrentStateStage>("current"));
 
-    const auto it = task_data_map_.find(std::string{command});
-    if (it == task_data_map_.end()) {
-        throw TaskFactoryError{
-            TaskFactoryError::ErrorCode::TaskCreationFailed,
-            fmt::format("Command '{}' not found", command)
-        };
-    }
-    
-    const auto& task_data = it->second;
-    int stage_counter{1};
+    const TaskData task_data = [&] {
+        if (command.starts_with("moveRelative:")) {
+            return GenerateRelativeMovementTask::parseCommand(command);
+        }
+        
+        auto it = task_data_map_.find(std::string{command});
+        if (it == task_data_map_.end()) {
+            throw std::invalid_argument(fmt::format("Command '{}' not found", command));
+        }
+        return it->second;
+    }();
 
+    int stage_counter{1};
     for (const auto& stage_ptr : task_data.getStages()) {
         const auto stage_name = fmt::format("stage_{}", stage_counter++);
         auto stage = stage_ptr->createStage(stage_name, worm_picker_node_);
 
         if (!stage) {
-            throw TaskFactoryError{
-                TaskFactoryError::ErrorCode::StageCreationFailed,
-                fmt::format("Failed to create stage: {}", stage_name)
-            };
+            throw std::runtime_error(fmt::format("Failed to create stage: {}", stage_name));
         }
-
         task.add(std::move(stage));
     }
 

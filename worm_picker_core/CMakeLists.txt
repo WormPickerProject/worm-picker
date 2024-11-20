@@ -111,6 +111,7 @@ add_worm_picker_executable(worm_picker_robot
     src/tasks/controllers/action_client_manager.cpp
     src/tasks/controllers/service_handler.cpp
     src/tasks/controllers/worm_picker_controller.cpp
+    src/tasks/generation/generate_relative_movement_task.cpp
   ARGS
     geometry_msgs
     moveit_core
