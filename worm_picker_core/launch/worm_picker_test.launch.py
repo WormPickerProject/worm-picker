@@ -122,6 +122,7 @@ def launch_setup(context, *args, **kwargs):
                 moveit_config.robot_description_semantic,
                 moveit_config.planning_pipelines,
                 moveit_config.robot_description_kinematics,
+                moveit_config.joint_limits,
             ],
         ),
         # Static TF Publisher
@@ -166,7 +167,7 @@ def launch_setup(context, *args, **kwargs):
             condition=IfCondition(use_sim),
             package="controller_manager",
             executable="spawner",
-            arguments=["joint_trajectory_controller", "--controller-manager", "/controller_manager"],
+            arguments=["follow_joint_trajectory", "--controller-manager", "/controller_manager"],
             output="screen",
         ),
         # Worm Picker Robot Node

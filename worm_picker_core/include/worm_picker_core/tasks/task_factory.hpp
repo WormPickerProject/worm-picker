@@ -86,6 +86,7 @@ private:
      * @brief Logs the current task map (temporary debug function)
      */
     void logTaskMap();
+    void logCreatedTask(const std::string_view& command, const TaskData& task_data);
  
     // Member Variables
     NodePtr worm_picker_node_;     ///< ROS 2 node for communication
