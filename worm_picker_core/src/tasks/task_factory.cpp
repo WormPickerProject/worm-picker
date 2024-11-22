@@ -46,6 +46,7 @@ TaskFactory::Task TaskFactory::createTask(std::string_view command)
         task.add(std::move(stage));
     }
 
+    logCreatedTask(command, task_data);
     return task;
 }
 
@@ -199,5 +200,103 @@ void TaskFactory::logTaskMap()
         RCLCPP_INFO(logger, "*");
     }
 
+    RCLCPP_INFO(logger, "*****************************************************************************");
+}
+
+void TaskFactory::logCreatedTask(const std::string_view& command, const TaskData& task_data)
+{
+    auto logger = rclcpp::get_logger("TaskFactory");
+
+    RCLCPP_INFO(logger, "*****************************************************************************");
+    RCLCPP_INFO(logger, "* Created Task: '%s'", std::string{command}.c_str());
+
+    int stage_number = 1;
+    for (const auto& stage_ptr : task_data.getStages()) {
+        StageType stage_type = stage_ptr->getType();
+        std::string stage_type_str;
+
+        switch (stage_type) {
+            case StageType::MOVE_TO_POINT: stage_type_str = "MOVE_TO_POINT"; break;
+            case StageType::MOVE_TO_JOINT: stage_type_str = "MOVE_TO_JOINT"; break;
+            case StageType::MOVE_RELATIVE: stage_type_str = "MOVE_RELATIVE"; break;
+            default: stage_type_str = "UNKNOWN"; break;
+        }
+
+        auto formatNumber = [](double value) -> std::string {
+            char buffer[16];
+            snprintf(buffer, sizeof(buffer), "%s%0.2f", (value >= 0 ? " " : ""), value);
+            return std::string(buffer);
+        };
+
+        auto formatVelAcc = [](double value) -> std::string {
+            char buffer[16];
+            snprintf(buffer, sizeof(buffer), "%.2f", value);
+            return std::string(buffer);
+        };
+
+        int stage_num_len = std::to_string(stage_number).length();
+        std::string continuation_indent(28 + (stage_num_len - 1), ' ');
+
+        if (stage_type == StageType::MOVE_TO_POINT) {
+            auto move_to_point_data = std::dynamic_pointer_cast<MoveToPointData>(stage_ptr);
+            if (move_to_point_data) {
+                RCLCPP_INFO(logger, "*   [Stage %d] %s: Pos(%s, %s, %s)", 
+                    stage_number,
+                    stage_type_str.c_str(),
+                    formatNumber(move_to_point_data->getX()).c_str(),
+                    formatNumber(move_to_point_data->getY()).c_str(),
+                    formatNumber(move_to_point_data->getZ()).c_str());
+                RCLCPP_INFO(logger, "*%sOri(%s, %s, %s, %s)",
+                    continuation_indent.c_str(),
+                    formatNumber(move_to_point_data->getQX()).c_str(),
+                    formatNumber(move_to_point_data->getQY()).c_str(),
+                    formatNumber(move_to_point_data->getQZ()).c_str(),
+                    formatNumber(move_to_point_data->getQW()).c_str());
+                RCLCPP_INFO(logger, "*%sVel: %s; Acc: %s",
+                    continuation_indent.c_str(),
+                    formatVelAcc(move_to_point_data->getVelocityScalingFactor()).c_str(),
+                    formatVelAcc(move_to_point_data->getAccelerationScalingFactor()).c_str());
+            }
+        } else if (stage_type == StageType::MOVE_TO_JOINT) {
+            auto move_to_joint_data = std::dynamic_pointer_cast<MoveToJointData>(stage_ptr);
+            if (move_to_joint_data) {
+                std::stringstream joints_ss;
+                joints_ss << "Joints(";
+                bool first = true;
+                for (const auto& joint_entry : move_to_joint_data->getJointPositions()) {
+                    if (!first) joints_ss << ", ";
+                    joints_ss << formatNumber(joint_entry.second);
+                    first = false;
+                }
+                joints_ss << ")";
+                
+                RCLCPP_INFO(logger, "*   [Stage %d] %s: %s",
+                    stage_number,
+                    stage_type_str.c_str(),
+                    joints_ss.str().c_str());
+                RCLCPP_INFO(logger, "*%sVel: %s; Acc: %s",
+                    continuation_indent.c_str(),
+                    formatVelAcc(move_to_joint_data->getVelocityScalingFactor()).c_str(),
+                    formatVelAcc(move_to_joint_data->getAccelerationScalingFactor()).c_str());
+            }
+        } else if (stage_type == StageType::MOVE_RELATIVE) {
+            auto move_relative_data = std::dynamic_pointer_cast<MoveRelativeData>(stage_ptr);
+            if (move_relative_data) {
+                RCLCPP_INFO(logger, "*   [Stage %d] %s: Delta(%s, %s, %s)",
+                    stage_number,
+                    stage_type_str.c_str(),
+                    formatNumber(move_relative_data->getDX()).c_str(),
+                    formatNumber(move_relative_data->getDY()).c_str(),
+                    formatNumber(move_relative_data->getDZ()).c_str());
+                RCLCPP_INFO(logger, "*%sVel: %s; Acc: %s",
+                    continuation_indent.c_str(),
+                    formatVelAcc(move_relative_data->getVelocityScalingFactor()).c_str(),
+                    formatVelAcc(move_relative_data->getAccelerationScalingFactor()).c_str());
+            }
+        }
+
+        stage_number++;
+    }
+    
     RCLCPP_INFO(logger, "*****************************************************************************");
 }

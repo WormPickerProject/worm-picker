@@ -88,8 +88,9 @@ private:
 };
 
 // Helper function to create and use the analyzer
-inline void outputTaskDetails(const moveit::task_constructor::Task& task,
-                            const std::shared_ptr<rclcpp::Node>& node) {
+inline void outputTaskDetails(const moveit::task_constructor::Task& task, 
+                              const std::shared_ptr<rclcpp::Node>& node) 
+{
     TaskAnalyzer analyzer(node);
     analyzer.analyzeTask(task);
 }
