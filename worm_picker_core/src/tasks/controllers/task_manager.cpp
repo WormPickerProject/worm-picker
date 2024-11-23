@@ -10,8 +10,6 @@
 #include "worm_picker_core/tasks/controllers/task_manager.hpp"
 #include "worm_picker_core/tools/timing/execution_timer.hpp"
 
-#include "worm_picker_core/tools/task_output.hpp" // Temp 
-
 TaskManager::TaskManager(const NodePtr& node,
                          const TaskFactoryPtr& task_factory,
                          const TimerDataCollectorPtr& timer_data_collector)
@@ -66,7 +64,6 @@ TaskManager::TaskExecutionStatus TaskManager::performTask(Task& task,
         if (!task.plan(planning_attempts)) {
             return TaskExecutionStatus::PlanningFailed;
         }
-        task_output::outputTaskDetails(task, node_); //Temp
         timer_results.emplace_back(plan_timer.getName(), plan_timer.stop());
     }
 

@@ -4,162 +4,135 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "worm_picker_core/calibration/plate_calibration.hpp"
-#include <cmath>
 
-PlateCalibration::Point::Point(
-    double joint1, double joint2, double joint3, double joint4, double joint5, double joint6)
+PlateCalibration::PlateCalibration(const rclcpp::NodeOptions& options) 
+    : node_{std::make_shared<rclcpp::Node>("calibration_node", options)}
 {
-    const double deg_to_rad = M_PI / 180.0;
-
-    joint_positions["joint_1"] = joint1 * deg_to_rad;
-    joint_positions["joint_2"] = joint2 * deg_to_rad;
-    joint_positions["joint_3"] = joint3 * deg_to_rad;
-    joint_positions["joint_4"] = joint4 * deg_to_rad;
-    joint_positions["joint_5"] = joint5 * deg_to_rad;
-    joint_positions["joint_6"] = joint6 * deg_to_rad;
+    declareParameters();
+    initializeCalibrationPoints();
+    setupServices();
 }
 
-PlateCalibration::PlateCalibration(int argc, char **argv) 
-    : calibration_active_(true)
+void PlateCalibration::initializeCalibrationPoints() 
 {
-    rclcpp::init(argc, argv);
-    
-    rclcpp::NodeOptions options;
-    options.automatically_declare_parameters_from_overrides(true);
-
-    calibration_node_ = std::make_shared<rclcpp::Node>("calibration_node", options);
-
     points_ = {
         {0.00, 58.23, 59.02, 0.00, -30.35, -0.01},
         {-24.59, 42.54, 32.44, 0.01, -19.48, -0.02},
         {24.81, 42.54, 32.45, 0.01, -19.48, -0.02},
         {0.00, 0.00, 0.00, 0.00, 0.00, 0.00}
     };
-
     current_point_it_ = points_.begin();
-
-    setupServices();
 }
 
 void PlateCalibration::setupServices() 
 {
-    task_execution_client_ = rclcpp_action::create_client<
-        moveit_task_constructor_msgs::action::ExecuteTaskSolution>(
-            calibration_node_, 
-            "/execute_task_solution"
-    );
-    
-    task_execution_client_->wait_for_action_server(
-        std::chrono::seconds(10)
+    action_client_ = rclcpp_action::create_client<ExecTaskSolutionAction>(
+        node_, "/execute_task_solution"
     );
 
-    task_command_service_ = calibration_node_->create_service<
-        worm_picker_custom_msgs::srv::TaskCommand>(
-            "/task_command", 
-            [this](
-                const std::shared_ptr<worm_picker_custom_msgs::srv::TaskCommand::Request> request, 
-                std::shared_ptr<worm_picker_custom_msgs::srv::TaskCommand::Response> response
-            ) {
-                handleUserInput(request, response);
-            }
+    wait_thread_ = std::jthread{[this] { waitForServer(); }};
+
+    task_command_service_ = node_->create_service<TaskCommandService>(
+        "/task_command",
+        [this](const std::shared_ptr<const TaskCommandRequest>& request,
+               const std::shared_ptr<TaskCommandResponse>& response) {
+            handleUserInput(request, response);
+        }
     );
 }
 
-void PlateCalibration::createMoveToPlateTask(const Point& point, 
-                                             double velocity_scaling_factor, 
-                                             double acceleration_scaling_factor) 
+void PlateCalibration::waitForServer() 
 {
-    moveit::task_constructor::Task current_task;
-
-    current_task.stages()->setName("plate");
-
-    current_task.loadRobotModel(calibration_node_);
-
-    const std::string arm_group_name = "gp4_arm";
-    current_task.setProperty("group", arm_group_name);
-
-    const std::string controller_name = "follow_joint_trajectory";
-    moveit::task_constructor::TrajectoryExecutionInfo exec_info;
-    exec_info.controller_names = {controller_name};
-    current_task.setProperty("trajectory_execution_info", exec_info);
-
-    auto current_state_stage = std::make_unique<
-        moveit::task_constructor::stages::CurrentState>("current");
-    current_task.add(std::move(current_state_stage));
-
-    auto joint_interpolation_planner = std::make_shared<
-        moveit::task_constructor::solvers::JointInterpolationPlanner>();
-    joint_interpolation_planner->setMaxVelocityScalingFactor(velocity_scaling_factor);
-    joint_interpolation_planner->setMaxAccelerationScalingFactor(acceleration_scaling_factor);
-    
-    auto stage = std::make_unique<
-        moveit::task_constructor::stages::MoveTo>("move_to_target", joint_interpolation_planner);
-    stage->setGoal(point.joint_positions);
-    stage->setGroup(arm_group_name);
-    stage->setIKFrame("eoat_tcp");
-    stage->setProperty("trajectory_execution_info", exec_info);
-
-    current_task.add(std::move(stage));
-
-    executeCurrentTask(current_task);
+    for (int retry_count = 0; rclcpp::ok() && retry_count < MAX_SERVER_RETRIES; ++retry_count) {
+        if (action_client_->wait_for_action_server(SERVER_TIMEOUT)) {
+            return;
+        }
+    }
 }
 
-void PlateCalibration::executeCurrentTask(moveit::task_constructor::Task& current_task) 
+PlateCalibration::Task PlateCalibration::createMoveToPlateTask(const MoveToJointData& point) const 
 {
-    current_task.init();
+    auto task = createBaseTask("command");
+    task.add(std::make_unique<CurrentStateStage>("current"));
 
-    if (!current_task.plan(10)) {
-        RCLCPP_ERROR(calibration_node_->get_logger(), "Task planning failed");
-        return;
+    auto stage = point.createStage("move_to_target", node_);
+    task.add(std::move(stage));
+
+    return task;
+}
+
+PlateCalibration::Task PlateCalibration::createBaseTask(std::string_view command) const
+{
+    Task task;
+    task.stages()->setName(std::string{command});
+    task.loadRobotModel(node_);
+
+    task.setProperty("group", "gp4_arm");
+    const auto current_end_effector = 
+        node_->get_parameter("end_effector").as_string();
+    task.setProperty("ik_frame", current_end_effector);
+
+    moveit::task_constructor::TrajectoryExecutionInfo execution_info;
+    execution_info.controller_names = {"follow_joint_trajectory"};
+    task.setProperty("trajectory_execution_info", execution_info);
+
+    return task;
+}
+
+bool PlateCalibration::executeTask(Task& task) const 
+{
+    const auto logger = node_->get_logger();
+
+    task.init();
+
+    if (!task.plan(MAX_PLANNING_ATTEMPTS)) {
+        RCLCPP_ERROR(logger, "Task planning failed");
+        return false;
     }
 
-    if (current_task.solutions().empty()) {
-        RCLCPP_ERROR(calibration_node_->get_logger(), "No solutions found");
-        return;
+    if (task.solutions().empty()) {
+        RCLCPP_ERROR(logger, "No solutions found");
+        return false;
     }
 
-    current_task.introspection().publishSolution(*current_task.solutions().front());
-
-    auto result = current_task.execute(*current_task.solutions().front());
+    const auto& solution = *task.solutions().front();
+    task.introspection().publishSolution(solution);
+    const auto result = task.execute(solution);
 
     if (result.val != moveit_msgs::msg::MoveItErrorCodes::SUCCESS) {
-        RCLCPP_ERROR(calibration_node_->get_logger(), "Task execution failed");
+        RCLCPP_ERROR(logger, "Task execution failed");
+        return false;
     }
+
+    return true;
 }
 
-void PlateCalibration::handleUserInput(
-    const std::shared_ptr<worm_picker_custom_msgs::srv::TaskCommand::Request> request,
-    std::shared_ptr<worm_picker_custom_msgs::srv::TaskCommand::Response> response) 
+void PlateCalibration::handleUserInput(const std::shared_ptr<const TaskCommandRequest>& request,
+                                       const std::shared_ptr<TaskCommandResponse>& response) 
 {
     if (!calibration_active_) {
-        RCLCPP_WARN(calibration_node_->get_logger(), "Calibration completed. No further commands are accepted.");
+        RCLCPP_WARN(node_->get_logger(), "Calibration completed. No further commands accepted.");
         response->success = false;
         return;
     }
 
     if (request->command != "next") {
-        RCLCPP_WARN(calibration_node_->get_logger(), "Unknown command: %s", request->command.c_str());
+        RCLCPP_WARN(node_->get_logger(), "Unknown command: %s", request->command.c_str());
         response->success = false;
         return;
     }
 
     processNextPlate();
     response->success = true;
-
-    // if (!calibration_active_) {
-    //     RCLCPP_INFO(calibration_node_->get_logger(), "All points processed. Shutting down.");
-    //     rclcpp::shutdown();
-    // }
 }
 
 void PlateCalibration::processNextPlate() 
 {
     if (current_point_it_ != points_.end()) {
-        const auto& point = *current_point_it_;
-
-        createMoveToPlateTask(point, 0.1, 0.1);
-
-        current_point_it_++;
+        auto task = createMoveToPlateTask(*current_point_it_);
+        bool success = executeTask(task);
+        (void)success;
+        ++current_point_it_;
     }
         
     if (current_point_it_ == points_.end()) {
@@ -167,11 +140,25 @@ void PlateCalibration::processNextPlate()
     }
 }
 
-int main(int argc, char **argv)
+void PlateCalibration::declareParameters() 
 {
-    auto plate_calibration = std::make_shared<PlateCalibration>(argc, argv);
+    node_->declare_parameter("end_effector", DEFAULT_END_EFFECTOR);
+}
 
-    rclcpp::spin(plate_calibration->getNodeBase());
+int main(int argc, char **argv) 
+{
+    rclcpp::init(argc, argv);
+
+    auto plate_calibration = std::make_shared<PlateCalibration>(
+        rclcpp::NodeOptions().automatically_declare_parameters_from_overrides(true));
+    
+    rclcpp::executors::MultiThreadedExecutor executor;
+    executor.add_node(plate_calibration->getNodeBase());
+
+    executor.spin();
+
+    executor.remove_node(plate_calibration->getNodeBase());
+    rclcpp::shutdown();
 
     return 0;
 }
