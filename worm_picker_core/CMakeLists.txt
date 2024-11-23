@@ -164,6 +164,9 @@ add_worm_picker_executable(command_networking
 add_worm_picker_executable(plate_calibration
   SOURCES
     src/calibration/plate_calibration.cpp
+    
+    # Stages
+    src/stages/move_to_joint_data.cpp
   ARGS
     geometry_msgs
     moveit_core
