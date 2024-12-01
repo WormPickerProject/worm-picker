@@ -148,6 +148,15 @@ add_worm_picker_executable(dev_command_interface
     worm_picker_custom_msgs
 )
 
+## Service Client
+add_worm_picker_executable(calibration_command_interface
+  SOURCES
+    src/calibration/user_input_node.cpp
+  ARGS
+    rclcpp
+    worm_picker_custom_msgs
+)
+
 ## Command Networking
 add_worm_picker_executable(command_networking
   SOURCES
@@ -163,10 +172,16 @@ add_worm_picker_executable(command_networking
 ## Plate Calibration
 add_worm_picker_executable(plate_calibration
   SOURCES
+    # Calibration
     src/calibration/plate_calibration.cpp
+    src/calibration/calibration_state_machine.cpp
+    src/calibration/robot_controller.cpp
     
     # Stages
     src/stages/move_to_joint_data.cpp
+
+    # Tools
+    src/tools/parsers/calibration_points_parser.cpp
   ARGS
     geometry_msgs
     moveit_core
