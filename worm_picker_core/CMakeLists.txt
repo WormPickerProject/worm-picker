@@ -200,6 +200,7 @@ add_worm_picker_executable(plate_position_analyzer_test
   SOURCES
     src/calibration/plate_position_analyzer.cpp
     src/calibration/plate_position_analyzer_test.cpp
+    src/tools/parsers/workstation_geometry_parser.cpp
   ARGS
     geometry_msgs
     rclcpp

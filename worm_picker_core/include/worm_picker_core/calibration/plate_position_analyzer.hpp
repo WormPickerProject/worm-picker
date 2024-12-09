@@ -7,17 +7,22 @@
 #include <string>
 #include <vector>
 
+struct FixedPoint {
+    std::string name;
+    double x;
+    double y;
+};
+
+struct WorkstationGeometry {
+    double ray_separation_angle;
+    std::vector<FixedPoint> fixed_points;
+};
+
 class PlatePositionAnalyzer {
 public:
     using Pose = geometry_msgs::msg::PoseStamped;
     using PoseMap = std::map<std::string, Pose>;
     using NormalizedPoseSet = std::map<std::string, PoseMap>;
-
-    struct FixedPoint {
-        std::string name;
-        double x;
-        double y;
-    };
 
     explicit PlatePositionAnalyzer(const PoseMap& recorded_positions);
     NormalizedPoseSet normalizeAllPoints() const;
@@ -28,6 +33,7 @@ private:
     void initializeFixedPoints();
 
     PoseMap recorded_positions_; 
+    WorkstationGeometry workstation_geometry_;
     std::vector<FixedPoint> fixed_points_;
 };
 
