@@ -64,7 +64,7 @@ std::vector<std::shared_ptr<StageData>> GenerateHoverWormPickTask::createStagesF
 Coordinate GenerateHoverWormPickTask::calculateDerivedPoint(const Coordinate& coord, char row_letter) const
 {
     constexpr double XY_OFFSET = 0.035;
-    constexpr double Z_OFFSET = 0.03;
+    constexpr double Z_OFFSET = 0.022;
     constexpr double THETA_INCREMENT_DEG = 8.381;
     constexpr double DEGREES_TO_RADIANS = M_PI / 180.0;
     constexpr int REFERENCE_ROW_INDEX = 6; 
