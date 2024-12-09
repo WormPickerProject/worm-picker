@@ -16,7 +16,7 @@ PlateCalibration::PlateCalibration(const rclcpp::NodeOptions& options)
     const auto end_effector_link = node_->get_parameter("end_effector_link").as_string();
 
     const auto current_path = std::filesystem::current_path().string();
-    const auto config_path = "/worm-picker/worm_picker_core/config/initial_calibration_points.json";
+    const auto config_path = "/worm-picker/worm_picker_core/config/initial_calibration_points2.json";
 
     robot_controller_ = std::make_shared<RobotController>(
         node_, current_path + config_path, robot_group, end_effector_link);
@@ -53,13 +53,11 @@ void PlateCalibration::handleUserInput(const CalibrationCommandRequestPtr& reque
     state_machine_->processCommand(request->command, response);
 
     if (state_machine_->getCurrentState() == CalibrationStateMachine::State::Completed) {
-        // Retrieve the recorded positions and log them
         const auto& recorded_positions = state_machine_->getRecordedPositions();
 
         RCLCPP_INFO(node_->get_logger(), "Calibration completed. Recorded positions:");
-        for (size_t i = 0; i < recorded_positions.size(); ++i) {
-            const auto& pose = recorded_positions[i];
-            RCLCPP_INFO(node_->get_logger(), "Position %zu:", i + 1);
+        for (const auto& [key, pose] : recorded_positions) {
+            RCLCPP_INFO(node_->get_logger(), "Position '%s':", key.c_str());
             RCLCPP_INFO(node_->get_logger(), "  Position: [x: %f, y: %f, z: %f]",
                         pose.pose.position.x, pose.pose.position.y, pose.pose.position.z);
             RCLCPP_INFO(node_->get_logger(), "  Orientation: [x: %f, y: %f, z: %f, w: %f]",

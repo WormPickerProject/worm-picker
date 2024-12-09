@@ -12,13 +12,13 @@ RobotController::RobotController(const NodePtr& node,
                                  const std::string& calibration_file_path,
                                  const std::string& robot_group,
                                  const std::string& end_effector_link)
-    : node_(node),
-      points_(CalibrationPointsParser(calibration_file_path).getCalibrationPoints()),
-      robot_group_(robot_group),
-      end_effector_link_(end_effector_link)
+    : node_(node), robot_group_(robot_group), end_effector_link_(end_effector_link)
 {
-    node_->declare_parameter<std::string>("end_effector", "eoat_tcp");
+    CalibrationPointsParser parser(calibration_file_path);
+    points_map_ = parser.getCalibrationPointsMap();
+    points_order_ = parser.getPointsOrder();
 
+    node_->declare_parameter<std::string>("end_effector", "eoat_tcp");
     planning_scene_sub_ = node_->create_subscription<moveit_msgs::msg::PlanningScene>(
         "monitored_planning_scene", 10,
         [this](const PlanningSceneMsg msg) {
@@ -26,11 +26,16 @@ RobotController::RobotController(const NodePtr& node,
         });
 }
 
-bool RobotController::moveToPoint(size_t index)
+bool RobotController::moveToPoint(const std::string& key)
 {
-    const auto& point_data = points_[index];
-    auto task = createTaskForPoint(point_data);
+    auto it = points_map_.find(key);
+    if (it == points_map_.end()) {
+        // RCLCPP_ERROR(node_->get_logger(), "No calibration point named '%s'", key.c_str());
+        return false;
+    }
 
+    const auto& point_data = it->second;
+    auto task = createTaskForPoint(point_data);
     return executeTask(task);
 }
 

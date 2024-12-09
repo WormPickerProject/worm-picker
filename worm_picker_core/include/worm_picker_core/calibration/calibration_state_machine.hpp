@@ -29,33 +29,33 @@ public:
 
     struct ParsedCommand {
         Command command;
-        std::optional<size_t> index;
+        std::optional<std::string> key;
     };
 
     CalibrationStateMachine(const rclcpp::Node::SharedPtr& node,
                             const std::shared_ptr<RobotController>& robot_controller);
     void processCommand(const std::string& command, CalibrationCommandResponsePtr response);
 
-    const PoseVector& getRecordedPositions() const;
+    const std::map<std::string, Pose>& getRecordedPositions() const;
     State getCurrentState() const;
 
 private:
     using OptionalCommand = std::optional<ParsedCommand>;
-    using CommandHandler = std::function<CommandResult(const std::optional<size_t>&)>;
+    using CommandHandler = std::function<CommandResult(const std::optional<std::string>&)>;
     using CommandHandlerMap = std::unordered_map<Command, CommandHandler>;
 
     OptionalCommand parseCommand(const std::string& command_str) const;
     bool isCommandValidInState(Command command) const;
 
-    CommandResult handleMoveCommand(Command command, const std::optional<size_t>& idx);
-    CommandResult handleRedoCommand(const std::optional<size_t>& idx);
-    CommandResult handleRecordCommand(const std::optional<size_t>& idx);
-    CommandResult handleDoneCommand(const std::optional<size_t>& idx);
+    CommandResult handleMoveCommand(Command command, const std::optional<std::string>& key);
+    CommandResult handleRedoCommand(const std::optional<std::string>& key);
+    CommandResult handleRecordCommand(const std::optional<std::string>& key);
+    CommandResult handleDoneCommand(const std::optional<std::string>& key);
 
-    CommandResult handlePointRerecording(const Pose& pose, size_t idx);
+    CommandResult handlePointRerecording(const Pose& pose, const std::string& key);
     CommandResult handleNewPointRecording(const Pose& pose);
 
-    bool moveRobotToPoint(size_t point_index);
+    bool moveRobotToPoint(const std::string& point_key);
     void updateState(State new_state);
 
     template<typename... Args>
@@ -81,8 +81,7 @@ private:
     rclcpp::Node::SharedPtr node_;
     std::shared_ptr<RobotController> robot_controller_;
     State state_{State::Idle};
-    size_t current_point_index_{0};
-    PoseVector recorded_positions_;
+    std::map<std::string, Pose> recorded_positions_;
     const CommandHandlerMap command_handlers_;
 };
 

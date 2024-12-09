@@ -11,16 +11,16 @@ CalibrationStateMachine::CalibrationStateMachine(
     : node_{node},
       robot_controller_{robot_controller}, 
       command_handlers_{
-          {Command::Next, [this](const std::optional<size_t>& idx) { 
-            return handleMoveCommand(Command::Next, idx); }},
-          {Command::Return, [this](const std::optional<size_t>& idx) { 
-            return handleMoveCommand(Command::Return, idx); }},
-          {Command::Record, [this](const std::optional<size_t>& idx) { 
-            return handleRecordCommand(idx); }},
-          {Command::Redo, [this](const std::optional<size_t>& idx) { 
-            return handleRedoCommand(idx); }},
-          {Command::Done, [this](const std::optional<size_t>& idx) { 
-            return handleDoneCommand(idx); }}
+          {Command::Next, [this](const std::optional<std::string>& key) { 
+            return handleMoveCommand(Command::Next, key); }},
+          {Command::Return, [this](const std::optional<std::string>& key) { 
+            return handleMoveCommand(Command::Return, key); }},
+          {Command::Record, [this](const std::optional<std::string>& key) { 
+            return handleRecordCommand(key); }},
+          {Command::Redo, [this](const std::optional<std::string>& key) { 
+            return handleRedoCommand(key); }},
+          {Command::Done, [this](const std::optional<std::string>& key) { 
+            return handleDoneCommand(key); }}
       }
 {
 }
@@ -47,7 +47,7 @@ void CalibrationStateMachine::processCommand(const std::string& command_str,
         return;
     }
 
-    const auto result = command_handlers_.at(parsed->command)(parsed->index);
+    const auto result = command_handlers_.at(parsed->command)(parsed->key);
     response->success = result.success;
     response->feedback = result.feedback;
 }
@@ -74,13 +74,13 @@ CalibrationStateMachine::parseCommand(const std::string& command_str) const
         return std::nullopt;
     }
 
-    std::optional<size_t> idx;
-    size_t temp_idx;
-    if (iss >> temp_idx) {
-        idx = temp_idx;
+    std::string possible_key;
+    std::optional<std::string> key;
+    if (iss >> possible_key) {
+        key = possible_key;
     }
 
-    return ParsedCommand{it->second, idx};
+    return ParsedCommand{it->second, key};
 }
 
 bool CalibrationStateMachine::isCommandValidInState(Command command) const 
@@ -101,61 +101,73 @@ bool CalibrationStateMachine::isCommandValidInState(Command command) const
 }
 
 CalibrationStateMachine::CommandResult 
-CalibrationStateMachine::handleMoveCommand(Command command, const std::optional<size_t>&)
+CalibrationStateMachine::handleMoveCommand(Command command, const std::optional<std::string>&)
 {
-    if (!moveRobotToPoint(current_point_index_)) {
-        return {false, fmt::format("Failed to {} point {}.", 
-            command == Command::Next ? "move to next" : "return to current",
-            current_point_index_)};
-    }
-    
-    return {true, fmt::format("{} point {}.", 
-        command == Command::Next ? "Moved to next" : "Returning to current",
-        current_point_index_)};
+    const auto& order = robot_controller_->getPointsOrder();
+
+    const auto& current_point = recorded_positions_.empty() 
+        ? order.front() 
+        : recorded_positions_.rbegin()->first;
+        
+    const auto& next_unrecorded_point = *std::ranges::find_if(order,
+        [this](const auto& key) { return !recorded_positions_.contains(key); });
+
+    const auto [action, point] = command == Command::Return
+        ? std::pair{"Returned to", current_point}
+        : std::pair{"Moved to", next_unrecorded_point};
+
+    const bool success = moveRobotToPoint(point);
+
+    return {
+        success,
+        success ? fmt::format("{} point '{}'.", action, point)
+                : fmt::format("Failed to move to point '{}'.", point)
+    };
 }
 
 CalibrationStateMachine::CommandResult 
-CalibrationStateMachine::handleRedoCommand(const std::optional<size_t>& idx)
+CalibrationStateMachine::handleRedoCommand(const std::optional<std::string>& key)
 {
-    if (!idx) {
-        return {false, "No index specified for redo command."};
+    if (!key) {
+        return {false, "No key specified for redo command."};
     }
 
-    size_t point_idx = *idx;
-    if (point_idx >= recorded_positions_.size()) {
+    const auto points_map = robot_controller_->getPointsMap();
+    if (points_map.find(*key) == points_map.end()) {
         return {false, fmt::format(
-            "Invalid index {} for re-recording. Please choose an index between 0-{}.",
-            point_idx, 
-            recorded_positions_.size() - 1)};
+            "Invalid key '{}' for re-recording. Please choose a known key.", *key)};
     }
 
-    if (!moveRobotToPoint(point_idx)) {
-        return {false, fmt::format("Failed to move to point {} for re-recording.", point_idx)};
+    const std::string& point_key = *key;
+    if (!moveRobotToPoint(point_key)) {
+        return {false, fmt::format("Failed to move to point '{}' for re-recording.", point_key)};
     }
 
-    return {true, fmt::format("Ready to re-record point {}. Use 'record' when ready.", point_idx)};
+    return {
+        true, fmt::format("Ready to re-record point '{}'. Use 'record' when ready.", point_key)};
 }
 
 CalibrationStateMachine::CommandResult 
-CalibrationStateMachine::handleRecordCommand(const std::optional<size_t>& idx)
+CalibrationStateMachine::handleRecordCommand(const std::optional<std::string>& key)
 {
     auto pose = robot_controller_->getCurrentPose();
     if (!pose) {
         return {false, "Failed to record position. Invalid pose."};
     }
 
-    if (state_ == State::Reviewing && idx.has_value()) {
-        return handlePointRerecording(*pose, *idx);
+    if (state_ == State::Reviewing && key.has_value()) {
+        return handlePointRerecording(*pose, *key);
     }
 
     return handleNewPointRecording(*pose);
 }
 
 CalibrationStateMachine::CommandResult 
-CalibrationStateMachine::handleDoneCommand(const std::optional<size_t>&)
+CalibrationStateMachine::handleDoneCommand(const std::optional<std::string>&)
 {
-    size_t home_index = robot_controller_->getTotalPoints() - 1;
-    if (!robot_controller_->moveToPoint(home_index)) {
+    const auto& order = robot_controller_->getPointsOrder();
+    const std::string& home_key = order.back();
+    if (!robot_controller_->moveToPoint(home_key)) {
         updateState(State::Idle);
         return {false, "Failed to move to home position."};
     }
@@ -165,46 +177,46 @@ CalibrationStateMachine::handleDoneCommand(const std::optional<size_t>&)
 }
 
 CalibrationStateMachine::CommandResult 
-CalibrationStateMachine::handlePointRerecording(const Pose& pose, size_t idx) 
+CalibrationStateMachine::handlePointRerecording(const Pose& pose, const std::string& key) 
 {
-    if (idx >= recorded_positions_.size()) {
-        return {false, fmt::format("Invalid point index {}. Must be between 0-{}.", 
-                                 idx, recorded_positions_.size() - 1)};
-    }
-
-    recorded_positions_[idx] = pose;
+    recorded_positions_[key] = pose;
     return {true, fmt::format(
-        "Point #{} has been re-recorded. Would you like to redo another point or 'done'?",
-        idx)};
+        "Point '{}' has been re-recorded. Would you like to redo another point or 'done'?",
+        key)};
 }
 
 CalibrationStateMachine::CommandResult 
 CalibrationStateMachine::handleNewPointRecording(const Pose& pose) 
 {
-    recorded_positions_.push_back(pose);
-    current_point_index_++;
+    const auto& order = robot_controller_->getPointsOrder();
+    
+    const auto& next_unrecorded_point = *std::ranges::find_if(order,
+        [this](const auto& key) { return !recorded_positions_.contains(key); });
 
-    if (current_point_index_ == robot_controller_->getTotalPoints() - 1) {
-        updateState(State::Reviewing);
-        return {true, "All points recorded. Would you like to re-record any point? "
-                      "Use 'redo <index>' to re-record, or 'done' to finalize."};
-    }
+    recorded_positions_[next_unrecorded_point] = pose;
 
-    updateState(State::Idle);
-    return {true, "Position recorded."};
+    const bool isComplete = recorded_positions_.size() == order.size() - 1;
+    updateState(isComplete ? State::Reviewing : State::Idle);
+
+    return {
+        true,
+        isComplete 
+            ? "All points recorded. Use 'redo <key>' to re-record, or 'done' to finalize."
+            : fmt::format("Position recorded for point '{}'.", next_unrecorded_point)
+    };
 }
 
-bool CalibrationStateMachine::moveRobotToPoint(size_t point_index) 
+bool CalibrationStateMachine::moveRobotToPoint(const std::string& point_key) 
 {
-    if (!robot_controller_->moveToPoint(point_index)) {
-        log(rclcpp::Logger::Level::Error, "Failed to move to point {}", point_index);
+    if (!robot_controller_->moveToPoint(point_key)) {
+        log(rclcpp::Logger::Level::Error, "Failed to move to point {}", point_key);
         return false;
     }
 
     if (state_ != State::Reviewing) {
         updateState(State::AwaitingAdjustment);
     }
-    log(rclcpp::Logger::Level::Info, "Moved to point {}. Awaiting adjustment", point_index);
+    log(rclcpp::Logger::Level::Info, "Moved to point {}. Awaiting adjustment", point_key);
     return true;
 }
 
@@ -217,7 +229,8 @@ void CalibrationStateMachine::updateState(State new_state)
     }
 }
 
-const CalibrationStateMachine::PoseVector& CalibrationStateMachine::getRecordedPositions() const 
+const std::map<std::string, CalibrationStateMachine::Pose>& 
+CalibrationStateMachine::getRecordedPositions() const 
 { 
     return recorded_positions_; 
 }

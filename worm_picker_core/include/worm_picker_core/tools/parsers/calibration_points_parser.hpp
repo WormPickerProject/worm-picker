@@ -12,12 +12,14 @@
 class CalibrationPointsParser {
 public:
     explicit CalibrationPointsParser(const std::string& file_path);
-    const std::vector<MoveToJointData>& getCalibrationPoints() const;
+    const std::map<std::string, MoveToJointData>& getCalibrationPointsMap() const;
+    const std::vector<std::string>& getPointsOrder() const;
 
 private:
     using json = nlohmann::json;
     void parseJsonFile(const std::string& file_path);
-    std::vector<MoveToJointData> points_;
+    std::map<std::string, MoveToJointData> points_map_;
+    std::vector<std::string> points_order_;
 };
 
 #endif // CALIBRATION_POINTS_PARSER_HPP

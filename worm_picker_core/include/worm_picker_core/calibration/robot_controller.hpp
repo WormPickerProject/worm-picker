@@ -27,9 +27,11 @@ public:
                     const std::string& robot_group,
                     const std::string& end_effector_link);
 
-    bool moveToPoint(size_t index);
+    bool moveToPoint(const std::string& key);
     std::optional<Pose> getCurrentPose() const;
-    size_t getTotalPoints() const { return points_.size(); }
+    const std::map<std::string, MoveToJointData>& getPointsMap() { return points_map_; }
+    const std::vector<std::string>& getPointsOrder() { return points_order_; }
+    size_t getTotalPoints() const { return points_order_.size(); }
 
 private:
     using PlanningSceneMsg = moveit_msgs::msg::PlanningScene::SharedPtr;
@@ -39,7 +41,8 @@ private:
     void monitoredPlanningSceneCallback(const PlanningSceneMsg msg);
 
     NodePtr node_;
-    std::vector<MoveToJointData> points_;
+    std::map<std::string, MoveToJointData> points_map_;
+    std::vector<std::string> points_order_;
     std::string robot_group_;
     std::string end_effector_link_;
     rclcpp::Subscription<moveit_msgs::msg::PlanningScene>::SharedPtr planning_scene_sub_;

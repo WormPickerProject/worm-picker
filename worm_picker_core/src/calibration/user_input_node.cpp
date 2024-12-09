@@ -67,12 +67,14 @@ void UserInputNode::runCommandLoop()
 
         if (command == "quit" || command == "q") {
             break;
-        } else if (command == "next" || command == "retry" || command == "record") {
+        // } else if (command == "next" || command == "retry" || command == "record") {
+        } else {
             auto request = createRequest(command);
             sendRequest(request);
-        } else {
-            std::cout << "Unknown command. Please enter 'next', 'retry', 'record', or 'quit'." << std::endl;
         }
+        // } else {
+        //     std::cout << "Unknown command. Please enter 'next', 'retry', 'record', or 'quit'." << std::endl;
+        // }
     }
 }
 

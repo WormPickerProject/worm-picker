@@ -11,20 +11,19 @@ CalibrationPointsParser::CalibrationPointsParser(const std::string& file_path)
     parseJsonFile(file_path);
 }
 
-void CalibrationPointsParser::parseJsonFile(const std::string& file_path) 
-{
+void CalibrationPointsParser::parseJsonFile(const std::string& file_path) {
     std::ifstream file(file_path);
     if (!file.is_open()) {
         throw std::runtime_error("Failed to open calibration points file: " + file_path);
     }
 
-    const auto data = json::parse(file);
+    auto data = json::parse(file);
     const auto& points = data["initial_calibration_points"];
 
-    points_.reserve(points.size());
     for (const auto& point : points) {
+        std::string key = point["calibration_point"].get<std::string>();
         const auto& positions = point["joint_positions"];
-        points_.emplace_back(
+        MoveToJointData joint_data(
             positions[0].get<double>(),
             positions[1].get<double>(), 
             positions[2].get<double>(),
@@ -32,10 +31,18 @@ void CalibrationPointsParser::parseJsonFile(const std::string& file_path)
             positions[4].get<double>(),
             positions[5].get<double>()
         );
+
+        points_map_.emplace(key, joint_data);
+        points_order_.push_back(key);
     }
 }
 
-const std::vector<MoveToJointData>& CalibrationPointsParser::getCalibrationPoints() const 
+const std::map<std::string, MoveToJointData>& CalibrationPointsParser::getCalibrationPointsMap() const 
 {
-    return points_;
+    return points_map_;
+}
+
+const std::vector<std::string>& CalibrationPointsParser::getPointsOrder() const 
+{
+    return points_order_;
 }

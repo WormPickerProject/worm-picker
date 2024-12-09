@@ -195,6 +195,16 @@ add_worm_picker_executable(plate_calibration
     worm_picker_custom_msgs
 )
 
+## Plate Position Analyzer Test
+add_worm_picker_executable(plate_position_analyzer_test
+  SOURCES
+    src/calibration/plate_position_analyzer.cpp
+    src/calibration/plate_position_analyzer_test.cpp
+  ARGS
+    geometry_msgs
+    rclcpp
+)
+
 # ---------------------------
 # Install Launch Files
 # ---------------------------
