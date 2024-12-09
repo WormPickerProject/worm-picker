@@ -7,6 +7,8 @@
 #define PLATE_CALIBRATION_HPP
 
 #include <rclcpp/rclcpp.hpp>
+#include <rclcpp_action/rclcpp_action.hpp>
+#include <moveit_task_constructor_msgs/action/execute_task_solution.hpp>
 #include <worm_picker_custom_msgs/srv/calibration_command.hpp>
 #include "worm_picker_core/calibration/calibration_state_machine.hpp"
 #include "worm_picker_core/calibration/robot_controller.hpp"
@@ -20,15 +22,24 @@ private:
     using CalibrationCommandService = worm_picker_custom_msgs::srv::CalibrationCommand;
     using CalibrationCommandRequest = CalibrationCommandService::Request;
     using CalibrationCommandResponse = CalibrationCommandService::Response;
+    using CalibrationCommandRequestPtr = std::shared_ptr<const CalibrationCommandRequest>;
+    using CalibrationCommandResponsePtr = std::shared_ptr<CalibrationCommandResponse>;
+    using ExecuteAction = moveit_task_constructor_msgs::action::ExecuteTaskSolution;
+
+    static constexpr int MAX_SERVER_RETRIES = 10;
+    static constexpr auto SERVER_TIMEOUT = std::chrono::seconds{3};
 
     void setupServices();
-    void handleUserInput(const std::shared_ptr<const CalibrationCommandRequest>& request,
-                         const std::shared_ptr<CalibrationCommandResponse>& response);
+    void waitForServer();
+    void handleUserInput(const CalibrationCommandRequestPtr& request,
+                         const CalibrationCommandResponsePtr& response);
 
     rclcpp::Node::SharedPtr node_;
-    rclcpp::Service<CalibrationCommandService>::SharedPtr calibration_command_service_;
+    rclcpp_action::Client<ExecuteAction>::SharedPtr action_client_;
+    rclcpp::Service<CalibrationCommandService>::SharedPtr calibration_service_;
     std::shared_ptr<CalibrationStateMachine> state_machine_;
     std::shared_ptr<RobotController> robot_controller_;
+    std::jthread server_wait_thread_;
 };
 
 #endif // PLATE_CALIBRATION_HPP

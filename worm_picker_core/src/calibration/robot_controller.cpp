@@ -4,67 +4,61 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "worm_picker_core/calibration/robot_controller.hpp"
-#include <moveit/robot_model_loader/robot_model_loader.h>
-#include <moveit/planning_scene/planning_scene.h>
+
 #include <tf2_eigen/tf2_eigen.hpp>
+#include <moveit/robot_model_loader/robot_model_loader.h>
 
-RobotController::RobotController(const rclcpp::Node::SharedPtr& node, const std::string& calibration_file_path)
-    : node_(node) {
-    initializeCalibrationPoints(calibration_file_path);
-}
-
-void RobotController::initializeCalibrationPoints(const std::string& calibration_file_path) {
-    try {
-        CalibrationPointsParser parser(calibration_file_path);
-        points_ = parser.getCalibrationPoints();
-
-        if (points_.empty()) {
-            RCLCPP_ERROR(node_->get_logger(), "No calibration points loaded from file.");
-        }
-    } catch (const std::exception& e) {
-        RCLCPP_ERROR(node_->get_logger(), "Failed to load calibration points: %s", e.what());
-    }
-}
-
-size_t RobotController::getTotalPoints() const
+RobotController::RobotController(const NodePtr& node,
+                                 const std::string& calibration_file_path,
+                                 const std::string& robot_group,
+                                 const std::string& end_effector_link)
+    : node_(node),
+      points_(CalibrationPointsParser(calibration_file_path).getCalibrationPoints()),
+      robot_group_(robot_group),
+      end_effector_link_(end_effector_link)
 {
-    return points_.size();
+    node_->declare_parameter<std::string>("end_effector", "eoat_tcp");
+
+    planning_scene_sub_ = node_->create_subscription<moveit_msgs::msg::PlanningScene>(
+        "monitored_planning_scene", 10,
+        [this](const PlanningSceneMsg msg) {
+            monitoredPlanningSceneCallback(msg);
+        });
 }
 
 bool RobotController::moveToPoint(size_t index)
 {
-    if (index >= points_.size()) {
-        RCLCPP_ERROR(node_->get_logger(), "moveToPoint: Point index %zu out of range.", index);
-        return false;
-    }
+    const auto& point_data = points_[index];
+    auto task = createTaskForPoint(point_data);
 
-    auto task = createMoveTask(points_[index]);
     return executeTask(task);
 }
 
-moveit::task_constructor::Task RobotController::createMoveTask(const MoveToJointData& point) const
+RobotController::Task RobotController::createTaskForPoint(const MoveToJointData& point_data) const
 {
-    using namespace moveit::task_constructor;
-
     Task task;
     task.stages()->setName("MoveToPoint");
     task.loadRobotModel(node_);
 
-    task.setProperty("group", "gp4_arm");
-    task.setProperty("ik_frame", DEFAULT_END_EFFECTOR);
+    task.setProperty("group", robot_group_);
+    task.setProperty("ik_frame", end_effector_link_);
 
-    task.add(std::make_unique<stages::CurrentState>("current"));
+    moveit::task_constructor::TrajectoryExecutionInfo execution_info;
+    execution_info.controller_names = {"follow_joint_trajectory"};
+    task.setProperty("trajectory_execution_info", execution_info);
 
-    auto stage = point.createStage("move_to_target", node_);
-    task.add(std::move(stage));
+    task.add(std::make_unique<moveit::task_constructor::stages::CurrentState>("current"));
+    task.add(point_data.createStage("move_to_target", node_));
 
     return task;
 }
 
-bool RobotController::executeTask(moveit::task_constructor::Task& task) const
+bool RobotController::executeTask(Task& task) const
 {
+    task.enableIntrospection();
     task.init();
 
+    static constexpr int MAX_PLANNING_ATTEMPTS = 5;
     if (!task.plan(MAX_PLANNING_ATTEMPTS)) {
         RCLCPP_ERROR(node_->get_logger(), "Task planning failed.");
         return false;
@@ -87,33 +81,35 @@ bool RobotController::executeTask(moveit::task_constructor::Task& task) const
     return true;
 }
 
-std::optional<geometry_msgs::msg::PoseStamped> RobotController::getCurrentPose() const
+void RobotController::monitoredPlanningSceneCallback(const PlanningSceneMsg msg) 
 {
-    try {
-        auto robot_loader = std::make_shared<robot_model_loader::RobotModelLoader>(node_);
-        auto kinematic_model = robot_loader->getModel();
-        if (!kinematic_model) {
-            throw std::runtime_error("Failed to load robot model.");
-        }
+    std::lock_guard<std::mutex> lock(scene_mutex_);
+    if (!current_scene_) {
+        robot_model_loader::RobotModelLoader::Options options;
+        options.robot_description_ = "robot_description";
+        auto robot_model = robot_model_loader::RobotModelLoader(node_, options).getModel();
+        current_scene_ = std::make_shared<planning_scene::PlanningScene>(robot_model);
+    }
+    current_scene_->usePlanningSceneMsg(*msg);
+}
 
-        planning_scene::PlanningScene planning_scene(kinematic_model);
-        planning_scene.getCurrentStateNonConst().update();
-
-        const auto& current_state = planning_scene.getCurrentState();
-
-        const auto link_names = current_state.getRobotModel()->getJointModelGroup("gp4_arm")->getLinkModelNames();
-        const auto& end_effector_link = link_names.back();
-
-        const Eigen::Isometry3d& ee_transform = current_state.getGlobalLinkTransform(end_effector_link);
-
-        geometry_msgs::msg::PoseStamped current_pose;
-        current_pose.pose = tf2::toMsg(ee_transform);
-        current_pose.header.frame_id = "world";
-        current_pose.header.stamp = node_->get_clock()->now();
-
-        return current_pose;
-    } catch (const std::exception& e) {
-        RCLCPP_ERROR(node_->get_logger(), "Exception in getCurrentPose: %s", e.what());
+std::optional<RobotController::Pose> RobotController::getCurrentPose() const
+{
+    std::lock_guard<std::mutex> lock(scene_mutex_);
+    
+    if (!current_scene_) {
+        RCLCPP_ERROR(node_->get_logger(), "Planning scene not yet received");
         return std::nullopt;
     }
+    
+    const auto& end_effector_link = node_->get_parameter("end_effector").as_string();
+    const Eigen::Isometry3d& transform = 
+        current_scene_->getCurrentState().getGlobalLinkTransform(end_effector_link);
+    
+    Pose pose;
+    pose.header.frame_id = current_scene_->getPlanningFrame();
+    pose.header.stamp = node_->get_clock()->now();
+    pose.pose = tf2::toMsg(transform);
+    
+    return pose;
 }

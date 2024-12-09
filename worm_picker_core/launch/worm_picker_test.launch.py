@@ -176,17 +176,17 @@ def launch_setup(context, *args, **kwargs):
             # executable="worm_picker_robot",
             executable="plate_calibration",
             output="screen",
-            # parameters=[
-            #     moveit_config.to_dict(),
-            # ],
             parameters=[
                 moveit_config.to_dict(),
-                {"calibration_file_path": os.path.join(
-                    get_package_share_directory('worm_picker_core'),
-                    'config',
-                    'initial_calibration_points.json'
-                )},
             ],
+            # parameters=[
+            #     moveit_config.to_dict(),
+            #     {"calibration_file_path": os.path.join(
+            #         get_package_share_directory('worm_picker_core'),
+            #         'config',
+            #         'initial_calibration_points.json'
+            #     )},
+            # ],
         ),
     ]
 

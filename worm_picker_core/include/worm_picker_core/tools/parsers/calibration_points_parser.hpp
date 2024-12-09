@@ -6,6 +6,7 @@
 #ifndef CALIBRATION_POINTS_PARSER_HPP
 #define CALIBRATION_POINTS_PARSER_HPP
 
+#include <nlohmann/json.hpp>
 #include "worm_picker_core/stages/move_to_joint_data.hpp"
 
 class CalibrationPointsParser {
@@ -14,9 +15,9 @@ public:
     const std::vector<MoveToJointData>& getCalibrationPoints() const;
 
 private:
+    using json = nlohmann::json;
     void parseJsonFile(const std::string& file_path);
-
-    std::vector<MoveToJointData> calibration_points_;
+    std::vector<MoveToJointData> points_;
 };
 
 #endif // CALIBRATION_POINTS_PARSER_HPP

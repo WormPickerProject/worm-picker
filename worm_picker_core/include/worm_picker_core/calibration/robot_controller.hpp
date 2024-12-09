@@ -7,28 +7,44 @@
 #define ROBOT_CONTROLLER_HPP
 
 #include <rclcpp/rclcpp.hpp>
+#include <geometry_msgs/msg/pose_stamped.hpp>
+#include <moveit_msgs/msg/planning_scene.hpp>
 #include <moveit/task_constructor/task.h>
 #include <moveit/task_constructor/stages.h>
-#include <geometry_msgs/msg/pose_stamped.hpp>
+#include <moveit/planning_scene/planning_scene.h>
+
 #include "worm_picker_core/stages/move_to_joint_data.hpp"
 #include "worm_picker_core/tools/parsers/calibration_points_parser.hpp"
 
 class RobotController {
 public:
-    RobotController(const rclcpp::Node::SharedPtr& node, const std::string& calibration_file_path);
+    using NodePtr = rclcpp::Node::SharedPtr;
+    using Pose = geometry_msgs::msg::PoseStamped;
+    using Task = moveit::task_constructor::Task;
+
+    RobotController(const NodePtr& node,
+                    const std::string& calibration_file_path,
+                    const std::string& robot_group,
+                    const std::string& end_effector_link);
+
     bool moveToPoint(size_t index);
-    std::optional<geometry_msgs::msg::PoseStamped> getCurrentPose() const;
-    size_t getTotalPoints() const;
+    std::optional<Pose> getCurrentPose() const;
+    size_t getTotalPoints() const { return points_.size(); }
 
 private:
-    void initializeCalibrationPoints(const std::string& calibration_file_path);
-    moveit::task_constructor::Task createMoveTask(const MoveToJointData& point) const;
-    bool executeTask(moveit::task_constructor::Task& task) const;
+    using PlanningSceneMsg = moveit_msgs::msg::PlanningScene::SharedPtr;
 
-    rclcpp::Node::SharedPtr node_;
+    Task createTaskForPoint(const MoveToJointData& point_data) const;
+    bool executeTask(Task& task) const;
+    void monitoredPlanningSceneCallback(const PlanningSceneMsg msg);
+
+    NodePtr node_;
     std::vector<MoveToJointData> points_;
-    static constexpr int MAX_PLANNING_ATTEMPTS = 5;
-    static constexpr const char* DEFAULT_END_EFFECTOR = "eoat_tcp";
+    std::string robot_group_;
+    std::string end_effector_link_;
+    rclcpp::Subscription<moveit_msgs::msg::PlanningScene>::SharedPtr planning_scene_sub_;
+    std::shared_ptr<planning_scene::PlanningScene> current_scene_;
+    mutable std::mutex scene_mutex_;
 };
 
 #endif // ROBOT_CONTROLLER_HPP
