@@ -82,7 +82,7 @@ Coordinate GenerateWorkstationTaskGenerator::calculateDerivedPoint(const Coordin
         break;
     case TaskType::HoverWormPick:
         XY_OFFSET = 0.035;
-        Z_OFFSET = 0.03;
+        Z_OFFSET = 0.022;
         break;
     }
 
