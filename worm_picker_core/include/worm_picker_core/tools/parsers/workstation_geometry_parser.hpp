@@ -9,17 +9,8 @@
 #include <nlohmann/json.hpp>
 #include <string>
 #include <vector>
-
-struct FixedPoint {
-    std::string name;
-    double x;
-    double y;
-};
-
-struct WorkstationGeometry {
-    double ray_separation_angle;
-    std::vector<FixedPoint> fixed_points;
-};
+#include "worm_picker_core/common/data_types/fixed_point.hpp"
+#include "worm_picker_core/common/data_types/workstation_geometry.hpp"
 
 class WorkstationGeometryParser {
 public:

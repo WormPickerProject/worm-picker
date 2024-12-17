@@ -198,6 +198,7 @@
     </link>
     <joint name="${prefix}eoat-eoat_tcp" type="fixed">
         <origin xyz="0.079 0 -0.0925" rpy="${radians(0)} ${radians(-60.0)} ${radians(180)}"/>
+        <!-- <origin xyz="0.079 0 -0.0925" rpy="${radians(0)} ${radians(-60.0)} ${radians(0)}"/> This is more correct, need to change later -->
         <parent link="${prefix}eoat"/>
         <child link="${prefix}eoat_tcp"/> 
     </joint>
