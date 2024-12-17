@@ -15,7 +15,7 @@ public:
         : data_map_(data_map) {}
 
 protected:
-    std::vector<std::shared_ptr<StageData>> createStagesForTaskImpl(const std::string& name, char row_letter) const override 
+    StageSequence createStagesForTaskImpl(const std::string& name, char row_letter) const override 
     {
         auto it = data_map_.find(name);
         if (it != data_map_.end()) {
@@ -34,7 +34,7 @@ protected:
         return keys;
     }
 
-    virtual std::vector<std::shared_ptr<StageData>> createStagesForTask(const DataType& data, char row_letter) const = 0;
+    virtual StageSequence createStagesForTask(const DataType& data, char row_letter) const = 0;
 
     const std::unordered_map<std::string, DataType>& data_map_;
 };

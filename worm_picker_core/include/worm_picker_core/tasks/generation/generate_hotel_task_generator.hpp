@@ -20,12 +20,14 @@ public:
         PlacePlate
     };
 
-    GenerateHotelTaskGenerator(const std::unordered_map<std::string, HotelData>& hotel_map, TaskType task_type);
+    GenerateHotelTaskGenerator(const std::unordered_map<std::string, 
+                               HotelData>& hotel_map, 
+                               TaskType task_type);
 
 protected:
     std::pair<char, int> parseName(const std::string& name) const override;
     std::string generateTaskName(char row_letter, int col_number) const override;
-    std::vector<std::shared_ptr<StageData>> createStagesForTask(const HotelData& data, char row_letter) const override;
+    StageSequence createStagesForTask(const HotelData& data, char row_letter) const override;
 
 private:
     Coordinate calculateDerivedPoint(const Coordinate& coord, char row_letter) const;
