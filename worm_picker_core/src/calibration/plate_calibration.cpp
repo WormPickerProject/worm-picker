@@ -16,7 +16,7 @@ PlateCalibration::PlateCalibration(const rclcpp::NodeOptions& options)
     const auto end_effector_link = node_->get_parameter("end_effector_link").as_string();
 
     const auto current_path = std::filesystem::current_path().string();
-    const auto config_path = "/worm-picker/worm_picker_core/config/initial_calibration_points2.json";
+    const auto config_path = "/worm-picker/worm_picker_core/config/initial_calibration_points.json";
 
     robot_controller_ = std::make_shared<RobotController>(
         node_, current_path + config_path, robot_group, end_effector_link);
