@@ -11,7 +11,8 @@ void BaseTaskGenerator::generateTasks()
         auto [row_letter, col_number] = parseName(name);
         std::string task_name = generateTaskName(row_letter, col_number);
         auto stages = createStagesForTaskImpl(name, row_letter);
-        task_data_map_.emplace(std::move(task_name), TaskData(std::move(stages)));
+        auto task_data = TaskData(std::move(stages));
+        task_data_map_.emplace(std::move(task_name), std::move(task_data));
     }
 }
 
