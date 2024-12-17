@@ -73,7 +73,14 @@ void TaskFactory::initializeTaskMap()
     const TaskGenerator task_plans{workstation_data_map, hotel_data_map};
     const auto& generated_task_map = task_plans.getGeneratedTaskPlans();
 
-    task_data_map_.insert(defined_tasks_map.begin(), defined_tasks_map.end());
+    const auto& allowed_tasks = {"home", "homeEndFactor", "swapEndFactor:1", "swapEndFactor:2"};
+    for (const auto& task_name : allowed_tasks) {
+        auto it = defined_tasks_map.find(task_name);
+        if (it != defined_tasks_map.end()) {
+            task_data_map_.insert(*it);
+        }
+    }
+    // task_data_map_.insert(defined_tasks_map.begin(), defined_tasks_map.end());
     task_data_map_.insert(generated_task_map.begin(), generated_task_map.end());
 
     logTaskMap(); // Temporary debug function
@@ -124,13 +131,13 @@ void TaskFactory::logTaskMap()
 
             auto formatNumber = [](double value) -> std::string {
                 char buffer[16];
-                snprintf(buffer, sizeof(buffer), "%s%0.2f", (value >= 0 ? " " : ""), value);
+                snprintf(buffer, sizeof(buffer), "%s%0.4f", (value >= 0 ? " " : ""), value);
                 return std::string(buffer);
             };
 
             auto formatVelAcc = [](double value) -> std::string {
                 char buffer[16];
-                snprintf(buffer, sizeof(buffer), "%.2f", value);
+                snprintf(buffer, sizeof(buffer), "%.4f", value);
                 return std::string(buffer);
             };
 
@@ -224,13 +231,13 @@ void TaskFactory::logCreatedTask(const std::string_view& command, const TaskData
 
         auto formatNumber = [](double value) -> std::string {
             char buffer[16];
-            snprintf(buffer, sizeof(buffer), "%s%0.2f", (value >= 0 ? " " : ""), value);
+            snprintf(buffer, sizeof(buffer), "%s%0.4f", (value >= 0 ? " " : ""), value);
             return std::string(buffer);
         };
 
         auto formatVelAcc = [](double value) -> std::string {
             char buffer[16];
-            snprintf(buffer, sizeof(buffer), "%.2f", value);
+            snprintf(buffer, sizeof(buffer), "%.4f", value);
             return std::string(buffer);
         };
 
