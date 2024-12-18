@@ -31,6 +31,9 @@ TaskGenerator::GeneratorList TaskGenerator::initializeGenerators(
     generators.emplace_back(std::make_unique<GenerateWorkstationTaskGenerator>(
         workstation_map, workstation_config::TaskType::HoverWormPick));
 
+    generators.emplace_back(std::make_unique<GenerateWorkstationTaskGenerator>(
+        workstation_map, workstation_config::TaskType::MoveToPoint));
+
     generators.emplace_back(std::make_unique<GenerateHotelTaskGenerator>(
         hotel_map, GenerateHotelTaskGenerator::TaskType::PickPlate));
 

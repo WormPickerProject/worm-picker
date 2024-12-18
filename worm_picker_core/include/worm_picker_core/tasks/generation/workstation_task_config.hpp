@@ -16,7 +16,9 @@ enum class TaskType {
     /// @brief Task to place a plate at workstation
     PlacePlate,
     /// @brief Task to hover worm pick over workstation
-    HoverWormPick
+    HoverWormPick,
+    /// @brief Task to move to a specific point at workstation
+    MoveToPoint
 };
 
 /// @brief Parameters defining a sequence of movements for task execution
@@ -45,9 +47,13 @@ namespace motion {
 
 /// @brief Position offsets for different task types
 namespace offset {
-    static constexpr PositionOffset PICK{0.048, 0.02};
-    static constexpr PositionOffset PLACE{-0.008, -0.02};
+    // static constexpr PositionOffset PICK{0.048, 0.02};
+    // static constexpr PositionOffset PLACE{-0.008, -0.02};
+    // static constexpr PositionOffset HOVER{0.035, 0.022};
+    static constexpr PositionOffset PICK{-0.048, 0.05};
+    static constexpr PositionOffset PLACE{-0.008, 0.05};
     static constexpr PositionOffset HOVER{0.035, 0.022};
+    static constexpr PositionOffset POINT{0.0, 0.01};
 }
 
 /// @brief Task name prefixes for different task types
@@ -55,6 +61,7 @@ namespace prefix {
     static constexpr const char* PICK = "pickPlateWorkStation:";
     static constexpr const char* PLACE = "placePlateWorkStation:";
     static constexpr const char* HOVER = "hoverWormPick:";
+    static constexpr const char* POINT = "moveToPoint:";
 }
 
 /// @brief Angular calculations and reference points

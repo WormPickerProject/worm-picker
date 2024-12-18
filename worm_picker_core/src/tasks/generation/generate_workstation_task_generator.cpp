@@ -26,6 +26,7 @@ std::string GenerateWorkstationTaskGenerator::generateTaskName(char row_letter,
         case TaskType::PickPlate: return workstation_config::prefix::PICK;
         case TaskType::PlacePlate: return workstation_config::prefix::PLACE;
         case TaskType::HoverWormPick: return workstation_config::prefix::HOVER;
+        case TaskType::MoveToPoint: return workstation_config::prefix::POINT;
         default: throw std::runtime_error("Unknown task type");
         }
     }();
@@ -42,6 +43,7 @@ GenerateWorkstationTaskGenerator::createStagesForTask(const WorkstationData& dat
         case TaskType::PickPlate: return workstation_config::motion::PICK;
         case TaskType::PlacePlate: return workstation_config::motion::PLACE;
         case TaskType::HoverWormPick: return std::nullopt;
+        case TaskType::MoveToPoint: return std::nullopt;
         default: throw std::runtime_error("Unknown task type");
         }
     }();
@@ -70,6 +72,7 @@ Coordinate GenerateWorkstationTaskGenerator::calculateDerivedPoint(const Coordin
         case TaskType::PickPlate: return offset::PICK;
         case TaskType::PlacePlate: return offset::PLACE;
         case TaskType::HoverWormPick: return offset::HOVER;
+        case TaskType::MoveToPoint: return offset::POINT;
         default: throw std::runtime_error("Unknown task type");
         }
     }();
