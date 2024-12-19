@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>worm_picker_core</name>
+  <version>0.0.1</version>
+  <description>
+    Worm Picker Core Functionality
+  </description>
+
+  <license>Apache-2.0</license>
+  <maintainer email="lkaising@outlook.com">Logan Kaising</maintainer>
+
+  <!-- Build Tool Dependencies -->
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <buildtool_depend>rosidl_default_generators</buildtool_depend>
+
+  <!-- Execution Dependencies -->
+  <exec_depend>rosidl_default_runtime</exec_depend>
+
+  <!-- Build Dependencies -->
+  <build_depend>rclcpp</build_depend>
+  <build_depend>geometry_msgs</build_depend>
+  <build_depend>tf2</build_depend>
+  <build_depend>tf2_geometry_msgs</build_depend>
+  <build_depend>std_srvs</build_depend>
+  <build_depend>moveit_core</build_depend>
+  <build_depend>moveit_msgs</build_depend>
+  <build_depend>moveit_ros_planning</build_depend>
+  <build_depend>moveit_ros_planning_interface</build_depend>
+  <build_depend>moveit_task_constructor_core</build_depend>
+  <build_depend>moveit_task_constructor_msgs</build_depend>
+  <build_depend>moveit_task_constructor_visualization</build_depend>
+  <build_depend>worm_picker_moveit_config</build_depend>
+  <build_depend>worm_picker_custom_msgs</build_depend>
+  <build_depend>motoros2_interfaces</build_depend>
+
+  <!-- Test Dependencies -->
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+
+  <!-- Export Dependencies -->
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>
+
+

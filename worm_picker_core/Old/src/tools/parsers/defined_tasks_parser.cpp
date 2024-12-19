@@ -46,10 +46,15 @@ DefinedTasksGenerator::TaskDataMap DefinedTasksGenerator::parseTasks(
 
     for (const auto& task_entry : tasks_json) {
         const auto& name = task_entry["name"].get<std::string>();
-
         auto stages = task_entry["stages"].get<std::vector<std::string>>();
 
-        task_data_map.emplace(name, TaskData(stage_data_map, std::move(stages)));
+        auto maybe_task = TaskData::create(stage_data_map, stages);
+        if (!maybe_task) {
+            throw std::runtime_error(
+                "Failed to create task: " + name + " - Invalid stage name in configuration");
+        }
+
+        task_data_map.emplace(name, std::move(maybe_task.value()));
     }
 
     return task_data_map;
