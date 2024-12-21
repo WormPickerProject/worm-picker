@@ -21,6 +21,7 @@ public:
 
     void setRaySeparationAngle(double angle) { ray_separation_angle_ = angle; }
     void setFixedPoints(const std::vector<FixedPoint>& points) { fixed_points_ = points; }
+    void addFixedPoint(const FixedPoint& point) { fixed_points_.push_back(point); }
 
 private:
     double ray_separation_angle_{};
