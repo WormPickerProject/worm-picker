@@ -9,6 +9,7 @@
 #include <moveit/task_constructor/solvers.h>
 #include <moveit/task_constructor/stages.h>
 #include "worm_picker_core/core/tasks/stages/stage_data.hpp"
+#include "worm_picker_core/utils/parameter_utils.hpp"
 
 class MoveToJointData : public StageData {
 public:
@@ -57,8 +58,8 @@ inline StageData::StagePtr MoveToJointData::createStage(
     stage->setGoal(joint_positions_);
     stage->setGroup("gp4_arm");
 
-    const auto& current_end_effector = node->get_parameter("end_effector").as_string();
-    stage->setIKFrame(current_end_effector);
+    auto ee_link = param_utils::getParameter<std::string>(node, "end_effectors.current_factor");
+    stage->setIKFrame(*ee_link);
 
     TrajectoryExecutionInfo execution_info;
     execution_info.controller_names = {"follow_joint_trajectory"};

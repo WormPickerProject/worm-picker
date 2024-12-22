@@ -10,6 +10,7 @@
 #include <moveit/task_constructor/stages.h>
 #include <tf2/LinearMath/Quaternion.h>
 #include "worm_picker_core/core/tasks/stages/stage_data.hpp"
+#include "worm_picker_core/utils/parameter_utils.hpp"
 
 class MoveToPointData : public StageData {
 public:
@@ -74,15 +75,18 @@ inline MoveToPointData::StagePtr MoveToPointData::createStage(const std::string&
     auto cartesian_planner = std::make_shared<solvers::CartesianPath>();
     cartesian_planner->setMaxVelocityScalingFactor(velocity_scaling_factor_);
     cartesian_planner->setMaxAccelerationScalingFactor(acceleration_scaling_factor_);
-    cartesian_planner->setStepSize(.01);
-    cartesian_planner->setMinFraction(0.0);
+
+    auto step_size = param_utils::getParameter<double>(node, "validation.step_size");
+    auto min_fraction = param_utils::getParameter<double>(node, "validation.min_fraction");
+    cartesian_planner->setStepSize(*step_size);
+    cartesian_planner->setMinFraction(*min_fraction);
 
     auto stage = std::make_unique<stages::MoveTo>(name, cartesian_planner);
     stage->setGoal(target_pose);
     stage->setGroup("gp4_arm");
 
-    const auto& current_end_effector = node->get_parameter("end_effector").as_string();
-    stage->setIKFrame(current_end_effector);
+    auto ee_link = param_utils::getParameter<std::string>(node, "end_effectors.current_factor");
+    stage->setIKFrame(*ee_link);
 
     TrajectoryExecutionInfo execution_info;
     execution_info.controller_names = {"follow_joint_trajectory"};

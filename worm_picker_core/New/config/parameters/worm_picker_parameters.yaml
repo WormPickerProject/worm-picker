@@ -1,0 +1,37 @@
+# worm_picker_parameters.yaml
+# 
+# Copyright (c) 2024
+# SPDX-License-Identifier: Apache-2.0
+
+parameters:
+  config_files:
+    workstation: "/worm-picker/worm_picker_description/program_data/data_files/workstation_data.json"
+    hotel: "/worm-picker/worm_picker_description/program_data/data_files/hotel_data.json"
+    stages: "/worm-picker/worm_picker_description/program_data/data_files/defined_stages.json"
+    tasks: "/worm-picker/worm_picker_description/program_data/data_files/defined_tasks.json"
+    timer_log: "/worm-picker/worm_picker_description/program_data/timer_log"
+
+  actions:
+    exec_task: "/execute_task_solution"
+    task_command: "/task_command"
+
+  operation_modes:
+    plate: "plateMode"
+    worm: "wormMode"
+
+  end_effectors:
+    current_factor: "eoat_tcp"
+    plate_factor: "eoat_tcp"
+    worm_factor: "wormpick_tcp"
+
+  settings:
+    server_timeout: 3
+    max_retries: 10
+    planning_attempts: 5
+
+  validation:
+    pos_tol: 0.01
+    ori_tol: 0.01
+    joint_tol: 0.01
+    step_size: 0.01
+    min_fraction: 0.9
