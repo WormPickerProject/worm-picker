@@ -19,7 +19,7 @@ TaskValidator::TaskValidator(const NodePtr& node)
 
 bool TaskValidator::validateSolution(const Stage* stage, 
                                      const RobotState& initial_state, 
-                                     const RobobState& final_state) const 
+                                     const RobotState& final_state) const 
 {
     const auto& properties = stage->properties();
 

@@ -15,8 +15,8 @@ PlatePositionAnalyzer::PlatePositionAnalyzer(const PoseMap& recorded_positions)
     const auto config_path = "/worm-picker/worm_picker_core/config/workstation_geometry.json";
 
     workstation_geometry_ = [](auto geometry) -> decltype(auto) {
-        std::ranges::for_each(geometry.fixed_points, [](auto& point) { 
-            point.y *= -1.0; 
+        std::ranges::for_each(geometry.getFixedPoints(), [](auto& point) { 
+            point.setY(point.getY() * -1.0);  
         });
         return geometry;
     }(WorkstationGeometryParser(current_path + config_path).getGeometry());
@@ -29,9 +29,9 @@ PlatePositionAnalyzer::NormalizedPoseMap PlatePositionAnalyzer::normalizeAllPoin
 {
     NormalizedPoseMap normalized_poses;
     for (const auto& [recorded_ref_name, recorded_pose] : recorded_positions_) {
-        const auto ref_point_iter = std::ranges::find_if(workstation_geometry_.fixed_points, 
+        const auto ref_point_iter = std::ranges::find_if(workstation_geometry_.getFixedPoints(),
             [&recorded_ref_name](const auto& fp) { 
-                return fp.name == recorded_ref_name; 
+                return fp.getName() == recorded_ref_name; 
             });
 
         const auto ref_positions = std::pair{
@@ -63,10 +63,10 @@ void PlatePositionAnalyzer::transformPoint(
     const auto& [ref_pos, recorded_pos] = ref_positions;
     
     auto& position = pose.pose.position;
-    position.x = (geometry_point.x - ref_pos.x) * MM_TO_M + recorded_pos.x;
-    position.y = (geometry_point.y - ref_pos.y) * MM_TO_M + recorded_pos.y;
+    position.x = (geometry_point.getX() - ref_pos.x) * MM_TO_M + recorded_pos.x;
+    position.y = (geometry_point.getY() - ref_pos.y) * MM_TO_M + recorded_pos.y;
 
-    const auto& quat = quaternions.at(getRowLetter(geometry_point.name));
+    const auto& quat = quaternions.at(getRowLetter(geometry_point.getName()));
     auto& orientation = pose.pose.orientation;
     orientation.x = quat.x;
     orientation.y = quat.y;
@@ -81,7 +81,7 @@ PlatePositionAnalyzer::transformQuaternions(const std::string& ref_key,
     std::unordered_map<std::string, Quaternion> base_quaternions;
     base_quaternions.reserve(ROW_END - ROW_START + 1);
 
-    const double angle_step = workstation_geometry_.ray_separation_angle * PI / 360.0;
+    const double angle_step = workstation_geometry_.getRaySeparationAngle() * PI / 360.0;
 
     for (char row = ROW_START; row <= ROW_END; ++row) {
         const double half_angle = (row - BASE_ROW) * angle_step;

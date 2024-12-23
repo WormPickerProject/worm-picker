@@ -3,11 +3,8 @@
 // Copyright (c) 2024
 // SPDX-License-Identifier: Apache-2.0
 
-// OLd
-#include "worm_picker_core/tasks/generation/task_generator.hpp"
-#include "worm_picker_core/tasks/generation/generate_relative_movement_task.hpp"
-
-// Updated
+#include "worm_picker_core/system/tasks/task_generator.hpp"
+#include "worm_picker_core/system/tasks/generation/generate_relative_movement_task.hpp"
 #include "worm_picker_core/system/tasks/task_factory.hpp"
 #include "worm_picker_core/infrastructure/parsers/workstation_data_parser.hpp"
 #include "worm_picker_core/infrastructure/parsers/hotel_data_parser.hpp"

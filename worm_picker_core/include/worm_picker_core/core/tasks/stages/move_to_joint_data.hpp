@@ -17,7 +17,7 @@ public:
 
     MoveToJointData(double joint1, double joint2, double joint3,
                     double joint4, double joint5, double joint6,
-                    double velocity_scaling, double acceleration_scaling)
+                    double velocity_scaling = 0.1, double acceleration_scaling = 0.1)
         : velocity_scaling_factor_(velocity_scaling)
         , acceleration_scaling_factor_(acceleration_scaling)
     {
@@ -42,8 +42,8 @@ public:
 private:
     static constexpr double DEG_TO_RAD = 3.14159265358979323846 / 180.0;
     std::map<std::string, double> joint_positions_{};
-    double velocity_scaling_factor_{0.1};
-    double acceleration_scaling_factor_{0.1};
+    double velocity_scaling_factor_{};
+    double acceleration_scaling_factor_{};
 };
 
 inline StageData::StagePtr MoveToJointData::createStage(

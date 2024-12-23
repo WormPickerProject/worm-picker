@@ -16,19 +16,19 @@ class TaskValidator {
 public:
     using NodePtr = rclcpp::Node::SharedPtr;
     using Stage = moveit::task_constructor::Stage;
-    using RobobState = moveit::core::RobotState;
+    using RobotState = moveit::core::RobotState;
 
     explicit TaskValidator(const NodePtr& node); 
     bool validateSolution(const Stage* stage, 
                           const RobotState& initial_state, 
-                          const RobobState& final_state) const;
+                          const RobotState& final_state) const;
 
 private:
     using Pose = geometry_msgs::msg::PoseStamped;
     using JointMap = std::map<std::string, double>;
     using Vector3 = geometry_msgs::msg::Vector3Stamped;
 
-    bool validatePoseGoal(const RobobState& state, const Pose& target) const;
+    bool validatePoseGoal(const RobotState& state, const Pose& target) const;
     bool validateJointGoal(const RobobState& state, const JointMap& joint_goals) const;
     bool validateRelativeMove(const RobotState& initial_state,
                               const RobotState& final_state, 
