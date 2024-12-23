@@ -55,7 +55,7 @@ bool WorkstationDataParser::hasInvalidValue(const json& col_data) const
     const auto& coord = col_data["coordinate"];
     return std::any_of(coordinate_keys.begin(), coordinate_keys.end(),
         [&coord](const auto& key) {
-            return coord[key].get<double>() == INVALID_VALUE;
+            return std::abs(coord[key].template get<double>() - INVALID_VALUE) < 1e-6;
         });
 }
 

@@ -43,7 +43,8 @@ inline StageData::StagePtr MoveRelativeData::createStage(const std::string& name
                                                          const NodePtr& node) const
 {
     geometry_msgs::msg::Vector3Stamped direction_vector;
-    direction_vector.header.frame_id = current_end_effector;
+    auto ee_link = param_utils::getParameter<std::string>(node, "end_effectors.current_factor");
+    direction_vector.header.frame_id = *ee_link;
     direction_vector.header.stamp = node->now();
     direction_vector.vector.x = dx_;
     direction_vector.vector.y = dy_;
@@ -62,8 +63,6 @@ inline StageData::StagePtr MoveRelativeData::createStage(const std::string& name
     auto stage = std::make_unique<stages::MoveRelative>(name, cartesian_planner);
     stage->setDirection(direction_vector);
     stage->setGroup("gp4_arm");
-
-    auto ee_link = param_utils::getParameter<std::string>(node, "end_effectors.current_factor");
     stage->setIKFrame(*ee_link);
 
     TrajectoryExecutionInfo execution_info;

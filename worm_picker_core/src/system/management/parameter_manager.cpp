@@ -13,12 +13,13 @@ ParameterManager::ParameterManager(const NodePtr& node, const std::string& yaml_
     processNode(params, "");
 }
 
-void ParameterManager::processNode(const YAML::Node& node, const std::string& prefix) {
-    for (const auto& [key, value] : node) {
-        const auto paramName = [&]() {
-            const auto keyStr = key.as<std::string>();
-            return prefix.empty() ? keyStr : prefix + "." + keyStr;
-        }();
+void ParameterManager::processNode(const YAML::Node& node, const std::string& prefix) 
+{
+    for (const auto& it : node) {
+        const auto key = it.first.as<std::string>();
+        const auto& value = it.second;
+        
+        const auto paramName = prefix.empty() ? key : prefix + "." + key;
 
         if (value.IsMap()) {
             processNode(value, paramName);

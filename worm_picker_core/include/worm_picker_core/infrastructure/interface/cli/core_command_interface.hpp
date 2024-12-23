@@ -3,8 +3,8 @@
 // Copyright (c) 2024
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef DEV_COMMAND_INTERFACE_HPP
-#define DEV_COMMAND_INTERFACE_HPP
+#ifndef CORE_COMMAND_INTERFACE_HPP
+#define CORE_COMMAND_INTERFACE_HPP
 
 #include <rclcpp/rclcpp.hpp>
 #include <worm_picker_custom_msgs/srv/task_command.hpp>
@@ -25,4 +25,4 @@ private:
     rclcpp::Client<TaskCommand>::SharedPtr client_;
 };
 
-#endif // DEV_COMMAND_INTERFACE_HPP
+#endif // CORE_COMMAND_INTERFACE_HPP
