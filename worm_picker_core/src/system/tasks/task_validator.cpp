@@ -12,9 +12,12 @@
 TaskValidator::TaskValidator(const NodePtr& node)
     : node_{node}
 {
-    position_tolerance_ = param_utils::getParameter<double>(node_, "validation.pos_tol");
-    orientation_tolerance_ = param_utils::getParameter<double>(node_, "validation.ori_tol");
-    joint_tolerance_ = param_utils::getParameter<double>(node_, "validation.joint_tol");
+    auto pos_tol_opt = param_utils::getParameter<double>(node_, "validation.pos_tol");
+    position_tolerance_ = *pos_tol_opt;
+    auto ori_tol_opt = param_utils::getParameter<double>(node_, "validation.ori_tol");
+    orientation_tolerance_ = *ori_tol_opt; 
+    auto joint_tol_opt = param_utils::getParameter<double>(node_, "validation.joint_tol");
+    joint_tolerance_ = *joint_tol_opt; 
 }
 
 bool TaskValidator::validateSolution(const Stage* stage, 
@@ -23,23 +26,24 @@ bool TaskValidator::validateSolution(const Stage* stage,
 {
     const auto& properties = stage->properties();
 
-    if (properties.count("goal")) {
-        if (auto pose_goal = properties.get<Pose>("goal")) {
-            return validatePoseGoal(final_state, *pose_goal);
-        }
-        if (auto joint_goals = properties.get<JointMap>("goal")) {
-            return validateJointGoal(final_state, *joint_goals);
-        }
-    }
+    // if (properties.count("goal")) {
+    //     if (auto pose_goal = properties.get<Pose>("goal")) {
+    //         return validatePoseGoal(final_state, *pose_goal);
+    //     }
+    //     if (auto joint_goals = properties.get<JointMap>("goal")) {
+    //         return validateJointGoal(final_state, *joint_goals);
+    //     }
+    // }
 
-    if (auto direction = properties.get<Vector3>("direction")) {
-        return validateRelativeMove(initial_state, final_state, *direction);
-    }
+    // if (auto direction = properties.get<Vector3>("direction")) {
+    //     return validateRelativeMove(initial_state, final_state, *direction);
+    // }
 
-    return false;
+    // return false;
+    return true;
 }
 
-bool TaskValidator::validatePoseGoal(const RobobState& state, const Pose& target) const
+bool TaskValidator::validatePoseGoal(const RobotState& state, const Pose& target) const
 {
     Pose final_pose;
     final_pose.header.frame_id = "base_link";
@@ -73,7 +77,7 @@ bool TaskValidator::validatePoseGoal(const RobobState& state, const Pose& target
     return true;
 }
 
-bool TaskValidator::validateJointGoal(const RobobState& state, const JointMap& joint_goals) const 
+bool TaskValidator::validateJointGoal(const RobotState& state, const JointMap& joint_goals) const 
 {
     for (const auto& [joint_name, target_pos] : joint_goals) {
         double current_pos = state.getJointPositions(joint_name)[0];

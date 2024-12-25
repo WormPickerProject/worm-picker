@@ -5,6 +5,7 @@
 
 #include <fmt/format.h>
 #include "worm_picker_core/system/tasks/generation/generate_relative_movement_task.hpp"
+#include "worm_picker_core/core/tasks/stages/move_relative_data.hpp"
 
 TaskData GenerateRelativeMovementTask::parseCommand(std::string_view command) 
 {

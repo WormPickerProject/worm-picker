@@ -7,6 +7,12 @@
 #include <moveit/task_constructor/solvers.h>
 #include <moveit/task_constructor/stages.h>
 
+#include <moveit/task_constructor/stage.h>
+#include <moveit/task_constructor/properties.h>
+#include <moveit/planning_scene/planning_scene.h>
+#include <moveit/robot_state/robot_state.h>
+#include <moveit/task_constructor/storage.h>
+
 #include "worm_picker_core/system/management/task_manager.hpp"
 #include "worm_picker_core/utils/execution_timer.hpp"
 #include "worm_picker_core/utils/parameter_utils.hpp"
@@ -82,16 +88,16 @@ TaskManager::TaskExecutionStatus TaskManager::performTask(Task& task,
             return TaskExecutionStatus::PlanningFailed;
         }
 
-        auto stage = task.stages().back();
+        auto last_stage = task.stages()->operator[](task.stages()->numChildren() - 1);
         auto it = std::find_if(solutions.begin(), solutions.end(), 
-            [this, &stage](const auto& solution) {
+            [this, &last_stage](const auto& solution) {
                 if (solution->isFailure()) {
                     return false;
                 }
                 return task_validator_->validateSolution(
-                    stage,
-                    solution->trajectory()->getFirstWayPoint(),
-                    solution->trajectory()->getLastWayPoint()
+                    last_stage,
+                    solution->start()->scene()->getCurrentState(),
+                    solution->end()->scene()->getCurrentState()
                 );
             });
 
@@ -100,8 +106,8 @@ TaskManager::TaskExecutionStatus TaskManager::performTask(Task& task,
         }
 
         const auto& valid_solution = *it;
-        task.introspection().publishSolution(valid_solution);
-        const auto result = task.execute(valid_solution);
+        task.introspection().publishSolution(*valid_solution);
+        const auto result = task.execute(*valid_solution);
 
         timer_results.emplace_back(execute_timer.getName(), execute_timer.stop());
         return checkExecutionResult(result, command);

@@ -35,20 +35,20 @@ PlatePositionAnalyzer::NormalizedPoseMap PlatePositionAnalyzer::normalizeAllPoin
             });
 
         const auto ref_positions = std::pair{
-            Point{ref_point_iter->x, ref_point_iter->y},
+            Point{ref_point_iter->getX(), ref_point_iter->getY()},
             Point{recorded_pose.pose.position.x, recorded_pose.pose.position.y}
         };
 
         const auto quaternion_map = transformQuaternions(
-            getRowLetter(ref_point_iter->name), 
+            getRowLetter(ref_point_iter->getName()), 
             Quaternion(recorded_pose.pose.orientation)
         );
 
         auto& normalized_points = normalized_poses[recorded_ref_name];
-        for (const auto& geometry_point : workstation_geometry_.fixed_points) {
+        for (const auto& geometry_point : workstation_geometry_.getFixedPoints()) {
             auto normalized_pose = recorded_pose;
             transformPoint(normalized_pose, geometry_point, ref_positions, quaternion_map);
-            normalized_points.try_emplace(geometry_point.name, std::move(normalized_pose));
+            normalized_points.try_emplace(geometry_point.getName(), std::move(normalized_pose));
         }
     }
     return normalized_poses;

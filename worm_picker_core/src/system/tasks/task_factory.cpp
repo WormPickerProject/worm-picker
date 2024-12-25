@@ -76,7 +76,7 @@ TaskFactory::Task TaskFactory::createTask(const std::string& command)
     int stage_counter{1};
     for (const auto& stage_ptr : task_data.getStages()) {
         const auto stage_name = fmt::format("stage_{}", stage_counter++);
-        auto stage = stage_ptr->createStage(stage_name, worm_picker_node_);
+        auto stage = stage_ptr->createStage(stage_name, node_);
 
         if (!stage) {
             throw std::runtime_error(fmt::format("Failed to create stage: {}", stage_name));

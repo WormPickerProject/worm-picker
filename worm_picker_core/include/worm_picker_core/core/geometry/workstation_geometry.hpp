@@ -18,6 +18,7 @@ public:
     
     double getRaySeparationAngle() const { return ray_separation_angle_; }
     const std::vector<FixedPoint>& getFixedPoints() const { return fixed_points_; }
+    std::vector<FixedPoint>& getFixedPoints() { return fixed_points_; }
 
     void setRaySeparationAngle(double angle) { ray_separation_angle_ = angle; }
     void setFixedPoints(const std::vector<FixedPoint>& points) { fixed_points_ = points; }

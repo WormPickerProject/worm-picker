@@ -14,8 +14,8 @@ RobotController::RobotController(const NodePtr& node,
     : node_(node), robot_group_(robot_group), end_effector_link_(end_effector_link)
 {
     CalibrationPointsParser parser(calibration_file_path);
-    points_map_ = parser.getCalibrationPointsMap();
-    points_order_ = parser.getPointsOrder();
+    points_map_   = parser.getCalibrationPointMap();
+    points_order_ = parser.getPointOrder();
 
     node_->declare_parameter<std::string>("end_effector", "eoat_tcp");
     planning_scene_sub_ = node_->create_subscription<moveit_msgs::msg::PlanningScene>(

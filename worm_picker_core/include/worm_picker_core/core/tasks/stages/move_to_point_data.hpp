@@ -18,7 +18,7 @@ public:
 
     MoveToPointData(double px, double py, double pz,
                     double ox, double oy, double oz, double ow,
-                    double velocity_scaling, double acceleration_scaling)
+                    double velocity_scaling = 0.1, double acceleration_scaling = 0.1)
         : x_(px), y_(py), z_(pz), 
           velocity_scaling_factor_(velocity_scaling), 
           acceleration_scaling_factor_(acceleration_scaling) 
@@ -52,9 +52,9 @@ private:
     double qx_{};
     double qy_{};
     double qz_{};
-    double qw_{1.0}; 
-    double velocity_scaling_factor_{0.1};
-    double acceleration_scaling_factor_{0.1};
+    double qw_{}; 
+    double velocity_scaling_factor_{};
+    double acceleration_scaling_factor_{};
 };
 
 inline MoveToPointData::StagePtr MoveToPointData::createStage(const std::string& name, 

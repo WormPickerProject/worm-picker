@@ -4,7 +4,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include <filesystem>
-#include "worm_picker_core/system/calibration/plate_calibration.hpp"
+#include "worm_picker_core/system/nodes/plate_calibration.hpp"
 
 PlateCalibration::PlateCalibration(const rclcpp::NodeOptions& options) 
     : node_{std::make_shared<rclcpp::Node>("plate_calibration_node", options)} 
@@ -70,4 +70,19 @@ void PlateCalibration::handleUserInput(const CalibrationCommandRequestPtr& reque
 rclcpp::node_interfaces::NodeBaseInterface::SharedPtr PlateCalibration::getNodeBase() const 
 {
     return node_->get_node_base_interface();
+}
+
+int main(int argc, char **argv) 
+{
+    rclcpp::init(argc, argv);
+    auto options = rclcpp::NodeOptions().automatically_declare_parameters_from_overrides(true);
+    auto plate_calibration = std::make_shared<PlateCalibration>(options);
+
+    rclcpp::executors::MultiThreadedExecutor executor;
+    executor.add_node(plate_calibration->getNodeBase());
+    executor.spin();
+    executor.remove_node(plate_calibration->getNodeBase());
+
+    rclcpp::shutdown();
+    return 0;
 }
