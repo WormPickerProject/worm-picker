@@ -5,11 +5,11 @@
 
 parameters:
   config_files:
-    workstation: "/worm-picker/worm_picker_description/program_data/data_files/workstation_data.json"
-    hotel: "/worm-picker/worm_picker_description/program_data/data_files/hotel_data.json"
-    stages: "/worm-picker/worm_picker_description/program_data/data_files/defined_stages.json"
-    tasks: "/worm-picker/worm_picker_description/program_data/data_files/defined_tasks.json"
-    timer_log: "/worm-picker/worm_picker_description/program_data/timer_log"
+    workstation: "/worm_picker_core/config/parameters/workstation_data.json"
+    hotel: "/worm_picker_core/config/parameters/hotel_data.json"
+    stages: "/worm_picker_core/config/parameters/defined_stages.json"
+    tasks: "/worm_picker_core/config/parameters/defined_tasks.json"
+    timer_log: "/worm_picker_core/config/logs"
 
   actions:
     exec_task: "/execute_task_solution"

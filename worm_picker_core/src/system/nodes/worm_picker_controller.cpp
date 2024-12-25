@@ -3,6 +3,7 @@
 // Copyright (c) 2024
 // SPDX-License-Identifier: Apache-2.0
 
+#include <ament_index_cpp/get_package_share_directory.hpp>
 #include "worm_picker_core/system/nodes/worm_picker_controller.hpp"
 
 WormPickerController::WormPickerController(const rclcpp::NodeOptions& options)
@@ -22,7 +23,10 @@ WormPickerController::WormPickerController(const rclcpp::NodeOptions& options)
 
 void WormPickerController::initializeComponents() 
 {
-    parameter_manager_ = std::make_shared<ParameterManager>(node_);
+    const auto package_share_dir = ament_index_cpp::get_package_share_directory("worm_picker_core");
+    const auto yaml_path = package_share_dir + "/config/parameters/worm_picker_parameters.yaml";
+
+    parameter_manager_ = std::make_shared<ParameterManager>(node_, yaml_path);
     task_factory_ = std::make_shared<TaskFactory>(node_);
     timer_data_collector_ = std::make_shared<TimerDataCollector>(node_);
     action_client_manager_ = std::make_shared<ActionClientManager>(node_);
@@ -42,18 +46,3 @@ WormPickerController::NodeBaseInterfacePtr WormPickerController::getBaseInterfac
 {
     return node_->get_node_base_interface();
 }
-
-// int main(int argc, char **argv) 
-// {
-//     rclcpp::init(argc, argv);
-//     auto options = rclcpp::NodeOptions().automatically_declare_parameters_from_overrides(true);
-//     auto worm_picker_controller = std::make_shared<WormPickerController>(options);
-    
-//     rclcpp::executors::MultiThreadedExecutor executor;
-//     executor.add_node(worm_picker_controller->getBaseInterface());
-//     executor.spin();
-//     executor.remove_node(worm_picker_controller->getBaseInterface());
-
-//     rclcpp::shutdown();
-//     return 0;
-// }

@@ -115,13 +115,3 @@ void RosCommandClient::sendTaskCommandRequest(const std::shared_ptr<TaskCommand:
 
     task_command_client_->async_send_request(request, std::move(response_handler));
 }
-
-int main(int argc, char **argv) 
-{
-    auto client = std::make_shared<RosCommandClient>(argc, argv);
-
-    std::jthread([client]() { client->connectToTaskCommandService(); });
-    client->runSocketServer(12345);
-
-    return 0;
-}
