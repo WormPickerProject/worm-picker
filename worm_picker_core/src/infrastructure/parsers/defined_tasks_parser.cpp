@@ -4,15 +4,16 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include <fstream>
+#include <ament_index_cpp/get_package_share_directory.hpp>
 #include "worm_picker_core/core/tasks/stages/move_relative_data.hpp"
 #include "worm_picker_core/core/tasks/stages/move_to_joint_data.hpp"
 #include "worm_picker_core/core/tasks/stages/move_to_point_data.hpp"
 #include "worm_picker_core/infrastructure/parsers/defined_tasks_parser.hpp"
 
 DefinedTasksGenerator::DefinedTasksGenerator(const std::string& stages_file, 
-                                             const std::string& tasks_file)
-    : stages_file_(std::move(std::filesystem::current_path().string() + stages_file)), 
-      tasks_file_(std::move(std::filesystem::current_path().string() + tasks_file)) 
+                                           const std::string& tasks_file)
+    : stages_file_(stages_file), 
+      tasks_file_(tasks_file) 
 {
     if (stages_file_.empty() || tasks_file_.empty()) {
         throw std::invalid_argument("File paths cannot be empty");
@@ -67,9 +68,10 @@ DefinedTasksGenerator::TaskDataMap DefinedTasksGenerator::parseTasks(
 
 DefinedTasksGenerator::json DefinedTasksGenerator::parseJsonFile(const std::string& file_path) 
 {
-    std::ifstream file(file_path);
+    const auto package_share_dir = ament_index_cpp::get_package_share_directory("worm_picker_core");
+    std::ifstream file(package_share_dir + file_path);
     if (!file.is_open()) {
-        throw std::runtime_error("Failed to open file: " + file_path);
+        throw std::runtime_error("Failed to open file: " + package_share_dir + file_path);
     }
 
     return json::parse(file);
