@@ -16,8 +16,8 @@ TimerDataCollector::TimerDataCollector(const NodePtr& node)
 
 void TimerDataCollector::initializeOutputDirectory(const NodePtr& node) 
 {
-    auto relative_path = param_utils::getParameter<std::string>(node, "config_files.timer_log");
     const auto base_path = std::filesystem::current_path().string();
+    auto relative_path = param_utils::getParameter<std::string>(node, "config_files.timer_log");
     output_path_ = base_path + *relative_path;
 
     std::error_code ec;
@@ -68,4 +68,6 @@ void TimerDataCollector::saveDataToFile() const
     if (!file) {
         throw std::runtime_error("Failed to write to file: " + file_path.string());
     }
+
+    file.close();
 }

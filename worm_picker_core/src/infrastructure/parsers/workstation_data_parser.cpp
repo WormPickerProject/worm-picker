@@ -4,7 +4,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include <fstream>
-#include <filesystem>
+#include <ament_index_cpp/get_package_share_directory.hpp>
 #include "worm_picker_core/infrastructure/parsers/workstation_data_parser.hpp"
 
 WorkstationDataParser::WorkstationDataParser(const std::string& file_path)
@@ -20,10 +20,10 @@ WorkstationDataParser::getWorkstationDataMap() const
 
 void WorkstationDataParser::parseJsonFile(const std::string& file_path) 
 {
-    const auto current_path = std::filesystem::current_path().string();
-    std::ifstream file(current_path + file_path);
+    const auto package_share_dir = ament_index_cpp::get_package_share_directory("worm_picker_core");
+    std::ifstream file(package_share_dir + file_path);
     if (!file.is_open()) {
-        throw std::runtime_error("Failed to open file: " + current_path + file_path);
+        throw std::runtime_error("Failed to open file: " + package_share_dir + file_path);
     }
 
     json workstation_json;
