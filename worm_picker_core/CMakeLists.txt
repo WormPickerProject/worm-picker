@@ -83,6 +83,7 @@ set(ROS_DEPS
   tf2_eigen
   std_srvs
   geometry_msgs
+  ament_index_cpp
 )
 
 set(WORM_PICKER_DEPS
@@ -117,6 +118,8 @@ add_library(${PROJECT_NAME} SHARED
   src/system/management/parameter_manager.cpp
   src/system/management/service_handler.cpp
   src/system/management/task_manager.cpp
+  src/system/nodes/plate_calibration.cpp
+  src/system/nodes/worm_picker_controller.cpp
   src/system/tasks/generation/base_task_generator.cpp
   src/system/tasks/generation/generate_hotel_task_generator.cpp
   src/system/tasks/generation/generate_relative_movement_task.cpp
@@ -193,6 +196,13 @@ add_worm_picker_executable(plate_calibration
     ${WORM_PICKER_DEPS}
 )
 
+add_worm_picker_executable(command_networking
+  SOURCES
+    src/apps/command_networking_main.cpp
+  DEPS
+    ${WORM_PICKER_DEPS}
+)
+
 #
 # ----------------------------------------------------------------------------
 # Install & Export
@@ -213,8 +223,13 @@ install(
 )
 
 install(
-  DIRECTORY config/
-  DESTINATION share/${PROJECT_NAME}/
+  DIRECTORY config/parameters/
+  DESTINATION share/${PROJECT_NAME}/config/parameters
+)
+
+install(
+  DIRECTORY config/launch/
+  DESTINATION share/${PROJECT_NAME}/launch
 )
 
 # install(
