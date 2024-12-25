@@ -16,7 +16,7 @@ public:
     MoveRelativeData() = default;
 
     constexpr MoveRelativeData(double delta_x, double delta_y, double delta_z,
-                               double velocity_scaling, double acceleration_scaling)
+                               double velocity_scaling = 0.1, double acceleration_scaling = 0.1)
         : dx_(delta_x), dy_(delta_y), dz_(delta_z), 
           velocity_scaling_factor_(velocity_scaling), 
           acceleration_scaling_factor_(acceleration_scaling) {}
@@ -35,8 +35,8 @@ private:
     double dx_{};
     double dy_{};
     double dz_{};
-    double velocity_scaling_factor_{0.1};
-    double acceleration_scaling_factor_{0.1};
+    double velocity_scaling_factor_{};
+    double acceleration_scaling_factor_{};
 };
 
 inline StageData::StagePtr MoveRelativeData::createStage(const std::string& name,

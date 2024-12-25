@@ -29,7 +29,7 @@ private:
     using Vector3 = geometry_msgs::msg::Vector3Stamped;
 
     bool validatePoseGoal(const RobotState& state, const Pose& target) const;
-    bool validateJointGoal(const RobobState& state, const JointMap& joint_goals) const;
+    bool validateJointGoal(const RobotState& state, const JointMap& joint_goals) const;
     bool validateRelativeMove(const RobotState& initial_state,
                               const RobotState& final_state, 
                               const Vector3& direction) const;

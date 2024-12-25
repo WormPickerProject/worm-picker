@@ -26,13 +26,14 @@ void RosCommandClient::initializeCommandHandlers()
         auto self = shared_from_this();
         
         using ReadyEnum = motoros2_interfaces::msg::MotionReadyEnum;
-        auto response_handler = [self, completion_callback](auto future) {
-            auto result = future.get();
-            bool success = (result->result_code.value == ReadyEnum::READY);
-            completion_callback(success);
+        auto response_handler = [self, completion_callback](
+            const rclcpp::Client<StartTrajMode>::SharedFuture future) {
+                auto response = future.get();
+                bool success = (response->result_code.value == ReadyEnum::READY);
+                completion_callback(success);
         };
 
-        start_traj_client_->async_send_request(request, response_handler);
+        start_traj_client_->async_send_request(request, std::move(response_handler));
     };
 
     command_handlers_["quit"] = [this](StatusCallback completion_callback) { 
@@ -106,12 +107,13 @@ void RosCommandClient::sendTaskCommandRequest(const std::shared_ptr<TaskCommand:
 {
     RCLCPP_INFO(node_->get_logger(), "Task command received: '%s'", request->command.c_str());
 
-    auto response_handler = [self = shared_from_this(), completion_callback](auto future) {
-        auto result = future.get();
-        completion_callback(result->success);
+    auto response_handler = [self = shared_from_this(), completion_callback](
+        const rclcpp::Client<TaskCommand>::SharedFuture future) {
+            auto response = future.get();
+            completion_callback(response->success);
     };
 
-    task_command_client_->async_send_request(request, response_handler);
+    task_command_client_->async_send_request(request, std::move(response_handler));
 }
 
 int main(int argc, char **argv) 
