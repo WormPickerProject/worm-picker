@@ -60,6 +60,7 @@ find_package(motoros2_interfaces REQUIRED)
 find_package(std_srvs REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 find_package(worm_picker_moveit_config REQUIRED)
+find_package(nlohmann_json REQUIRED)
 
 #
 # ----------------------------------------------------------------------------
@@ -93,6 +94,7 @@ set(WORM_PICKER_DEPS
   motoros2_interfaces
   fmt
   yaml-cpp
+  nlohmann_json
 )
 
 #
