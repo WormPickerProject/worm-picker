@@ -88,14 +88,13 @@ TaskManager::TaskExecutionStatus TaskManager::performTask(Task& task,
             return TaskExecutionStatus::PlanningFailed;
         }
 
-        auto last_stage = task.stages()->operator[](task.stages()->numChildren() - 1);
         auto it = std::find_if(solutions.begin(), solutions.end(), 
-            [this, &last_stage](const auto& solution) {
+            [this, &task](const auto& solution) {
                 if (solution->isFailure()) {
                     return false;
                 }
                 return task_validator_->validateSolution(
-                    last_stage,
+                    task,
                     solution->start()->scene()->getCurrentState(),
                     solution->end()->scene()->getCurrentState()
                 );

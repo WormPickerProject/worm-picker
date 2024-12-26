@@ -3,66 +3,32 @@
         "command": "homeEndFactor",
         "timers": [
             {
-                "duration": 0.040019318,
+                "duration": 0.034112002,
                 "name": "Create Task Timer"
             },
             {
-                "duration": 0.009163879,
+                "duration": 0.007074834,
                 "name": "Initialize and Plan Task Timer"
             },
             {
-                "duration": 2.157594779,
+                "duration": 2.148596317,
                 "name": "Execute Task Timer"
             }
         ]
     },
     {
-        "command": "moveToPoint:G1",
+        "command": "moveToPoint:G2",
         "timers": [
             {
-                "duration": 0.038535097,
+                "duration": 0.034184743,
                 "name": "Create Task Timer"
             },
             {
-                "duration": 0.009705686,
+                "duration": 0.007599075,
                 "name": "Initialize and Plan Task Timer"
             },
             {
-                "duration": 1.870162942,
-                "name": "Execute Task Timer"
-            }
-        ]
-    },
-    {
-        "command": "moveToPoint:G3",
-        "timers": [
-            {
-                "duration": 0.036509147,
-                "name": "Create Task Timer"
-            },
-            {
-                "duration": 0.010389808,
-                "name": "Initialize and Plan Task Timer"
-            },
-            {
-                "duration": 1.699760946,
-                "name": "Execute Task Timer"
-            }
-        ]
-    },
-    {
-        "command": "home",
-        "timers": [
-            {
-                "duration": 0.036995242,
-                "name": "Create Task Timer"
-            },
-            {
-                "duration": 0.008324927,
-                "name": "Initialize and Plan Task Timer"
-            },
-            {
-                "duration": 1.452190019,
+                "duration": 1.847519874,
                 "name": "Execute Task Timer"
             }
         ]
