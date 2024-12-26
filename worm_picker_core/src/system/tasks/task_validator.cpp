@@ -3,9 +3,9 @@
 // Copyright (c) 2024
 // SPDX-License-Identifier: Apache-2.0
 
-#include <Eigen/Geometry>
-#include <cmath>
-#include <algorithm>
+// #include <Eigen/Geometry>
+// #include <cmath>
+// #include <algorithm>
 #include "worm_picker_core/system/tasks/task_validator.hpp"
 #include "worm_picker_core/utils/parameter_utils.hpp"
 
@@ -20,27 +20,46 @@ TaskValidator::TaskValidator(const NodePtr& node)
     joint_tolerance_ = *joint_tol_opt; 
 }
 
-bool TaskValidator::validateSolution(const Stage* stage, 
+bool TaskValidator::validateSolution(const Task& task, 
                                      const RobotState& initial_state, 
                                      const RobotState& final_state) const 
 {
-    const auto& properties = stage->properties();
+    auto last_stage = task.stages()->operator[](task.stages()->numChildren() - 1);
+    const auto& properties = last_stage->properties();
 
-    // if (properties.count("goal")) {
-    //     if (auto pose_goal = properties.get<Pose>("goal")) {
-    //         return validatePoseGoal(final_state, *pose_goal);
-    //     }
-    //     if (auto joint_goals = properties.get<JointMap>("goal")) {
-    //         return validateJointGoal(final_state, *joint_goals);
-    //     }
-    // }
+    if (properties.hasProperty("goal")) {
+        const auto& goal = properties.get("goal");
+        if (goal.type() == typeid(Pose)) {
+            const auto& pose_goal = boost::any_cast<Pose>(goal);
+            return validatePoseGoal(final_state, pose_goal);
+        }
+        if (goal.type() == typeid(moveit_msgs::msg::RobotState)) {
+            const auto& robot_state = boost::any_cast<moveit_msgs::msg::RobotState>(goal);
+            JointMap joint_goals;
+            for (size_t i = 0; i < robot_state.joint_state.name.size(); ++i) {
+                joint_goals[robot_state.joint_state.name[i]] = robot_state.joint_state.position[i];
+            }
+            return validateJointGoal(final_state, joint_goals);
+        }
+    }
 
-    // if (auto direction = properties.get<Vector3>("direction")) {
-    //     return validateRelativeMove(initial_state, final_state, *direction);
-    // }
+    if (properties.hasProperty("direction")) {
+        const auto& direction = properties.get<Vector3>("direction");
+        (void)direction;
+        (void)initial_state;
+        // return validateRelativeMove(initial_state, final_state, direction);
+        //
+        // Relative move validation is not implemented correctly for a task that contains
+        // multiple stages. This is because the validation is done only for the last stage, 
+        // and does not take into account for the stages before it/looks at the whole picuture. 
+        // This approach works with a task ending with a joint and pose goal, but not with a 
+        // relative move goal.
+        //
+        // Return true for now to avoid validation errors.
+        return true;
+    }
 
-    // return false;
-    return true;
+    return false;
 }
 
 bool TaskValidator::validatePoseGoal(const RobotState& state, const Pose& target) const

@@ -7,6 +7,7 @@
 #define TASK_VALIDATOR_HPP
 
 #include <rclcpp/rclcpp.hpp>
+#include <moveit/task_constructor/task.h>
 #include <moveit/robot_state/robot_state.h>
 #include <geometry_msgs/msg/pose_stamped.hpp>
 #include <geometry_msgs/msg/vector3_stamped.hpp>
@@ -15,11 +16,11 @@
 class TaskValidator {
 public:
     using NodePtr = rclcpp::Node::SharedPtr;
-    using Stage = moveit::task_constructor::Stage;
+    using Task = moveit::task_constructor::Task;
     using RobotState = moveit::core::RobotState;
 
     explicit TaskValidator(const NodePtr& node); 
-    bool validateSolution(const Stage* stage, 
+    bool validateSolution(const Task& task, 
                           const RobotState& initial_state, 
                           const RobotState& final_state) const;
 
