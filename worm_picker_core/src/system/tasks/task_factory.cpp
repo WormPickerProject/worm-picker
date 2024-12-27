@@ -15,7 +15,8 @@
 #include "worm_picker_core/utils/parameter_utils.hpp"
 
 TaskFactory::TaskFactory(const NodePtr& node) 
-    : node_(node) 
+    : node_(node), 
+      command_parser_(std::make_unique<CommandParser>())
 { 
     if (!node_) {
         throw std::runtime_error("TaskFactory initialization failed: worm_picker_node_ is null.");
@@ -61,16 +62,30 @@ TaskFactory::Task TaskFactory::createTask(const std::string& command)
     auto task = createBaseTask(command);
     task.add(std::make_unique<CurrentStateStage>("current"));
 
-    const TaskData task_data = [&] {
-        if (command.starts_with("moveRelative:")) {
-            return GenerateRelativeMovementTask::parseCommand(command);
+    auto info = command_parser_->parse(command);
+    const auto task_data = [&] {
+        if (info.getBaseCommand() == "moveRelative") {
+            return GenerateRelativeMovementTask::parseCommand(info.getArgs());
         }
         
         auto it = task_data_map_.find(command);
         if (it == task_data_map_.end()) {
             throw std::invalid_argument(fmt::format("Command '{}' not found", command));
         }
-        return it->second;
+
+        if (!info.getSpeedOverride()) {
+            return it->second;
+        }
+
+        TaskData modified_task = it->second;
+        const auto& [velocity, acceleration] = *info.getSpeedOverride();
+        for (auto& stage : modified_task.getStages()) {
+            if (auto* move_base = dynamic_cast<MovementDataBase*>(stage.get())) {
+                move_base->setVelocityScalingFactor(velocity);
+                move_base->setAccelerationScalingFactor(acceleration);
+            }
+        }
+        return modified_task;
     }();
 
     int stage_counter{1};

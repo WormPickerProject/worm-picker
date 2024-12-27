@@ -108,6 +108,7 @@ add_library(${PROJECT_NAME} SHARED
   src/infrastructure/interface/network/ros_command_client.cpp
   src/infrastructure/interface/network/tcp_socket_server.cpp
   src/infrastructure/parsers/calibration_points_parser.cpp
+  src/infrastructure/parsers/command_parser.cpp
   src/infrastructure/parsers/defined_tasks_parser.cpp
   src/infrastructure/parsers/hotel_data_parser.cpp
   src/infrastructure/parsers/workstation_data_parser.cpp

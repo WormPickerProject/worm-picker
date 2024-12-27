@@ -63,8 +63,7 @@ inline void MovementDataBase::setCommonInfo(Stage& stage, const NodePtr& node) c
         move_to_stage->setGroup(*move_group);
         move_to_stage->setIKFrame(*ee_link);
         setCommonExecutionInfo(*move_to_stage);  
-    } 
-    else if (auto* move_relative_stage = dynamic_cast<stages::MoveRelative*>(&stage)) {
+    } else if (auto* move_relative_stage = dynamic_cast<stages::MoveRelative*>(&stage)) {
         move_relative_stage->setGroup(*move_group);
         move_relative_stage->setIKFrame(*ee_link);
         setCommonExecutionInfo(*move_relative_stage);

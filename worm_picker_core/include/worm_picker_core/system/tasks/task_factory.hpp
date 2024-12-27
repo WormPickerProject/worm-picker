@@ -11,6 +11,7 @@
 #include <moveit/task_constructor/task.h>
 #include <moveit/task_constructor/stages.h>
 #include "worm_picker_core/core/tasks/task_data.hpp"
+#include "worm_picker_core/infrastructure/parsers/command_parser.hpp"
 
 class TaskFactory {
 public:
@@ -31,6 +32,7 @@ private:
     void logCreatedTask(const std::string& command, const TaskData& task_data);
  
     NodePtr node_;
+    std::unique_ptr<CommandParser> command_parser_;
     TaskDataMap task_data_map_;
 };
 

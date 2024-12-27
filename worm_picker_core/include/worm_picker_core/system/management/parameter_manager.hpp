@@ -25,11 +25,30 @@ private:
 };
 
 template<typename T>
-bool ParameterManager::tryDeclareParam(const std::string& name, const YAML::Node& value) 
+inline bool ParameterManager::tryDeclareParam(const std::string& name, const YAML::Node& value) 
 {
     try {
         node_->declare_parameter(name, value.as<T>());
         return true;
+    } catch (...) {
+        return false;
+    }
+}
+
+template<>
+inline bool ParameterManager::tryDeclareParam<std::vector<std::string>>(
+    const std::string& name, const YAML::Node& value)
+{
+    try {
+        if (value.IsSequence()) {
+            std::vector<std::string> vec;
+            for (const auto& item : value) {
+                vec.push_back(item.as<std::string>());
+            }
+            node_->declare_parameter(name, vec);
+            return true;
+        }
+        return false;
     } catch (...) {
         return false;
     }
