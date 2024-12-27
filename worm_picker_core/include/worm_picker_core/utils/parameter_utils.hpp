@@ -11,9 +11,19 @@
 namespace param_utils {
 
 template<typename T>
-std::optional<T> getParameter(const rclcpp::Node::SharedPtr& node, const std::string& name) {
+inline std::optional<T> getParameter(const rclcpp::Node::SharedPtr& node, const std::string& name) {
     try {
         return node->get_parameter(name).get_value<T>();
+    } catch (const rclcpp::exceptions::ParameterNotDeclaredException&) {
+        return std::nullopt;
+    }
+}
+
+template<>
+inline std::optional<std::vector<std::string>> getParameter(const rclcpp::Node::SharedPtr& node, 
+                                                     const std::string& name) {
+    try {
+        return node->get_parameter(name).get_value<std::vector<std::string>>();
     } catch (const rclcpp::exceptions::ParameterNotDeclaredException&) {
         return std::nullopt;
     }

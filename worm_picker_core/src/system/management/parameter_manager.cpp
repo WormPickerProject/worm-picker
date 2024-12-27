@@ -30,7 +30,8 @@ void ParameterManager::processNode(const YAML::Node& node, const std::string& pr
             &ParameterManager::tryDeclareParam<bool>,
             &ParameterManager::tryDeclareParam<int>,
             &ParameterManager::tryDeclareParam<double>,
-            &ParameterManager::tryDeclareParam<std::string>
+            &ParameterManager::tryDeclareParam<std::string>,
+            &ParameterManager::tryDeclareParam<std::vector<std::string>>
         };
 
         bool declared = false;

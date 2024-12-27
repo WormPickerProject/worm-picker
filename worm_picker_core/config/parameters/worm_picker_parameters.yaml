@@ -36,3 +36,9 @@ parameters:
     joint_tol: 0.01
     step_size: 0.01
     min_fraction: 0.9
+
+  commands:
+    zero_arg: ["home", "homeEndEffector"]
+    one_arg: ["pickPlateWorkstation", "placePlateWorkStation", "swapEndFactor", "hoverWormPick"]
+    two_arg: []
+    three_arg: ["moveRelative", "moveAbsolute"]
