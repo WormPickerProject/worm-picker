@@ -23,18 +23,13 @@ DefinedTasksGenerator::DefinedTasksGenerator(const std::string& stages_file,
     task_data_map_ = parseTasks(stages);
 }
 
-const DefinedTasksGenerator::TaskDataMap& DefinedTasksGenerator::getDefinedTasksMap() const 
-{
-    return task_data_map_;
-}
-
 DefinedTasksGenerator::StageDataMap DefinedTasksGenerator::parseStages() 
 {
     StageDataMap stage_data_map;
     json stages_json = parseJsonFile(stages_file_);
 
     for (const auto& stage_entry : stages_json) {
-        const auto& name = stage_entry["name"].get<std::string>();
+        const auto& name = stage_entry.at("name").get<std::string>();
 
         if (auto stage_data = createStageData(stage_entry)) {
             stage_data_map.emplace(name, std::move(stage_data));
@@ -42,28 +37,6 @@ DefinedTasksGenerator::StageDataMap DefinedTasksGenerator::parseStages()
     }
 
     return stage_data_map;
-}
-
-DefinedTasksGenerator::TaskDataMap DefinedTasksGenerator::parseTasks(
-    const StageDataMap& stage_data_map) 
-{
-    TaskDataMap task_data_map;
-    json tasks_json = parseJsonFile(tasks_file_);
-
-    for (const auto& task_entry : tasks_json) {
-        const auto& name = task_entry["name"].get<std::string>();
-        const auto& stages = task_entry["stages"].get<std::vector<std::string>>();
-
-        auto maybe_task = TaskData::create(stage_data_map, stages);
-        if (!maybe_task) {
-            throw std::runtime_error(
-                "Failed to create task: " + name + " - Invalid stage name in configuration");
-        }
-
-        task_data_map.emplace(name, std::move(*maybe_task));
-    }
-
-    return task_data_map;
 }
 
 DefinedTasksGenerator::json DefinedTasksGenerator::parseJsonFile(const std::string& file_path) 
@@ -79,33 +52,83 @@ DefinedTasksGenerator::json DefinedTasksGenerator::parseJsonFile(const std::stri
 
 DefinedTasksGenerator::StageDataPtr DefinedTasksGenerator::createStageData(const json& stage_entry) 
 {
-    const auto& type = stage_entry["type"].get<std::string>();
-    const auto& parameters = stage_entry["parameters"].get<std::vector<double>>();
-    const auto& velocity_scaling = stage_entry["velocity_scaling"].get<double>();
-    const auto& acceleration_scaling = stage_entry["acceleration_scaling"].get<double>();
+    const auto& type = stage_entry.at("type").get<std::string>();
+    const auto& velocity_scaling = stage_entry.at("velocity_scaling").get<double>();
+    const auto& acceleration_scaling = stage_entry.at("acceleration_scaling").get<double>();
 
     if (type == "JOINT") {
-        return std::make_shared<MoveToJointData>(
-            parameters[0], parameters[1], parameters[2], 
-            parameters[3], parameters[4], parameters[5],
-            velocity_scaling, acceleration_scaling
-        );
+        return createJointStageData(stage_entry, velocity_scaling, acceleration_scaling);
     }
     
     if (type == "POINT") {
+        const auto& params = stage_entry.at("parameters").get<std::vector<double>>();
         return std::make_shared<MoveToPointData>(
-            parameters[0], parameters[1], parameters[2],
-            parameters[3], parameters[4], parameters[5], parameters[6],
+            params[0], params[1], params[2],
+            params[3], params[4], params[5], params[6],
             velocity_scaling, acceleration_scaling
         );
     }
     
     if (type == "RELATIVE") {
+        const auto& params = stage_entry.at("parameters").get<std::vector<double>>();
         return std::make_shared<MoveRelativeData>(
-            parameters[0], parameters[1], parameters[2],
+            params[0], params[1], params[2],
             velocity_scaling, acceleration_scaling
         );
     }
 
     return nullptr;
+}
+
+DefinedTasksGenerator::StageDataPtr DefinedTasksGenerator::createJointStageData(
+    const json& stage_entry,
+    double velocity_scaling,
+    double acceleration_scaling)
+{
+    const auto& params = stage_entry.at("parameters").get<std::vector<double>>();
+
+    if (stage_entry.contains("joints_to_move")) {
+        const auto& joints_to_move = stage_entry.at("joints_to_move").get<std::vector<int>>();
+        
+        std::map<std::string, double> joint_targets;
+        for (const auto joint_num : joints_to_move) {
+            joint_targets.emplace("joint_" + std::to_string(joint_num), params[joint_num - 1]);
+        }
+        return std::make_shared<MoveToJointData>(
+            joint_targets, velocity_scaling, acceleration_scaling
+        );
+    } 
+    
+    return std::make_shared<MoveToJointData>(
+        params[0], params[1], params[2], 
+        params[3], params[4], params[5],
+        velocity_scaling, acceleration_scaling
+    );
+}
+
+DefinedTasksGenerator::TaskDataMap DefinedTasksGenerator::parseTasks(
+    const StageDataMap& stage_data_map) 
+{
+    TaskDataMap task_data_map;
+    json tasks_json = parseJsonFile(tasks_file_);
+
+    for (const auto& task_entry : tasks_json) {
+        const auto& name = task_entry.at("name").get<std::string>();
+        const auto& stages = task_entry.at("stages").get<std::vector<std::string>>();
+
+        auto maybe_task = TaskData::create(stage_data_map, stages);
+        if (!maybe_task) {
+            throw std::runtime_error(
+                "Failed to create task: " + name + " - Invalid stage name in configuration");
+        }
+
+        task_data_map.emplace(name, std::move(*maybe_task));
+    }
+
+    return task_data_map;
+}
+
+const DefinedTasksGenerator::TaskDataMap& DefinedTasksGenerator::getDefinedTasksMap() const 
+{
+    return task_data_map_;
 }
