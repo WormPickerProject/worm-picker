@@ -26,6 +26,9 @@ private:
     TaskDataMap parseTasks(const StageDataMap& stage_data_map);
     static json parseJsonFile(const std::string& file_path);
     static StageDataPtr createStageData(const json& stage_entry);
+    static StageDataPtr createJointStageData(const json& stage_entry, 
+                                             double velocity_scaling,
+                                             double acceleration_scaling);
 
     std::string stages_file_;
     std::string tasks_file_;
