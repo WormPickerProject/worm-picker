@@ -6,8 +6,8 @@
 #ifndef STAGE_DATA_HPP
 #define STAGE_DATA_HPP
 
-#include <moveit/task_constructor/stage.h>
 #include <rclcpp/rclcpp.hpp>
+#include <moveit/task_constructor/stage.h>
 
 enum class StageType { 
     MOVE_TO_POINT, 
@@ -22,7 +22,6 @@ public:
     using NodePtr = rclcpp::Node::SharedPtr;
 
     virtual ~StageData() = default;
-
     virtual StageType getType() const = 0;
     virtual StagePtr createStage(const std::string& name, const NodePtr& node) const = 0;
 };

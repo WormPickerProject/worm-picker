@@ -16,6 +16,7 @@ parameters:
     task_command: "/task_command"
 
   operation_modes:
+    group: "gp4_arm"
     plate: "plateMode"
     worm: "wormMode"
 
