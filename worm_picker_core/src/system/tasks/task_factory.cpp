@@ -16,7 +16,7 @@
 
 TaskFactory::TaskFactory(const NodePtr& node) 
     : node_(node), 
-      command_parser_(std::make_unique<CommandParser>())
+      command_parser_(std::make_unique<CommandParser>(node))
 { 
     if (!node_) {
         throw std::runtime_error("TaskFactory initialization failed: worm_picker_node_ is null.");
@@ -54,7 +54,7 @@ void TaskFactory::initializeTaskMap()
     // task_data_map_.insert(defined_tasks_map.begin(), defined_tasks_map.end());
     task_data_map_.insert(generated_task_map.begin(), generated_task_map.end());
 
-    logTaskMap(); // Temporary debug function
+    // logTaskMap(); // Temporary debug function
 }
 
 TaskFactory::Task TaskFactory::createTask(const std::string& command) 
@@ -68,24 +68,24 @@ TaskFactory::Task TaskFactory::createTask(const std::string& command)
             return GenerateRelativeMovementTask::parseCommand(info.getArgs());
         }
         
-        auto it = task_data_map_.find(command);
+        auto it = task_data_map_.find(info.getBaseCommandKey());
         if (it == task_data_map_.end()) {
             throw std::invalid_argument(fmt::format("Command '{}' not found", command));
         }
 
+        TaskData task_copy(it->second); 
         if (!info.getSpeedOverride()) {
-            return it->second;
+            return task_copy;
         }
 
-        TaskData modified_task = it->second;
         const auto& [velocity, acceleration] = *info.getSpeedOverride();
-        for (auto& stage : modified_task.getStages()) {
+        for (auto& stage : task_copy.getStages()) {
             if (auto* move_base = dynamic_cast<MovementDataBase*>(stage.get())) {
                 move_base->setVelocityScalingFactor(velocity);
                 move_base->setAccelerationScalingFactor(acceleration);
             }
         }
-        return modified_task;
+        return task_copy;
     }();
 
     int stage_counter{1};
@@ -124,7 +124,7 @@ void TaskFactory::logTaskMap()
 {
     auto logger = rclcpp::get_logger("TaskFactory");
 
-    RCLCPP_INFO(logger, "*****************************************************************************");
+    RCLCPP_INFO(logger, "************************************************************************");
     RCLCPP_INFO(logger, "* Task Data Map Contents:");
 
     for (const auto& task_entry : task_data_map_) {
@@ -223,14 +223,14 @@ void TaskFactory::logTaskMap()
         RCLCPP_INFO(logger, "*");
     }
 
-    RCLCPP_INFO(logger, "*****************************************************************************");
+    RCLCPP_INFO(logger, "************************************************************************");
 }
 
 void TaskFactory::logCreatedTask(const std::string& command, const TaskData& task_data)
 {
     auto logger = rclcpp::get_logger("TaskFactory");
 
-    RCLCPP_INFO(logger, "*****************************************************************************");
+    RCLCPP_INFO(logger, "************************************************************************");
     RCLCPP_INFO(logger, "* Created Task: '%s'", command.c_str());
 
     int stage_number = 1;
@@ -321,5 +321,5 @@ void TaskFactory::logCreatedTask(const std::string& command, const TaskData& tas
         stage_number++;
     }
     
-    RCLCPP_INFO(logger, "*****************************************************************************");
+    RCLCPP_INFO(logger, "************************************************************************");
 }

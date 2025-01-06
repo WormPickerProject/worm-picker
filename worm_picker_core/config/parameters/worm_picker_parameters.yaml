@@ -38,7 +38,7 @@ parameters:
     min_fraction: 0.9
 
   commands:
-    zero_arg: ["home", "homeEndEffector"]
-    one_arg: ["pickPlateWorkstation", "placePlateWorkStation", "swapEndFactor", "hoverWormPick"]
+    zero_arg: ["home", "homeEndFactor"]
+    one_arg: ["pickPlateWorkStation", "placePlateWorkStation", "swapEndFactor", "hoverWormPick"]
     two_arg: []
     three_arg: ["moveRelative", "moveAbsolute"]

@@ -33,6 +33,7 @@ public:
         }
     }
     
+    std::unique_ptr<StageData> clone() const override;
     StageType getType() const override { return StageType::MOVE_TO_JOINT; }
     const std::map<std::string, double>& getJointPositions() const { return joint_positions_; }
 
@@ -48,6 +49,11 @@ private:
     static constexpr double DEG_TO_RAD = 3.14159265358979323846 / 180.0;
     std::map<std::string, double> joint_positions_{};
 };
+
+inline std::unique_ptr<StageData> MoveToJointData::clone() const
+{
+    return std::make_unique<MoveToJointData>(*this);
+}
 
 inline std::shared_ptr<void> MoveToJointData::createPlannerImpl(const NodePtr& node,
                                                                 double vel_scaling, 

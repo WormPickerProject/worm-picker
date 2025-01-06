@@ -17,6 +17,7 @@ public:
         : MovementDataBase(vel_scaling, acc_scaling), 
           dx_(dx), dy_(dy), dz_(dz) {}
 
+    std::unique_ptr<StageData> clone() const override;
     StageType getType() const override { return StageType::MOVE_RELATIVE; }
     constexpr double getDX() const { return dx_; }
     constexpr double getDY() const { return dy_; }
@@ -35,6 +36,11 @@ private:
     double dy_{};
     double dz_{};
 };
+
+inline std::unique_ptr<StageData> MoveRelativeData::clone() const
+{
+    return std::make_unique<MoveRelativeData>(*this);
+}
 
 inline std::shared_ptr<void> MoveRelativeData::createPlannerImpl(const NodePtr& node, 
                                                                  double vel_scaling, 
