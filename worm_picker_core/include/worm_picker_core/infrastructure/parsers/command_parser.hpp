@@ -28,9 +28,8 @@ private:
     static std::pair<std::string, size_t> getNextValue(const std::string& command, size_t pos);
     static std::string getBaseCommand(const std::string& command);
     static std::vector<std::string> parseArguments(const std::string& command);
-    SpeedOverrideOpt extractSpeedOverride(
-            const std::vector<std::string>& args,
-            const std::string& baseCommand);
+    SpeedOverrideOpt extractSpeedOverride(const std::vector<std::string>& args,
+                                          const std::string& baseCommand);
 
     CommandConfigVec configs_;
 };
