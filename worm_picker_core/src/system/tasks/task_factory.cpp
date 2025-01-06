@@ -54,7 +54,7 @@ void TaskFactory::initializeTaskMap()
     // task_data_map_.insert(defined_tasks_map.begin(), defined_tasks_map.end());
     task_data_map_.insert(generated_task_map.begin(), generated_task_map.end());
 
-    // logTaskMap(); // Temporary debug function
+    logTaskMap(); // Temporary debug function
 }
 
 TaskFactory::Task TaskFactory::createTask(const std::string& command) 
