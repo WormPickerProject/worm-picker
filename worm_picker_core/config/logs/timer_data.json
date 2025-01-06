@@ -1,51 +1,51 @@
 [
     {
+        "command": "home:0.9:0.9",
+        "timers": [
+            {
+                "duration": 0.038075852,
+                "name": "Create Task Timer"
+            },
+            {
+                "duration": 0.007148151,
+                "name": "Initialize and Plan Task Timer"
+            },
+            {
+                "duration": 1.036680481,
+                "name": "Execute Task Timer"
+            }
+        ]
+    },
+    {
         "command": "homeEndFactor",
         "timers": [
             {
-                "duration": 0.038729768,
+                "duration": 0.03348054,
                 "name": "Create Task Timer"
             },
             {
-                "duration": 0.006367522,
+                "duration": 0.007246307,
                 "name": "Initialize and Plan Task Timer"
             },
             {
-                "duration": 2.158432298,
+                "duration": 2.34961579,
                 "name": "Execute Task Timer"
             }
         ]
     },
     {
-        "command": "moveToPoint:G2",
+        "command": "home",
         "timers": [
             {
-                "duration": 0.033586183,
+                "duration": 0.034019159,
                 "name": "Create Task Timer"
             },
             {
-                "duration": 0.008229662,
+                "duration": 0.007471707,
                 "name": "Initialize and Plan Task Timer"
             },
             {
-                "duration": 1.855681959,
-                "name": "Execute Task Timer"
-            }
-        ]
-    },
-    {
-        "command": "pickPlateWorkStation:G3",
-        "timers": [
-            {
-                "duration": 0.034062566,
-                "name": "Create Task Timer"
-            },
-            {
-                "duration": 0.009431202,
-                "name": "Initialize and Plan Task Timer"
-            },
-            {
-                "duration": 4.177559215,
+                "duration": 1.022719917,
                 "name": "Execute Task Timer"
             }
         ]

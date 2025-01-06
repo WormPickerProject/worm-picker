@@ -24,12 +24,10 @@ private:
     using CommandConfigVec = std::vector<CommandConfigPtr>;
 
     void initCommandConfigs(const NodePtr& node);
-    const CommandConfig* findConfigForCommand(const std::string& command);
-    static std::pair<std::string, size_t> getNextValue(const std::string& command, size_t pos);
-    static std::string getBaseCommand(const std::string& command);
-    static std::vector<std::string> parseArguments(const std::string& command);
+    const CommandConfig* findConfigForCommand(const std::string& base_command) const;
+    static std::vector<std::string> tokenizeByColon(const std::string& str);
     SpeedOverrideOpt extractSpeedOverride(const std::vector<std::string>& args,
-                                          const std::string& baseCommand);
+                                          const CommandConfig* config) const;
 
     CommandConfigVec configs_;
 };

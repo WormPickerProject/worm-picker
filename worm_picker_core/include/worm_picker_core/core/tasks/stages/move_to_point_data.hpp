@@ -26,6 +26,7 @@ public:
         qw_ = q.w();
     }
 
+    std::unique_ptr<StageData> clone() const override;
     StageType getType() const override { return StageType::MOVE_TO_POINT; }
     constexpr double getX() const { return x_; }
     constexpr double getY() const { return y_; }
@@ -52,6 +53,11 @@ private:
     double qz_{};
     double qw_{};
 };
+
+inline std::unique_ptr<StageData> MoveToPointData::clone() const
+{
+    return std::make_unique<MoveToPointData>(*this);
+}
 
 inline std::shared_ptr<void> MoveToPointData::createPlannerImpl(const NodePtr& node, 
                                                                 double vel_scaling, 

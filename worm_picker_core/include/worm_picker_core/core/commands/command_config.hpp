@@ -25,6 +25,10 @@ public:
     explicit ZeroArgsConfig(const NodePtr& node) {
         if (auto names = param_utils::getParameter<StringVec>(node, "commands.zero_arg")) {
             argument_names_ = std::move(names.value());
+            RCLCPP_INFO(rclcpp::get_logger("ZeroArgsConfig"), 
+                "Zero-arg commands loaded with %lu commands: %s", 
+                argument_names_.size(), fmt::format("{}", 
+                fmt::join(argument_names_, ", ")).c_str());
         }
     }
     StringVec getArgumentNames() const override {
@@ -44,6 +48,10 @@ public:
     explicit OneArgConfig(const NodePtr& node) {
         if (auto names = param_utils::getParameter<StringVec>(node, "commands.one_arg")) {
             argument_names_ = std::move(names.value());
+            RCLCPP_INFO(rclcpp::get_logger("OneArgConfig"), 
+                "One-arg commands loaded with %lu commands: %s", 
+                argument_names_.size(), fmt::format("{}", 
+                fmt::join(argument_names_, ", ")).c_str());
         }
     }
     StringVec getArgumentNames() const override {
@@ -63,6 +71,10 @@ public:
     explicit ThreeArgsConfig(const NodePtr& node) {
         if (auto names = param_utils::getParameter<StringVec>(node, "commands.three_arg")) {
             argument_names_ = std::move(names.value());
+            RCLCPP_INFO(rclcpp::get_logger("ThreeArgsConfig"), 
+                "Three-arg commands loaded with %lu commands: %s", 
+                argument_names_.size(), fmt::format("{}", 
+                fmt::join(argument_names_, ", ")).c_str());
         }
     }
     StringVec getArgumentNames() const override {

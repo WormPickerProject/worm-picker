@@ -17,6 +17,7 @@ public:
       : velocity_scaling_(vel_scaling), acceleration_scaling_(acc_scaling) {}
 
     StagePtr createStage(const std::string& name, const NodePtr& node) const final;
+    virtual std::unique_ptr<StageData> clone() const override = 0;
     void setVelocityScalingFactor(double v) { velocity_scaling_ = v; }
     void setAccelerationScalingFactor(double a) { acceleration_scaling_ = a; }
     double getVelocityScalingFactor() const { return velocity_scaling_; }

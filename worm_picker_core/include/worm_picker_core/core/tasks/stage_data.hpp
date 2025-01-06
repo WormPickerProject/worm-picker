@@ -24,6 +24,7 @@ public:
     virtual ~StageData() = default;
     virtual StageType getType() const = 0;
     virtual StagePtr createStage(const std::string& name, const NodePtr& node) const = 0;
+    virtual std::unique_ptr<StageData> clone() const = 0;
 };
 
 #endif // STAGE_DATA_HPP
