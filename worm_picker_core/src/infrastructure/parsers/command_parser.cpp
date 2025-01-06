@@ -42,11 +42,11 @@ std::vector<std::string> CommandParser::parseArguments(const std::string& comman
     if (pos != std::string::npos) {
         pos++; 
         while (pos < command.length()) {
-            auto [arg, next_pos] = getNextValue(command, pos);
-            if (!arg.empty()) {
-                args.push_back(arg);
+            const auto [current_arg, next_position] = getNextValue(command, pos);
+            if (!current_arg.empty()) {
+                args.push_back(current_arg);
             }
-            pos = next_pos;
+            pos = next_position;
         }
     }
     return args;

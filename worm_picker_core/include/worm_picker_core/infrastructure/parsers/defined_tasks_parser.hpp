@@ -8,7 +8,7 @@
 
 #include <nlohmann/json.hpp>
 #include "worm_picker_core/core/tasks/task_data.hpp"
-#include "worm_picker_core/core/tasks/stages/stage_data.hpp"
+#include "worm_picker_core/core/tasks/stage_data.hpp"
 
 class DefinedTasksGenerator {
 public:

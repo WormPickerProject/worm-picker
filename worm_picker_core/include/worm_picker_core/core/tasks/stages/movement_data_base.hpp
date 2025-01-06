@@ -8,7 +8,7 @@
 
 #include <moveit/task_constructor/stages.h>
 #include "worm_picker_core/utils/parameter_utils.hpp"
-#include "worm_picker_core/core/tasks/stages/stage_data.hpp"
+#include "worm_picker_core/core/tasks/stage_data.hpp"
 
 class MovementDataBase : public StageData {
 public:
