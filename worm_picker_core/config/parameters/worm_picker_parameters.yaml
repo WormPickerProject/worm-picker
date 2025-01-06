@@ -1,6 +1,6 @@
 # worm_picker_parameters.yaml
 # 
-# Copyright (c) 2024
+# Copyright (c) 2025
 # SPDX-License-Identifier: Apache-2.0
 
 parameters:
@@ -39,6 +39,7 @@ parameters:
 
   commands:
     zero_arg: ["home", "homeEndFactor"]
-    one_arg: ["pickPlateWorkStation", "placePlateWorkStation", "swapEndFactor", "hoverWormPick"]
+    one_arg: ["pickPlateWorkStation", "placePlateWorkStation", "swapEndFactor", "hoverWormPick",
+              "moveToPoint"]
     two_arg: []
     three_arg: ["moveRelative", "moveAbsolute"]
