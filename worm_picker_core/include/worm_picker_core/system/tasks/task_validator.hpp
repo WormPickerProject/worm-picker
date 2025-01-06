@@ -11,7 +11,7 @@
 #include <moveit/robot_state/robot_state.h>
 #include <geometry_msgs/msg/pose_stamped.hpp>
 #include <geometry_msgs/msg/vector3_stamped.hpp>
-#include "worm_picker_core/core/tasks/stages/stage_data.hpp"
+#include "worm_picker_core/core/tasks/stage_data.hpp"
 
 class TaskValidator {
 public:

@@ -147,26 +147,20 @@ bool TaskValidator::validateRelativeMove(const RobotState& initial_state,
 
 double TaskValidator::computePositionError(const Pose& actual, const Pose& target) const
 {
-    double dx = actual.pose.position.x - target.pose.position.x;
-    double dy = actual.pose.position.y - target.pose.position.y;
-    double dz = actual.pose.position.z - target.pose.position.z;
-    return std::sqrt(dx * dx + dy * dy + dz * dz);
+    Eigen::Vector3d p1(actual.pose.position.x, actual.pose.position.y, actual.pose.position.z);
+    Eigen::Vector3d p2(target.pose.position.x, target.pose.position.y, target.pose.position.z);
+    
+    return (p1 - p2).norm(); 
 }
 
 double TaskValidator::computeOrientationError(const Pose& actual, const Pose& target) const
 {
-    double dot = 
-        actual.pose.orientation.x * target.pose.orientation.x +
-        actual.pose.orientation.y * target.pose.orientation.y +
-        actual.pose.orientation.z * target.pose.orientation.z +
-        actual.pose.orientation.w * target.pose.orientation.w;
+    Eigen::Quaterniond q1(actual.pose.orientation.w, actual.pose.orientation.x,
+                          actual.pose.orientation.y, actual.pose.orientation.z);
+    Eigen::Quaterniond q2(target.pose.orientation.w, target.pose.orientation.x,
+                          actual.pose.orientation.y, target.pose.orientation.z);
 
-    dot = std::abs(dot);
-
-    double cos_val = 2.0 * dot * dot - 1.0;
-    cos_val = std::clamp(cos_val, -1.0, 1.0);
-
-    return std::acos(cos_val);
+    return q1.angularDistance(q2);
 }
 
 double TaskValidator::computeJointError(double current_pos, double target_pos) const
