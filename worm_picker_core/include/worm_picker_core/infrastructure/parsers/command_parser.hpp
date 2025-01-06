@@ -7,8 +7,8 @@
 #define COMMAND_PARSER_HPP
 
 #include <rclcpp/rclcpp.hpp>
-#include "worm_picker_core/core/model/command_info.hpp"
-#include "worm_picker_core/core/model/command_config.hpp"
+#include "worm_picker_core/core/commands/command_info.hpp"
+#include "worm_picker_core/core/commands/command_config.hpp"
 
 class CommandParser {
 public:
