@@ -1,6 +1,6 @@
 // task_factory.cpp
 //
-// Copyright (c) 2024
+// Copyright (c) 2025
 // SPDX-License-Identifier: Apache-2.0
 
 #include "worm_picker_core/system/tasks/task_generator.hpp"
@@ -73,11 +73,11 @@ TaskFactory::Task TaskFactory::createTask(const std::string& command)
             throw std::invalid_argument(fmt::format("Command '{}' not found", command));
         }
 
-        TaskData task_copy(it->second); 
         if (!info.getSpeedOverride()) {
-            return task_copy;
+            return it->second;
         }
 
+        TaskData task_copy(it->second); 
         const auto& [velocity, acceleration] = *info.getSpeedOverride();
         for (auto& stage : task_copy.getStages()) {
             if (auto* move_base = dynamic_cast<MovementDataBase*>(stage.get())) {
