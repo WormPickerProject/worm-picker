@@ -206,6 +206,13 @@ add_worm_picker_executable(command_networking
     ${WORM_PICKER_DEPS}
 )
 
+add_worm_picker_executable(plate_calibration_test
+  SOURCES
+    src/system/calibration/plate_position_analyzer_test.cpp
+  DEPS
+    ${WORM_PICKER_DEPS}
+)
+
 #
 # ----------------------------------------------------------------------------
 # Install & Export

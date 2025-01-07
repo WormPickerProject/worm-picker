@@ -1,13 +1,59 @@
 // plate_position_analyzer.hpp
+//
+// Copyright (c) 2025
+// SPDX-License-Identifier: Apache-2.0
+
 #ifndef PLATE_POSITION_ANALYZER_HPP
 #define PLATE_POSITION_ANALYZER_HPP
 
-#include <geometry_msgs/msg/pose_stamped.hpp>
 #include <map>
-#include <string>
-#include <vector>
+// #include <string>
+// #include <vector>
+#include <Eigen/Dense>
+#include <geometry_msgs/msg/pose_stamped.hpp>
 #include "worm_picker_core/core/geometry/fixed_point.hpp"
 #include "worm_picker_core/core/geometry/workstation_geometry.hpp"
+
+struct Point;
+struct Quaternion;
+
+class PlatePositionAnalyzer {
+public:
+    using Pose = geometry_msgs::msg::PoseStamped;
+    using PoseMap = std::map<std::string, Pose>;
+    using NormalizedPoseMap = std::map<std::string, PoseMap>;
+
+    explicit PlatePositionAnalyzer(const PoseMap& recorded_positions);
+
+    const NormalizedPoseMap& getNormalizedPoses() const { return normalized_poses_; }
+    const PoseMap& getAveragedPoses() const { return averaged_poses_; }
+
+private:
+    using Matrix2x2 = Eigen::Matrix2d;
+    using Vector2 = Eigen::Vector2d;
+    using QuaternionMap = std::unordered_map<std::string, Quaternion>; 
+    using TranformationMatrix = std::pair<Matrix2x2, Vector2>;
+
+    TranformationMatrix calculateAffineTransformation();
+    NormalizedPoseMap normalizeAllPoints();
+    void averageNormalizedPoints();
+    Quaternion normalizeQuaternion(const Quaternion& quat) const;
+    QuaternionMap transformQuaternions(const std::string& ref_key, 
+                                       const Quaternion& ref_quat) const;
+    Pose transformPoseUsingAffine(const Pose& pose, 
+                                  const FixedPoint& geometry_point,
+                                  const QuaternionMap& quaternions) const;
+    static std::string getRowLetter(const std::string& point_name) {
+        return std::string(1, point_name[0]);
+    }
+
+    PoseMap recorded_positions_;
+    WorkstationGeometry workstation_geometry_;
+    Matrix2x2 transformation_matrix_;
+    Vector2 offset_vector_;
+    NormalizedPoseMap normalized_poses_;
+    PoseMap averaged_poses_;
+};
 
 struct Point {
     double x;
@@ -35,45 +81,6 @@ struct Quaternion {
     Quaternion inverse() const {
         return Quaternion{-x, -y, -z, w};
     }
-};
-
-class PlatePositionAnalyzer {
-public:
-    using Pose = geometry_msgs::msg::PoseStamped;
-    using PoseMap = std::map<std::string, Pose>;
-    using NormalizedPoseMap = std::map<std::string, PoseMap>;
-
-    explicit PlatePositionAnalyzer(const PoseMap& recorded_positions);
-
-    const NormalizedPoseMap& getNormalizedPoses() const { return normalized_poses_; }
-    const PoseMap& getAveragedPoses() const { return averaged_poses_; }
-
-private:
-    static constexpr double MM_TO_M = 0.001;
-    static constexpr double PI = 3.14159265358979323846;
-    static constexpr char ROW_START = 'A';
-    static constexpr char BASE_ROW = 'G';
-    static constexpr char ROW_END = 'M';
-
-    static std::string getRowLetter(const std::string& point_name) {
-        return std::string(1, point_name[0]);
-    }
-    
-    NormalizedPoseMap normalizeAllPoints() const;
-    std::unordered_map<std::string, Quaternion> transformQuaternions(
-        const std::string& ref_key, 
-        const Quaternion& ref_quat) const;
-    void transformPoint(
-        Pose& pose,
-        const FixedPoint& point,
-        const std::pair<Point, Point>& positions,
-        const std::unordered_map<std::string, Quaternion>& quaternions) const;
-    void averageNormalizedPoints(const NormalizedPoseMap& normalized_poses);
-
-    PoseMap recorded_positions_; 
-    WorkstationGeometry workstation_geometry_;
-    NormalizedPoseMap normalized_poses_;
-    PoseMap averaged_poses_;
 };
 
 #endif // PLATE_POSITION_ANALYZER_HPP
