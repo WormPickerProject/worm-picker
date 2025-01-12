@@ -9,6 +9,7 @@
 #include <moveit/task_constructor/stages.h>
 #include "worm_picker_core/utils/parameter_utils.hpp"
 #include "worm_picker_core/core/tasks/stage_data.hpp"
+#include "worm_picker_core/core/tasks/stages/planner_factory.hpp"
 
 class MovementDataBase : public StageData {
 public:
@@ -24,9 +25,9 @@ public:
     double getAccelerationScalingFactor() const { return acceleration_scaling_; }
 
 protected:
-    virtual std::shared_ptr<void> createPlannerImpl(const NodePtr& node, 
-                                                    double vel_scaling, 
-                                                    double acc_scaling) const = 0;
+    std::shared_ptr<void> createPlannerImpl(const NodePtr& node, 
+                                            double vel_scaling, 
+                                            double acc_scaling) const;
     virtual StagePtr createStageInstanceImpl(const std::string& name, 
                                              std::shared_ptr<void> planner) const = 0;
     virtual void configureStageImpl(Stage& stage, const NodePtr& node) const = 0;
@@ -52,6 +53,29 @@ MovementDataBase::createStage(const std::string& name, const NodePtr& node) cons
     configureStageImpl(*stage, node);
 
     return stage;
+}
+
+inline std::shared_ptr<void> MovementDataBase::createPlannerImpl(const NodePtr& node, 
+                                                                 double vel_scaling, 
+                                                                 double acc_scaling) const 
+{
+    auto planners = [&]() -> std::pair<
+        std::pair<std::optional<std::string>, std::string>,
+        std::pair<std::optional<std::string>, std::string>
+    > {
+        auto it = type_map_.find(getType());
+        const std::string base = "planners." + it->second;
+
+        return std::make_pair(
+            std::make_pair(param_utils::getParameter<std::string>(node, base + ".primary"), base),
+            std::make_pair(param_utils::getParameter<std::string>(node, base + ".backup"), base)
+        );
+    }();
+
+    auto planner_ptr = PlannerFactory::getInstance().createPlanner(
+            planners.first, node, vel_scaling, acc_scaling);
+
+    return std::static_pointer_cast<void>(planner_ptr);
 }
 
 inline void MovementDataBase::setCommonInfo(Stage& stage, const NodePtr& node) const
