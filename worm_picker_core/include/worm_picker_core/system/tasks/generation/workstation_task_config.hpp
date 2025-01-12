@@ -50,8 +50,8 @@ namespace offset {
     // static constexpr PositionOffset PICK{0.048, 0.02};
     // static constexpr PositionOffset PLACE{-0.008, -0.02};
     // static constexpr PositionOffset HOVER{0.035, 0.022};
-    static constexpr PositionOffset PICK{-0.048, 0.05};
-    static constexpr PositionOffset PLACE{-0.008, 0.05};
+    static constexpr PositionOffset PICK{-0.048, 0.02};
+    static constexpr PositionOffset PLACE{-0.008, -0.02};
     static constexpr PositionOffset HOVER{0.035, 0.022};
     static constexpr PositionOffset POINT{0.0, 0.01};
 }

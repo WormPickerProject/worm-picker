@@ -31,11 +31,11 @@ parameters:
     planning_attempts: 5
 
   validation:
-    pos_tol: 0.01
-    ori_tol: 0.01
-    joint_tol: 0.01
-    step_size: 0.05
-    min_fraction: 0.7
+    pos_tol: 0.001
+    ori_tol: 0.001
+    joint_tol: 0.001
+    step_size: 0.01
+    min_fraction: 0.01
 
   commands:
     zero_arg: ["home", "homeEndFactor"]
@@ -43,3 +43,29 @@ parameters:
               "moveToPoint"]
     two_arg: []
     three_arg: ["moveRelative", "moveAbsolute"]
+
+  planners:   
+    move_to_point:
+      primary: "cartesian"
+      backup: "descartes"
+      configs:
+        descartes:
+          sampling_density: 0.01
+        cartesian:
+          step_size: 0.01
+          min_fraction: 0.01
+        chomp:
+    move_to_joint:
+      primary: "joint_interpolation"
+      backup: "rrt"
+      configs:
+        joint_interpolation:
+        rrt:
+    move_relative:
+      primary: "cartesian"
+      backup: "stomp"
+      configs:
+        cartesian:
+          step_size: 0.01
+          min_fraction: 0.85
+        stomp:

@@ -37,9 +37,6 @@ public:
     constexpr double getQW() const { return qw_; }
 
 protected:
-    std::shared_ptr<void> createPlannerImpl(const NodePtr& node, 
-                                            double vel_scaling, 
-                                            double acc_scaling) const override;
     StagePtr createStageInstanceImpl(const std::string& name, 
                                      std::shared_ptr<void> planner) const override;
     void configureStageImpl(Stage& stage, const NodePtr& node) const override;
@@ -57,24 +54,6 @@ private:
 inline std::unique_ptr<StageData> MoveToPointData::clone() const
 {
     return std::make_unique<MoveToPointData>(*this);
-}
-
-inline std::shared_ptr<void> MoveToPointData::createPlannerImpl(const NodePtr& node, 
-                                                                double vel_scaling, 
-                                                                double acc_scaling) const 
-{
-    using namespace moveit::task_constructor;
-    auto cartesian_planner = std::make_shared<solvers::CartesianPath>();
-    cartesian_planner->setMaxVelocityScalingFactor(vel_scaling);
-    cartesian_planner->setMaxAccelerationScalingFactor(acc_scaling);
-
-    auto step_size = param_utils::getParameter<double>(node, "validation.step_size");
-    cartesian_planner->setStepSize(*step_size);
-    
-    auto min_fraction = param_utils::getParameter<double>(node, "validation.min_fraction");
-    cartesian_planner->setMinFraction(*min_fraction);
-    
-    return cartesian_planner;
 }
 
 inline MoveToPointData::StagePtr 

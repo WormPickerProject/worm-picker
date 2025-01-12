@@ -38,9 +38,6 @@ public:
     const std::map<std::string, double>& getJointPositions() const { return joint_positions_; }
 
 protected:
-    std::shared_ptr<void> createPlannerImpl(const NodePtr& node, 
-                                            double vel_scaling, 
-                                            double acc_scaling) const override;
     StagePtr createStageInstanceImpl(const std::string& name, 
                                      std::shared_ptr<void> planner) const override;
     void configureStageImpl(Stage& stage, const NodePtr& node) const override;
@@ -53,19 +50,6 @@ private:
 inline std::unique_ptr<StageData> MoveToJointData::clone() const
 {
     return std::make_unique<MoveToJointData>(*this);
-}
-
-inline std::shared_ptr<void> MoveToJointData::createPlannerImpl(const NodePtr& node,
-                                                                double vel_scaling, 
-                                                                double acc_scaling) const 
-{
-    (void)node;
-    using namespace moveit::task_constructor;
-    auto joint_planner = std::make_shared<solvers::JointInterpolationPlanner>();
-    joint_planner->setMaxVelocityScalingFactor(vel_scaling);
-    joint_planner->setMaxAccelerationScalingFactor(acc_scaling);
-    
-    return joint_planner;
 }
 
 inline MoveToJointData::StagePtr 
