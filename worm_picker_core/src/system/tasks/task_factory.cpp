@@ -6,41 +6,81 @@
 #include "worm_picker_core/system/tasks/task_generator.hpp"
 #include "worm_picker_core/system/tasks/generation/generate_relative_movement_task.hpp"
 #include "worm_picker_core/system/tasks/task_factory.hpp"
-#include "worm_picker_core/infrastructure/parsers/workstation_data_parser.hpp"
-#include "worm_picker_core/infrastructure/parsers/hotel_data_parser.hpp"
 #include "worm_picker_core/infrastructure/parsers/defined_tasks_parser.hpp"
 #include "worm_picker_core/core/tasks/stages/move_relative_data.hpp"
 #include "worm_picker_core/core/tasks/stages/move_to_joint_data.hpp"
 #include "worm_picker_core/core/tasks/stages/move_to_point_data.hpp"
 #include "worm_picker_core/utils/parameter_utils.hpp"
 
-TaskFactory::TaskFactory(const NodePtr& node) 
-    : node_(node), 
-      command_parser_(std::make_unique<CommandParser>(node))
-{ 
-    initializeTaskMap();
+TaskFactory::TaskFactory(const NodePtr& node)
+  : node_(node),
+    command_parser_(std::make_unique<CommandParser>(node))
+{
+  initializeTaskMap();
 }
 
 void TaskFactory::initializeTaskMap() 
 {
-    auto ws_config_path = param_utils::getParameter<std::string>(node_, "config_files.workstation");
-    auto hotel_config_path = param_utils::getParameter<std::string>(node_, "config_files.hotel");
-    const WorkstationDataParser workstation_parser{*ws_config_path};
-    const HotelDataParser hotel_parser{*hotel_config_path};
-    const auto& workstation_data_map = workstation_parser.getWorkstationDataMap();
-    const auto& hotel_data_map = hotel_parser.getHotelDataMap();
+    const auto& workstation = loadWorkstationData();
+    const auto& hotel = loadHotelData();
+    loadDefinedTasks(workstation, hotel);
+    logTaskMap();
+}
 
+TaskFactory::WorkstationDataMap TaskFactory::loadWorkstationData() 
+{
+    auto ws_config_path = param_utils::getParameter<std::string>(node_, "config_files.workstation");
+    WorkstationDataParser workstation_parser{*ws_config_path};
+    return(workstation_parser.getWorkstationDataMap());
+}
+
+TaskFactory::HotelDataMap TaskFactory::loadHotelData() 
+{
+    auto hotel_config_path = param_utils::getParameter<std::string>(node_, "config_files.hotel");
+    HotelDataParser hotel_parser{*hotel_config_path};
+    return(hotel_parser.getHotelDataMap());
+}
+
+void TaskFactory::loadDefinedTasks(const WorkstationDataMap& workstation, const HotelDataMap& hotel)
+{
     auto defined_stages_path = param_utils::getParameter<std::string>(node_, "config_files.stages");
-    auto defined_tasks_path = param_utils::getParameter<std::string>(node_, "config_files.tasks");
-    const DefinedTasksGenerator defined_tasks_parser{*defined_stages_path, *defined_tasks_path};
-    const TaskGenerator task_plans{workstation_data_map, hotel_data_map};
+    auto defined_tasks_path  = param_utils::getParameter<std::string>(node_, "config_files.tasks");
+
+    DefinedTasksGenerator defined_tasks_parser{*defined_stages_path, *defined_tasks_path};
     const auto& defined_tasks_map = defined_tasks_parser.getDefinedTasksMap();
+
+    TaskGenerator task_plans{workstation, hotel};
     const auto& generated_task_map = task_plans.getGeneratedTaskPlans();
 
     task_data_map_.insert(defined_tasks_map.begin(), defined_tasks_map.end());
     task_data_map_.insert(generated_task_map.begin(), generated_task_map.end());
+}
 
-    logTaskMap(); // Temporary debug function
+TaskData TaskFactory::fetchTaskData(const CommandInfo& info) 
+{
+    if (info.getBaseCommand() == "moveRelative") {
+        return GenerateRelativeMovementTask::parseCommand(info.getArgs());
+    }
+    auto it = task_data_map_.find(info.getBaseCommandKey());
+    if (it == task_data_map_.end()) {
+        throw std::invalid_argument(fmt::format("Command '{}' not found", info.getBaseCommand()));
+    }
+    auto task_copy = it->second;
+    if (info.getSpeedOverride()) {
+        applySpeedOverrides(task_copy, *info.getSpeedOverride());
+    }
+    return task_copy;
+}
+
+void TaskFactory::applySpeedOverrides(TaskData& task_data, const SpeedOverride& override) 
+{
+    auto [velocity, acceleration] = override;
+    for (auto& stage : task_data.getStages()) {
+        if (auto* move_base = dynamic_cast<MovementDataBase*>(stage.get())) {
+            move_base->setVelocityScalingFactor(velocity);
+            move_base->setAccelerationScalingFactor(acceleration);
+        }
+    }
 }
 
 TaskFactory::Task TaskFactory::createTask(const std::string& command) 
@@ -49,39 +89,11 @@ TaskFactory::Task TaskFactory::createTask(const std::string& command)
     task.add(std::make_unique<CurrentStateStage>("current"));
 
     auto info = command_parser_->parse(command);
-    const auto task_data = [&] {
-        if (info.getBaseCommand() == "moveRelative") {
-            return GenerateRelativeMovementTask::parseCommand(info.getArgs());
-        }
-        
-        auto it = task_data_map_.find(info.getBaseCommandKey());
-        if (it == task_data_map_.end()) {
-            throw std::invalid_argument(fmt::format("Command '{}' not found", command));
-        }
+    TaskData task_data = fetchTaskData(info);
 
-        if (!info.getSpeedOverride()) {
-            return it->second;
-        }
-
-        TaskData task_copy(it->second); 
-        const auto& [velocity, acceleration] = *info.getSpeedOverride();
-        for (auto& stage : task_copy.getStages()) {
-            if (auto* move_base = dynamic_cast<MovementDataBase*>(stage.get())) {
-                move_base->setVelocityScalingFactor(velocity);
-                move_base->setAccelerationScalingFactor(acceleration);
-            }
-        }
-        return task_copy;
-    }();
-
-    int stage_counter{1};
-    for (const auto& stage_ptr : task_data.getStages()) {
-        const auto stage_name = fmt::format("stage_{}", stage_counter++);
-        auto stage = stage_ptr->createStage(stage_name, node_);
-
-        if (!stage) {
-            throw std::runtime_error(fmt::format("Failed to create stage: {}", stage_name));
-        }
+    for (int i = 1; const auto& stage_ptr : task_data.getStages()) {
+        auto name = fmt::format("stage_{}", i++);
+        auto stage = stage_ptr->createStage(name, node_);
         task.add(std::move(stage));
     }
 
@@ -94,15 +106,17 @@ TaskFactory::Task TaskFactory::createBaseTask(const std::string& command)
     Task task;
     task.stages()->setName(command);
     task.loadRobotModel(node_);
-    
+
     task.setProperty("group", "gp4_arm");
     auto ee_link = param_utils::getParameter<std::string>(node_, "end_effectors.current_factor");
-    task.setProperty("ik_frame", *ee_link);
-    
+    if (ee_link) {
+        task.setProperty("ik_frame", *ee_link);
+    }
+
     TrajectoryExecutionInfo execution_info;
-    execution_info.controller_names = {"follow_joint_trajectory"};
+    execution_info.controller_names = { "follow_joint_trajectory" };
     task.setProperty("trajectory_execution_info", execution_info);
-    
+
     return task;
 }
 

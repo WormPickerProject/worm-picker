@@ -20,10 +20,10 @@ private:
     void awaitService();
     bool sendRequest(const std::string &command);
     void processUserCommand(const std::string &command);
-    void moveToAllPoints();
-    void moveToRowPoints(const std::string &row_letter);
-    void movePlatesRow(const std::string &row_letter);
-    void movePlatesAll();
+    void moveAllPoints();
+    void moveRowPoints(const std::string &row_letter);
+    void moveRowPlates(const std::string &row_letter);
+    void moveAllPlates();
     std::vector<std::string> getRowPoints(char row) const;
     bool isRowLetter(const std::string &row_letter) const;
     void movePlatesRowSequence(const std::vector<std::string> &row_points);
