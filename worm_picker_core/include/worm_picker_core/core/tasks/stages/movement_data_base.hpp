@@ -1,6 +1,6 @@
 // movement_data_base.hpp
 //
-// Copyright (c) 2024
+// Copyright (c) 2025
 // SPDX-License-Identifier: Apache-2.0
 
 #ifndef MOVEMENT_DATA_BASE_HPP
@@ -25,15 +25,15 @@ public:
     double getAccelerationScalingFactor() const { return acceleration_scaling_; }
 
 protected:
-    std::shared_ptr<void> createPlannerImpl(const NodePtr& node, 
-                                            double vel_scaling, 
-                                            double acc_scaling) const;
     virtual StagePtr createStageInstanceImpl(const std::string& name, 
                                              std::shared_ptr<void> planner) const = 0;
     virtual void configureStageImpl(Stage& stage, const NodePtr& node) const = 0;
     void setCommonInfo(Stage& stage, const NodePtr& node) const;
 
 private:
+    std::shared_ptr<void> createPlannerImpl(const NodePtr& node, 
+                                            double vel_scaling, 
+                                            double acc_scaling) const;
     void setCommonExecutionInfo(Stage& stage) const;
 
     double velocity_scaling_;
@@ -43,15 +43,9 @@ private:
 inline MovementDataBase::StagePtr 
 MovementDataBase::createStage(const std::string& name, const NodePtr& node) const 
 {
-    // 1) Possibly read step size, fraction, or other parameters from Node
-    //    or do override logic if your code wants. We keep it minimal here:
-    double v_scale = velocity_scaling_;
-    double a_scale = acceleration_scaling_;
-
-    auto planner = createPlannerImpl(node, v_scale, a_scale);
+    auto planner = createPlannerImpl(node, velocity_scaling_, acceleration_scaling_);
     auto stage = createStageInstanceImpl(name, planner);
     configureStageImpl(*stage, node);
-
     return stage;
 }
 
@@ -59,10 +53,8 @@ inline std::shared_ptr<void> MovementDataBase::createPlannerImpl(const NodePtr& 
                                                                  double vel_scaling, 
                                                                  double acc_scaling) const 
 {
-    auto planners = [&]() -> std::pair<
-        std::pair<std::optional<std::string>, std::string>,
-        std::pair<std::optional<std::string>, std::string>
-    > {
+    auto planners = [&]() -> std::pair<std::pair<std::optional<std::string>, std::string>,
+                                       std::pair<std::optional<std::string>, std::string>> {
         auto it = type_map_.find(getType());
         const std::string base = "planners." + it->second;
 
@@ -73,7 +65,7 @@ inline std::shared_ptr<void> MovementDataBase::createPlannerImpl(const NodePtr& 
     }();
 
     auto planner_ptr = PlannerFactory::getInstance().createPlanner(
-            planners.first, node, vel_scaling, acc_scaling);
+            planners.first, planners.second, node, vel_scaling, acc_scaling);
 
     return std::static_pointer_cast<void>(planner_ptr);
 }

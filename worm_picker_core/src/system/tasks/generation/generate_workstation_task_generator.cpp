@@ -53,11 +53,11 @@ GenerateWorkstationTaskGenerator::createStagesForTask(const WorkstationData& dat
 
     if (motion_params) {
         stages.emplace_back(std::make_shared<MoveRelativeData>(
-            motion_params->vertical_approach, 0.0, 0.0));
+            0.0, 0.0, motion_params->vertical_approach));
         stages.emplace_back(std::make_shared<MoveRelativeData>(
-            0.0, 0.0, motion_params->horizontal_motion));
+            motion_params->horizontal_motion, 0.0, 0.0));
         stages.emplace_back(std::make_shared<MoveRelativeData>(
-            motion_params->vertical_retreat, 0.0, 0.0));
+            0.0, 0.0, motion_params->vertical_retreat));
     }
 
     return stages;

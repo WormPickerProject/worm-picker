@@ -7,27 +7,6 @@
         "acceleration_scaling": 0.1
     },
     {
-        "name": "jointPoint1",
-        "type": "JOINT",
-        "parameters": [-2.0, -11.0, 21.0, 0.0, -62.0, 0.0],
-        "velocity_scaling": 0.1,
-        "acceleration_scaling": 0.1
-    },
-    {
-        "name": "jointPoint2",
-        "type": "JOINT",
-        "parameters": [15.0, 7.0, 23.0, 18.0, -48.0, -20.0],
-        "velocity_scaling": 0.1,
-        "acceleration_scaling": 0.1
-    },
-    {
-        "name": "jointPoint3",
-        "type": "JOINT",
-        "parameters": [-28.0, 28.0, 23.0, -43.0, -37.0, 52.0],
-        "velocity_scaling": 0.1,
-        "acceleration_scaling": 0.1
-    },
-    {
         "name": "homeEndFactor",
         "type": "JOINT",
         "parameters": [0.0, 0.0, 0.0, 0.0, -30.0, 0.0],
@@ -52,44 +31,93 @@
         "acceleration_scaling": 0.1
     },
     {
-        "name": "coordPoint1",
-        "type": "POINT",
-        "parameters": [0.47424, 0.01732, 0.48122, 0.70712, 0.0, 0.7071, 0.0],
-        "velocity_scaling": 0.1,
-        "acceleration_scaling": 0.1
-    },
-    {
-        "name": "coordPoint2",
-        "type": "POINT",
-        "parameters": [0.39007, -0.11781, 0.44918, 0.70712, 0.0, 0.7071, 0.0],
-        "velocity_scaling": 0.1,
-        "acceleration_scaling": 0.1
-    },
-    {
-        "name": "coordPoint3",
-        "type": "POINT",
-        "parameters": [0.40111, 0.25094, 0.42120, 0.70712, 0.0, 0.7071, 0.0],
-        "velocity_scaling": 0.1,
-        "acceleration_scaling": 0.1
-    },
-    {
-        "name": "moveRelativeX",
+        "name": "moveRelativeOneMillimeterX",
         "type": "RELATIVE",
-        "parameters": [0.0005, 0.0, 0.0],
+        "parameters": [0.001, 0.0, 0.0],
         "velocity_scaling": 0.1,
         "acceleration_scaling": 0.1
     },
     {
-        "name": "moveRelativeY",
+        "name": "moveRelativeOneMillimeterY",
         "type": "RELATIVE",
-        "parameters": [0.0, 0.0005, 0.0],
+        "parameters": [0.0, 0.001, 0.0],
         "velocity_scaling": 0.1,
         "acceleration_scaling": 0.1
     },
     {
-        "name": "moveRelativeZ",
+        "name": "moveRelativeOneMillimeterZ",
         "type": "RELATIVE",
-        "parameters": [0.0, 0.0, 0.0005],
+        "parameters": [0.0, 0.0, 0.001],
+        "velocity_scaling": 0.1,
+        "acceleration_scaling": 0.1
+    },
+    {
+        "name": "G4",
+        "type": "JOINT",
+        "parameters": [-0.057, 57.521, 58.283, -0.086, -30.534, 0.072],
+        "velocity_scaling": 0.1,
+        "acceleration_scaling": 0.1
+    },
+    {
+        "name": "G1",
+        "type": "JOINT",
+        "parameters": [-1.256, -21.148, -40.791, -6.022, -10.428, 6.563],
+        "velocity_scaling": 0.1,
+        "acceleration_scaling": 0.1
+    },
+    {
+        "name": "I1",
+        "type": "JOINT",
+        "parameters": [15.644, -21.744, -41.13, -0.068, -10.617, 0.07],
+        "velocity_scaling": 0.1,
+        "acceleration_scaling": 0.1
+    },
+    {
+        "name": "E1",
+        "type": "JOINT",
+        "parameters": [-16.952, -20.723, -40.641, -0.071, -10.091, 0.059],
+        "velocity_scaling": 0.1,
+        "acceleration_scaling": 0.1
+    },
+    {
+        "name": "J3",
+        "type": "JOINT",
+        "parameters": [24.839, 40.795, 31.523, 0.001, -21.796, 0.000],
+        "velocity_scaling": 0.1,
+        "acceleration_scaling": 0.1
+    },
+    {
+        "name": "D3",
+        "type": "JOINT",
+        "parameters": [-24.9, 41.753, 32.152, 0.002, -20.48, -0.004],
+        "velocity_scaling": 0.1,
+        "acceleration_scaling": 0.1
+    },
+    {
+        "name": "M2",
+        "type": "JOINT",
+        "parameters": [49.479, 2.578, -20.377, 0.0, -7.057, -0.006],
+        "velocity_scaling": 0.1,
+        "acceleration_scaling": 0.1
+    },
+    {
+        "name": "A2",
+        "type": "JOINT",
+        "parameters": [-49.6, 4.577, -18.014, -0.001, -7.431, -0.006],
+        "velocity_scaling": 0.1,
+        "acceleration_scaling": 0.1
+    },
+    {
+        "name": "I3",
+        "type": "JOINT",
+        "parameters": [16.381, 27.066, 9.572, 0.001, -12.521, -0.004],
+        "velocity_scaling": 0.1,
+        "acceleration_scaling": 0.1
+    },
+    {
+        "name": "E3",
+        "type": "JOINT",
+        "parameters": [-16.701, 27.905, 10.833, 0.002, -12.95, -0.006],
         "velocity_scaling": 0.1,
         "acceleration_scaling": 0.1
     }

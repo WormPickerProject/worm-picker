@@ -4,24 +4,24 @@
         "columns": {
             "1": {
                 "coordinate": {
-                    "position_x": 0.17050,
-                    "position_y": -0.21504,
-                    "position_z": 0.32757,
-                    "orientation_x": 0.63935,
-                    "orientation_y": -0.30270,
-                    "orientation_z": 0.63850,
-                    "orientation_w": 0.30318
+                    "position_x": 0.20063,
+                    "position_y": -0.23409,
+                    "position_z": 0.33071,
+                    "orientation_x": -0.00059,
+                    "orientation_y": 0.00058,
+                    "orientation_z": -0.42853,
+                    "orientation_w": 0.90353
                 }
             },
             "2": {
                 "coordinate": {
-                    "position_x": 0.23900,
-                    "position_y": -0.29136,
-                    "position_z": 0.32757,
-                    "orientation_x": 0.63935,
-                    "orientation_y": -0.30270,
-                    "orientation_z": 0.63850,
-                    "orientation_w": 0.30318
+                    "position_x": 0.27038,
+                    "position_y": -0.31731,
+                    "position_z": 0.33071,
+                    "orientation_x": -0.00059,
+                    "orientation_y": 0.00058,
+                    "orientation_z": -0.42853,
+                    "orientation_w": 0.90353
                 }
             }
         }
@@ -31,24 +31,24 @@
         "columns": {
             "1": {
                 "coordinate": {
-                    "position_x": 0.24390,
-                    "position_y": -0.22249,
-                    "position_z": 0.32757,
-                    "orientation_x": 0.65990,
-                    "orientation_y": -0.25497,
-                    "orientation_z": 0.65902,
-                    "orientation_w": 0.25539
+                    "position_x": 0.27537,
+                    "position_y": -0.24226,
+                    "position_z": 0.33071,
+                    "orientation_x": -0.00055,
+                    "orientation_y": 0.00062,
+                    "orientation_z": -0.36098,
+                    "orientation_w": 0.93257
                 }
             },
             "2": {
                 "coordinate": {
-                    "position_x": 0.32364,
-                    "position_y": -0.28860,
-                    "position_z": 0.32757,
-                    "orientation_x": 0.65990,
-                    "orientation_y": -0.25497,
-                    "orientation_z": 0.65902,
-                    "orientation_w": 0.25539
+                    "position_x": 0.35655,
+                    "position_y": -0.31435,
+                    "position_z": 0.33071,
+                    "orientation_x": -0.00055,
+                    "orientation_y": 0.00062,
+                    "orientation_z": -0.36098,
+                    "orientation_w": 0.93257
                 }
             }
         }
@@ -58,35 +58,35 @@
         "columns": {
             "1": {
                 "coordinate": {
-                    "position_x": 0.22722,
-                    "position_y": -0.15526,
-                    "position_z": 0.32757,
-                    "orientation_x": 0.67688,
-                    "orientation_y": -0.20585,
-                    "orientation_z": 0.67597,
-                    "orientation_w": 0.20621
+                    "position_x": 0.25839,
+                    "position_y": -0.16899,
+                    "position_z": 0.33071,
+                    "orientation_x": -0.00050,
+                    "orientation_y": 0.00066,
+                    "orientation_z": -0.29148,
+                    "orientation_w": 0.95658
                 }
             },
             "2": {
                 "coordinate": {
-                    "position_x": 0.31648,
-                    "position_y": -0.20972,
-                    "position_z": 0.32757,
-                    "orientation_x": 0.67688,
-                    "orientation_y": -0.20585,
-                    "orientation_z": 0.67597,
-                    "orientation_w": 0.20621
+                    "position_x": 0.34926,
+                    "position_y": -0.22839,
+                    "position_z": 0.33071,
+                    "orientation_x": -0.00050,
+                    "orientation_y": 0.00066,
+                    "orientation_z": -0.29148,
+                    "orientation_w": 0.95658
                 }
             },
             "3": {
                 "coordinate": {
-                    "position_x": 0.40573,
-                    "position_y": -0.26419,
-                    "position_z": 0.32757,
-                    "orientation_x": 0.67688,
-                    "orientation_y": -0.20585,
-                    "orientation_z": 0.67597,
-                    "orientation_w": 0.20621
+                    "position_x": 0.44013,
+                    "position_y": -0.28780,
+                    "position_z": 0.33071,
+                    "orientation_x": -0.00050,
+                    "orientation_y": 0.00066,
+                    "orientation_z": -0.29148,
+                    "orientation_w": 0.95658
                 }
             }
         }
@@ -96,35 +96,35 @@
         "columns": {
             "1": {
                 "coordinate": {
-                    "position_x": 0.29980,
-                    "position_y": -0.14249,
-                    "position_z": 0.32757,
-                    "orientation_x": 0.69020,
-                    "orientation_y": -0.15563,
-                    "orientation_z": 0.68927,
-                    "orientation_w": 0.15592
+                    "position_x": 0.33228,
+                    "position_y": -0.15512,
+                    "position_z": 0.33071,
+                    "orientation_x": -0.00045,
+                    "orientation_y": 0.00070,
+                    "orientation_z": -0.22041,
+                    "orientation_w": 0.97541
                 }
             },
             "2": {
                 "coordinate": {
-                    "position_x": 0.39664,
-                    "position_y": -0.18414,
-                    "position_z": 0.32757,
-                    "orientation_x": 0.69020,
-                    "orientation_y": -0.15563,
-                    "orientation_z": 0.68927,
-                    "orientation_w": 0.15592
+                    "position_x": 0.43087,
+                    "position_y": -0.20056,
+                    "position_z": 0.33071,
+                    "orientation_x": -0.00045,
+                    "orientation_y": 0.00070,
+                    "orientation_z": -0.22041,
+                    "orientation_w": 0.97541
                 }
             },
             "3": {
                 "coordinate": {
-                    "position_x": 0.49348,
-                    "position_y": -0.22578,
-                    "position_z": 0.32757,
-                    "orientation_x": 0.69020,
-                    "orientation_y": -0.15563,
-                    "orientation_z": 0.68927,
-                    "orientation_w": 0.15592
+                    "position_x": 0.52947,
+                    "position_y": -0.24600,
+                    "position_z": 0.33071,
+                    "orientation_x": -0.00045,
+                    "orientation_y": 0.00070,
+                    "orientation_z": -0.22041,
+                    "orientation_w": 0.97541
                 }
             }
         }
@@ -134,46 +134,46 @@
         "columns": {
             "1": {
                 "coordinate": {
-                    "position_x": 0.26299,
-                    "position_y": -0.08268,
-                    "position_z": 0.32757,
-                    "orientation_x": 0.69979,
-                    "orientation_y": -0.10456,
-                    "orientation_z": 0.69884,
-                    "orientation_w": 0.10478
+                    "position_x": 0.29479,
+                    "position_y": -0.08993,
+                    "position_z": 0.33071,
+                    "orientation_x": -0.00040,
+                    "orientation_y": 0.00073,
+                    "orientation_z": -0.14814,
+                    "orientation_w": 0.98897
                 }
             },
             "2": {
                 "coordinate": {
-                    "position_x": 0.36532,
-                    "position_y": -0.11061,
-                    "position_z": 0.32757,
-                    "orientation_x": 0.69979,
-                    "orientation_y": -0.10456,
-                    "orientation_z": 0.69884,
-                    "orientation_w": 0.10478
+                    "position_x": 0.39898,
+                    "position_y": -0.12042,
+                    "position_z": 0.33071,
+                    "orientation_x": -0.00040,
+                    "orientation_y": 0.00073,
+                    "orientation_z": -0.14814,
+                    "orientation_w": 0.98897
                 }
             },
             "3": {
                 "coordinate": {
-                    "position_x": 0.46765,
-                    "position_y": -0.13853,
-                    "position_z": 0.32757,
-                    "orientation_x": 0.69979,
-                    "orientation_y": -0.10456,
-                    "orientation_z": 0.69884,
-                    "orientation_w": 0.10478
+                    "position_x": 0.50317,
+                    "position_y": -0.15091,
+                    "position_z": 0.33071,
+                    "orientation_x": -0.00040,
+                    "orientation_y": 0.00073,
+                    "orientation_z": -0.14814,
+                    "orientation_w": 0.98897
                 }
             },
             "4": {
                 "coordinate": {
-                    "position_x": 0.56998,
-                    "position_y": -0.16645,
-                    "position_z": 0.32757,
-                    "orientation_x": 0.69979,
-                    "orientation_y": -0.10456,
-                    "orientation_z": 0.69884,
-                    "orientation_w": 0.10478
+                    "position_x": 0.60736,
+                    "position_y": -0.18140,
+                    "position_z": 0.33071,
+                    "orientation_x": -0.00040,
+                    "orientation_y": 0.00073,
+                    "orientation_z": -0.14814,
+                    "orientation_w": 0.98897
                 }
             }
         }
@@ -183,35 +183,35 @@
         "columns": {
             "1": {
                 "coordinate": {
-                    "position_x": 0.32850,
-                    "position_y": -0.05080,
-                    "position_z": 0.32757,
-                    "orientation_x": 0.70560,
-                    "orientation_y": -0.05293,
-                    "orientation_z": 0.70463,
-                    "orientation_w": 0.05308
+                    "position_x": 0.36150,
+                    "position_y": -0.05522,
+                    "position_z": 0.33071,
+                    "orientation_x": -0.00034,
+                    "orientation_y": 0.00076,
+                    "orientation_z": -0.07508,
+                    "orientation_w": 0.99718
                 }
             },
             "2": {
                 "coordinate": {
-                    "position_x": 0.43412,
-                    "position_y": -0.06440,
-                    "position_z": 0.32757,
-                    "orientation_x": 0.70560,
-                    "orientation_y": -0.05293,
-                    "orientation_z": 0.70463,
-                    "orientation_w": 0.05308
+                    "position_x": 0.46903,
+                    "position_y": -0.07011,
+                    "position_z": 0.33071,
+                    "orientation_x": -0.00034,
+                    "orientation_y": 0.00076,
+                    "orientation_z": -0.07508,
+                    "orientation_w": 0.99718
                 }
             },
             "3": {
                 "coordinate": {
-                    "position_x": 0.53974,
-                    "position_y": -0.07799,
-                    "position_z": 0.32757,
-                    "orientation_x": 0.70560,
-                    "orientation_y": -0.05293,
-                    "orientation_z": 0.70463,
-                    "orientation_w": 0.05308
+                    "position_x": 0.57656,
+                    "position_y": -0.08499,
+                    "position_z": 0.33071,
+                    "orientation_x": -0.00034,
+                    "orientation_y": 0.00076,
+                    "orientation_z": -0.07508,
+                    "orientation_w": 0.99718
                 }
             }
         }
@@ -221,46 +221,46 @@
         "columns": {
             "1": {
                 "coordinate": {
-                    "position_x": 0.27471,
-                    "position_y": -0.00355,
-                    "position_z": 0.32757,
-                    "orientation_x": 0.70759,
-                    "orientation_y": -0.00102,
-                    "orientation_z": 0.70662,
-                    "orientation_w": 0.00109
+                    "position_x": 0.30672,
+                    "position_y": -0.00371,
+                    "position_z": 0.33071,
+                    "orientation_x": -0.00029,
+                    "orientation_y": 0.00078,
+                    "orientation_z": -0.00160,
+                    "orientation_w": 1.00000
                 }
             },
             "2": {
                 "coordinate": {
-                    "position_x": 0.38133,
-                    "position_y": -0.00253,
-                    "position_z": 0.32757,
-                    "orientation_x": 0.70759,
-                    "orientation_y": -0.00102,
-                    "orientation_z": 0.70662,
-                    "orientation_w": 0.00109
+                    "position_x": 0.41528,
+                    "position_y": -0.00266,
+                    "position_z": 0.33071,
+                    "orientation_x": -0.00029,
+                    "orientation_y": 0.00078,
+                    "orientation_z": -0.00160,
+                    "orientation_w": 1.00000
                 }
             },
             "3": {
                 "coordinate": {
-                    "position_x": 0.48795,
-                    "position_y": -0.00151,
-                    "position_z": 0.32757,
-                    "orientation_x": 0.70759,
-                    "orientation_y": -0.00102,
-                    "orientation_z": 0.70662,
-                    "orientation_w": 0.00109
+                    "position_x": 0.52383,
+                    "position_y": -0.00162,
+                    "position_z": 0.33071,
+                    "orientation_x": -0.00029,
+                    "orientation_y": 0.00078,
+                    "orientation_z": -0.00160,
+                    "orientation_w": 1.00000
                 }
             },
             "4": {
                 "coordinate": {
-                    "position_x": 0.59457,
-                    "position_y": -0.00049,
-                    "position_z": 0.32757,
-                    "orientation_x": 0.70759,
-                    "orientation_y": -0.00102,
-                    "orientation_z": 0.70662,
-                    "orientation_w": 0.00109
+                    "position_x": 0.63238,
+                    "position_y": -0.00057,
+                    "position_z": 0.33071,
+                    "orientation_x": -0.00029,
+                    "orientation_y": 0.00078,
+                    "orientation_z": -0.00160,
+                    "orientation_w": 1.00000
                 }
             }
         }
@@ -270,35 +270,35 @@
         "columns": {
             "1": {
                 "coordinate": {
-                    "position_x": 0.32754,
-                    "position_y": 0.04471,
-                    "position_z": 0.32757,
-                    "orientation_x": 0.70576,
-                    "orientation_y": 0.05091,
-                    "orientation_z": 0.70478,
-                    "orientation_w": -0.05090
+                    "position_x": 0.36051,
+                    "position_y": 0.04885,
+                    "position_z": 0.33071,
+                    "orientation_x": -0.00023,
+                    "orientation_y": 0.00080,
+                    "orientation_z": 0.07188,
+                    "orientation_w": 0.99741
                 }
             },
             "2": {
                 "coordinate": {
-                    "position_x": 0.43286,
-                    "position_y": 0.06033,
-                    "position_z": 0.32757,
-                    "orientation_x": 0.70576,
-                    "orientation_y": 0.05091,
-                    "orientation_z": 0.70478,
-                    "orientation_w": -0.05090
+                    "position_x": 0.46774,
+                    "position_y": 0.06580,
+                    "position_z": 0.33071,
+                    "orientation_x": -0.00023,
+                    "orientation_y": 0.00080,
+                    "orientation_z": 0.07188,
+                    "orientation_w": 0.99741
                 }
             },
             "3": {
                 "coordinate": {
-                    "position_x": 0.53818,
-                    "position_y": 0.07595,
-                    "position_z": 0.32757,
-                    "orientation_x": 0.70576,
-                    "orientation_y": 0.05091,
-                    "orientation_z": 0.70478,
-                    "orientation_w": -0.05090
+                    "position_x": 0.57497,
+                    "position_y": 0.08275,
+                    "position_z": 0.33071,
+                    "orientation_x": -0.00023,
+                    "orientation_y": 0.00080,
+                    "orientation_z": 0.07188,
+                    "orientation_w": 0.99741
                 }
             }
         }
@@ -308,46 +308,46 @@
         "columns": {
             "1": {
                 "coordinate": {
-                    "position_x": 0.26139,
-                    "position_y": 0.07534,
-                    "position_z": 0.32757,
-                    "orientation_x": 0.70011,
-                    "orientation_y": 0.10255,
-                    "orientation_z": 0.69914,
-                    "orientation_w": -0.10262
+                    "position_x": 0.29316,
+                    "position_y": 0.08227,
+                    "position_z": 0.33071,
+                    "orientation_x": -0.00017,
+                    "orientation_y": 0.00081,
+                    "orientation_z": 0.14497,
+                    "orientation_w": 0.98944
                 }
             },
             "2": {
                 "coordinate": {
-                    "position_x": 0.36314,
-                    "position_y": 0.10522,
-                    "position_z": 0.32757,
-                    "orientation_x": 0.70011,
-                    "orientation_y": 0.10255,
-                    "orientation_z": 0.69914,
-                    "orientation_w": -0.10262
+                    "position_x": 0.39675,
+                    "position_y": 0.11476,
+                    "position_z": 0.33071,
+                    "orientation_x": -0.00017,
+                    "orientation_y": 0.00081,
+                    "orientation_z": 0.14497,
+                    "orientation_w": 0.98944
                 }
             },
             "3": {
                 "coordinate": {
-                    "position_x": 0.46489,
-                    "position_y": 0.13509,
-                    "position_z": 0.32757,
-                    "orientation_x": 0.70011,
-                    "orientation_y": 0.10255,
-                    "orientation_z": 0.69914,
-                    "orientation_w": -0.10262
+                    "position_x": 0.50034,
+                    "position_y": 0.14725,
+                    "position_z": 0.33071,
+                    "orientation_x": -0.00017,
+                    "orientation_y": 0.00081,
+                    "orientation_z": 0.14497,
+                    "orientation_w": 0.98944
                 }
             },
             "4": {
                 "coordinate": {
-                    "position_x": 0.56664,
-                    "position_y": 0.16496,
-                    "position_z": 0.32757,
-                    "orientation_x": 0.70011,
-                    "orientation_y": 0.10255,
-                    "orientation_z": 0.69914,
-                    "orientation_w": -0.10262
+                    "position_x": 0.60393,
+                    "position_y": 0.17974,
+                    "position_z": 0.33071,
+                    "orientation_x": -0.00017,
+                    "orientation_y": 0.00081,
+                    "orientation_z": 0.14497,
+                    "orientation_w": 0.98944
                 }
             }
         }
@@ -357,35 +357,35 @@
         "columns": {
             "1": {
                 "coordinate": {
-                    "position_x": 0.29699,
-                    "position_y": 0.13584,
-                    "position_z": 0.32757,
-                    "orientation_x": 0.69068,
-                    "orientation_y": 0.15365,
-                    "orientation_z": 0.68971,
-                    "orientation_w": -0.15379
+                    "position_x": 0.32940,
+                    "position_y": 0.14817,
+                    "position_z": 0.33071,
+                    "orientation_x": -0.00011,
+                    "orientation_y": 0.00082,
+                    "orientation_z": 0.21728,
+                    "orientation_w": 0.97611
                 }
             },
             "2": {
                 "coordinate": {
-                    "position_x": 0.39297,
-                    "position_y": 0.17933,
-                    "position_z": 0.32757,
-                    "orientation_x": 0.69068,
-                    "orientation_y": 0.15365,
-                    "orientation_z": 0.68971,
-                    "orientation_w": -0.15379
+                    "position_x": 0.42711,
+                    "position_y": 0.19550,
+                    "position_z": 0.33071,
+                    "orientation_x": -0.00011,
+                    "orientation_y": 0.00082,
+                    "orientation_z": 0.21728,
+                    "orientation_w": 0.97611
                 }
             },
             "3": {
                 "coordinate": {
-                    "position_x": 0.48894,
-                    "position_y": 0.22282,
-                    "position_z": 0.32757,
-                    "orientation_x": 0.69068,
-                    "orientation_y": 0.15365,
-                    "orientation_z": 0.68971,
-                    "orientation_w": -0.15379
+                    "position_x": 0.52483,
+                    "position_y": 0.24282,
+                    "position_z": 0.33071,
+                    "orientation_x": -0.00011,
+                    "orientation_y": 0.00082,
+                    "orientation_z": 0.21728,
+                    "orientation_w": 0.97611
                 }
             }
         }
@@ -395,35 +395,35 @@
         "columns": {
             "1": {
                 "coordinate": {
-                    "position_x": 0.22417,
-                    "position_y": 0.14722,
-                    "position_z": 0.32757,
-                    "orientation_x": 0.67751,
-                    "orientation_y": 0.20391,
-                    "orientation_z": 0.67656,
-                    "orientation_w": -0.20412
+                    "position_x": 0.25526,
+                    "position_y": 0.16061,
+                    "position_z": 0.33071,
+                    "orientation_x": -0.00005,
+                    "orientation_y": 0.00083,
+                    "orientation_z": 0.28841,
+                    "orientation_w": 0.95751
                 }
             },
             "2": {
                 "coordinate": {
-                    "position_x": 0.31230,
-                    "position_y": 0.20338,
-                    "position_z": 0.32757,
-                    "orientation_x": 0.67751,
-                    "orientation_y": 0.20391,
-                    "orientation_z": 0.67656,
-                    "orientation_w": -0.20412
+                    "position_x": 0.34498,
+                    "position_y": 0.22175,
+                    "position_z": 0.33071,
+                    "orientation_x": -0.00005,
+                    "orientation_y": 0.00083,
+                    "orientation_z": 0.28841,
+                    "orientation_w": 0.95751
                 }
             },
             "3": {
                 "coordinate": {
-                    "position_x": 0.40044,
-                    "position_y": 0.25954,
-                    "position_z": 0.32757,
-                    "orientation_x": 0.67751,
-                    "orientation_y": 0.20391,
-                    "orientation_z": 0.67656,
-                    "orientation_w": -0.20412
+                    "position_x": 0.43471,
+                    "position_y": 0.28290,
+                    "position_z": 0.33071,
+                    "orientation_x": -0.00005,
+                    "orientation_y": 0.00083,
+                    "orientation_z": 0.28841,
+                    "orientation_w": 0.95751
                 }
             }
         }
@@ -433,24 +433,24 @@
         "columns": {
             "1": {
                 "coordinate": {
-                    "position_x": 0.23948,
-                    "position_y": 0.21475,
-                    "position_z": 0.32757,
-                    "orientation_x": 0.66068,
-                    "orientation_y": 0.25307,
-                    "orientation_z": 0.65975,
-                    "orientation_w": -0.25335
+                    "position_x": 0.27084,
+                    "position_y": 0.23419,
+                    "position_z": 0.33071,
+                    "orientation_x": 0.00001,
+                    "orientation_y": 0.00083,
+                    "orientation_z": 0.35799,
+                    "orientation_w": 0.93373
                 }
             },
             "2": {
                 "coordinate": {
-                    "position_x": 0.31787,
-                    "position_y": 0.28238,
-                    "position_z": 0.32757,
-                    "orientation_x": 0.66068,
-                    "orientation_y": 0.25307,
-                    "orientation_z": 0.65975,
-                    "orientation_w": -0.25335
+                    "position_x": 0.35065,
+                    "position_y": 0.30783,
+                    "position_z": 0.33071,
+                    "orientation_x": 0.00001,
+                    "orientation_y": 0.00083,
+                    "orientation_z": 0.35799,
+                    "orientation_w": 0.93373
                 }
             }
         }
@@ -460,24 +460,24 @@
         "columns": {
             "1": {
                 "coordinate": {
-                    "position_x": 0.16624,
-                    "position_y": 0.20590,
-                    "position_z": 0.32757,
-                    "orientation_x": 0.64028,
-                    "orientation_y": 0.30086,
-                    "orientation_z": 0.63937,
-                    "orientation_w": -0.30121
+                    "position_x": 0.19628,
+                    "position_y": 0.22459,
+                    "position_z": 0.33071,
+                    "orientation_x": 0.00007,
+                    "orientation_y": 0.00083,
+                    "orientation_z": 0.42563,
+                    "orientation_w": 0.90490
                 }
             },
             "2": {
                 "coordinate": {
-                    "position_x": 0.23319,
-                    "position_y": 0.28352,
-                    "position_z": 0.32757,
-                    "orientation_x": 0.64028,
-                    "orientation_y": 0.30086,
-                    "orientation_z": 0.63937,
-                    "orientation_w": -0.30121
+                    "position_x": 0.26443,
+                    "position_y": 0.30913,
+                    "position_z": 0.33071,
+                    "orientation_x": 0.00007,
+                    "orientation_y": 0.00083,
+                    "orientation_z": 0.42563,
+                    "orientation_w": 0.90490
                 }
             }
         }

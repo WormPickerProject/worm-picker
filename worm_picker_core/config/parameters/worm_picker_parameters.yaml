@@ -38,7 +38,9 @@ parameters:
     min_fraction: 0.01
 
   commands:
-    zero_arg: ["home", "homeEndFactor"]
+    zero_arg: ["home", "homeEndFactor", "moveToA2", "moveToM2", 
+              "moveToG4", "moveToG1", "moveToI1", "moveToE1", 
+              "moveToJ3", "moveToD3", "moveToI3", "moveToE3"]
     one_arg: ["pickPlateWorkStation", "placePlateWorkStation", "swapEndFactor", "hoverWormPick",
               "moveToPoint"]
     two_arg: []
@@ -46,26 +48,24 @@ parameters:
 
   planners:   
     move_to_point:
-      primary: "cartesian"
-      backup: "descartes"
+      primary: "pilz"
+      backup: "cartesian"
       configs:
-        descartes:
-          sampling_density: 0.01
+        pilz:
         cartesian:
           step_size: 0.01
           min_fraction: 0.01
-        chomp:
     move_to_joint:
       primary: "joint_interpolation"
-      backup: "rrt"
+      backup:
       configs:
         joint_interpolation:
         rrt:
     move_relative:
-      primary: "cartesian"
-      backup: "stomp"
+      primary: "pilz"
+      backup: "cartesian"
       configs:
+        pilz:
         cartesian:
           step_size: 0.01
-          min_fraction: 0.85
-        stomp:
+          min_fraction: 0.01
