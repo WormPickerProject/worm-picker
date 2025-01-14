@@ -19,19 +19,25 @@ private:
 
     void awaitService();
     bool sendRequest(const std::string &command);
+    bool sendCommandRequest(const std::string &command);
+    std::string formatCommand(const std::string &base_command) const;
     void processUserCommand(const std::string &command);
     void moveAllPoints();
     void moveRowPoints(const std::string &row_letter);
     void moveRowPlates(const std::string &row_letter);
     void moveAllPlates();
+    void moveAllPlatesRandom();
     std::vector<std::string> getRowPoints(char row) const;
     bool isRowLetter(const std::string &row_letter) const;
     void movePlatesRowSequence(const std::vector<std::string> &row_points);
+    bool parseVelAcc(const std::string &value, double &result) const;
 
     static constexpr const char* SERVICE_NAME = "/task_command";
     rclcpp::Node::SharedPtr node_;
     rclcpp::Client<TaskCommand>::SharedPtr client_;
     std::vector<std::string> move_to_points_;
+    std::optional<double> current_vel_;
+    std::optional<double> current_acc_;
 };
 
 #endif // CORE_COMMAND_INTERFACE_HPP

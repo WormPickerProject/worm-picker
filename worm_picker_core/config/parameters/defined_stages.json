@@ -10,7 +10,6 @@
         "name": "homeEndFactor",
         "type": "JOINT",
         "parameters": [0.0, 0.0, 0.0, 0.0, -30.0, 0.0],
-        "joints_to_move": [5],
         "velocity_scaling": 0.1,
         "acceleration_scaling": 0.1
     },
