@@ -1,6 +1,6 @@
 // move_to_joint_data.hpp
 //
-// Copyright (c) 2024
+// Copyright (c) 2025
 // SPDX-License-Identifier: Apache-2.0
 
 #ifndef MOVE_TO_JOINT_DATA_HPP

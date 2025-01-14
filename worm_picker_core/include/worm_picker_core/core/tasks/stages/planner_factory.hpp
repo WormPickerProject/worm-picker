@@ -13,9 +13,9 @@
 class PlannerFactory {
 public:
     using NodePtr = rclcpp::Node::SharedPtr;
-    using PlannerPtr = std::shared_ptr<moveit::task_constructor::solvers::PlannerInterface>;
+    using PlanPtr = std::shared_ptr<moveit::task_constructor::solvers::PlannerInterface>;
     using PlannerInfo = std::pair<std::optional<std::string>, std::string>;
-    using CreatorFunc = std::function<PlannerPtr(const NodePtr&, const std::string&, double, double)>;
+    using CreatorFunc = std::function<PlanPtr(const NodePtr&, const std::string&, double, double)>;
 
     static PlannerFactory& getInstance() {
         static PlannerFactory instance;
@@ -26,43 +26,49 @@ public:
         planner_creators_[planner_type] = std::move(creator);
     }
 
-    PlannerPtr createPlanner(const PlannerInfo& planner_info, 
-                             const NodePtr& node,
-                             double vel_scaling, 
-                             double acc_scaling) const 
+    PlanPtr createPlanner(const PlannerInfo& planner_info_1,
+                          const PlannerInfo& planner_info_2, 
+                          const NodePtr& node,
+                          double vel_scaling, 
+                          double acc_scaling) const 
     {
-        if (!planner_info.first) {
-            throw std::runtime_error("Planner type is not specified.");
+        if (planner_info_1.first) {
+            const auto& planner_type = *planner_info_1.first;
+            const auto it = planner_creators_.find(planner_type);
+            
+            if (it != planner_creators_.end()) {
+                return it->second(node, planner_info_1.second, vel_scaling, acc_scaling);
+            }
         }
 
-        const auto& planner_type = *planner_info.first;
-        const auto it = planner_creators_.find(planner_type);
-        if (it == planner_creators_.end()) {
-            throw std::runtime_error("Unknown planner type: " + planner_type);
+        if (planner_info_2.first) {
+            const auto& planner_type = *planner_info_2.first;
+            const auto it = planner_creators_.find(planner_type);
+            
+            if (it != planner_creators_.end()) {
+                return it->second(node, planner_info_2.second, vel_scaling, acc_scaling);
+            }
         }
 
-        return it->second(node, planner_info.second, vel_scaling, acc_scaling);
+        throw std::runtime_error("No valid planner type specified");
     }
 
 private:
     PlannerFactory() {
         registerPlannerCreator("cartesian", 
             [](const NodePtr& node, const std::string& param_path, 
-               double vel_scaling, double acc_scaling) -> PlannerPtr 
+               double vel_scaling, double acc_scaling) -> PlanPtr 
             {
                 using namespace moveit::task_constructor::solvers;
-
                 auto planner = std::make_shared<CartesianPath>();
                 planner->setMaxVelocityScalingFactor(vel_scaling);
                 planner->setMaxAccelerationScalingFactor(acc_scaling);
 
                 const std::string base_config = param_path + ".configs.cartesian.";
-
                 if (auto step_size = param_utils::getParameter<double>(
                         node, base_config + "step_size")) {
                     planner->setStepSize(*step_size);
                 }
-
                 if (auto min_fraction = param_utils::getParameter<double>(
                         node, base_config + "min_fraction")) {
                     planner->setMinFraction(*min_fraction);
@@ -71,35 +77,30 @@ private:
                 return planner;
             }
         );
-
         registerPlannerCreator("joint_interpolation",
             [](const NodePtr&, const std::string&, 
-               double vel_scaling, double acc_scaling) -> PlannerPtr 
+               double vel_scaling, double acc_scaling) -> PlanPtr 
             {
                 using namespace moveit::task_constructor::solvers;
-
                 auto planner = std::make_shared<JointInterpolationPlanner>();
                 planner->setMaxVelocityScalingFactor(vel_scaling);
                 planner->setMaxAccelerationScalingFactor(acc_scaling);
                 return planner;
             }
         );
-
-        // registerPlannerCreator("descartes",
-        //     [](const NodePtr& node, double vel_scaling, double acc_scaling) -> PlannerPtr {
-        //         auto planner = std::make_shared<Planners::DescartesPlanner>();
-        //         planner->setMaxVelocityScalingFactor(vel_scaling);
-        //         planner->setMaxAccelerationScalingFactor(acc_scaling);
-        //         return planner;
-        //     });
-
-        // registerPlannerCreator("chomp",
-        //     [](const NodePtr& node, double vel_scaling, double acc_scaling) -> PlannerPtr {
-        //         auto planner = std::make_shared<Planners::CHOMPPlanner>();
-        //         planner->setMaxVelocityScalingFactor(vel_scaling);
-        //         planner->setMaxAccelerationScalingFactor(acc_scaling);
-        //         return planner;
-        //     });
+        registerPlannerCreator("pilz",
+            [](const NodePtr& node, const std::string&, 
+               double vel_scaling, double acc_scaling) -> PlanPtr 
+            {
+                using namespace moveit::task_constructor::solvers;
+                auto planner = 
+                    std::make_shared<PipelinePlanner>(node, "pilz_industrial_motion_planner");
+                planner->setPlannerId("LIN");
+                planner->setMaxVelocityScalingFactor(vel_scaling);
+                planner->setMaxAccelerationScalingFactor(acc_scaling);
+                return planner;
+            }
+        );
     }
 
     std::map<std::string, CreatorFunc> planner_creators_;

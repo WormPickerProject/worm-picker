@@ -197,7 +197,7 @@
         </visual>
     </link>
     <joint name="${prefix}eoat-eoat_tcp" type="fixed">
-        <origin xyz="0.079 0 -0.0925" rpy="${radians(0)} ${radians(-60.0)} ${radians(180)}"/>
+        <origin xyz="0.11024 0.00 -0.07075" rpy="${radians(180)} ${radians(-150.0)} ${radians(180)}"/>
         <parent link="${prefix}eoat"/>
         <child link="${prefix}eoat_tcp"/> 
     </joint>

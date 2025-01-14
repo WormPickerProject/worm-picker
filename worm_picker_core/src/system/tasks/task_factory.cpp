@@ -18,10 +18,6 @@ TaskFactory::TaskFactory(const NodePtr& node)
     : node_(node), 
       command_parser_(std::make_unique<CommandParser>(node))
 { 
-    if (!node_) {
-        throw std::runtime_error("TaskFactory initialization failed: worm_picker_node_ is null.");
-    }
-
     initializeTaskMap();
 }
 
@@ -29,29 +25,19 @@ void TaskFactory::initializeTaskMap()
 {
     auto ws_config_path = param_utils::getParameter<std::string>(node_, "config_files.workstation");
     auto hotel_config_path = param_utils::getParameter<std::string>(node_, "config_files.hotel");
-    auto defined_stages_path = param_utils::getParameter<std::string>(node_, "config_files.stages");
-    auto defined_tasks_path = param_utils::getParameter<std::string>(node_, "config_files.tasks");
-
     const WorkstationDataParser workstation_parser{*ws_config_path};
-    const auto& workstation_data_map = workstation_parser.getWorkstationDataMap();
-
     const HotelDataParser hotel_parser{*hotel_config_path};
+    const auto& workstation_data_map = workstation_parser.getWorkstationDataMap();
     const auto& hotel_data_map = hotel_parser.getHotelDataMap();
 
+    auto defined_stages_path = param_utils::getParameter<std::string>(node_, "config_files.stages");
+    auto defined_tasks_path = param_utils::getParameter<std::string>(node_, "config_files.tasks");
     const DefinedTasksGenerator defined_tasks_parser{*defined_stages_path, *defined_tasks_path};
-    const auto& defined_tasks_map = defined_tasks_parser.getDefinedTasksMap();
-
     const TaskGenerator task_plans{workstation_data_map, hotel_data_map};
+    const auto& defined_tasks_map = defined_tasks_parser.getDefinedTasksMap();
     const auto& generated_task_map = task_plans.getGeneratedTaskPlans();
 
-    const auto& allowed_tasks = {"home", "homeEndFactor", "swapEndFactor:1", "swapEndFactor:2"};
-    for (const auto& task_name : allowed_tasks) {
-        auto it = defined_tasks_map.find(task_name);
-        if (it != defined_tasks_map.end()) {
-            task_data_map_.insert(*it);
-        }
-    }
-    // task_data_map_.insert(defined_tasks_map.begin(), defined_tasks_map.end());
+    task_data_map_.insert(defined_tasks_map.begin(), defined_tasks_map.end());
     task_data_map_.insert(generated_task_map.begin(), generated_task_map.end());
 
     logTaskMap(); // Temporary debug function

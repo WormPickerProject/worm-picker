@@ -4,30 +4,6 @@
         "stages": ["home"]
     },
     {
-        "name": "coordPoint1",
-        "stages": ["coordPoint1"]
-    },
-    {
-        "name": "coordPoint2",
-        "stages": ["coordPoint2"]
-    },
-    {
-        "name": "coordPoint3",
-        "stages": ["coordPoint3"]
-    },
-    {
-        "name": "jointPoint1",
-        "stages": ["jointPoint1"]
-    },
-    {
-        "name": "jointPoint2",
-        "stages": ["jointPoint2"]
-    },
-    {
-        "name": "jointPoint3",
-        "stages": ["jointPoint3"]
-    },
-    {
         "name": "homeEndFactor",
         "stages": ["homeEndFactor"]
     },
@@ -40,67 +16,55 @@
         "stages": ["swapEndFactor:2"]
     },
     {
-        "name": "moveRelativeX",
-        "stages": ["moveRelativeX"]
+        "name": "relx1",
+        "stages": ["moveRelativeOneMillimeterX"]
     },
     {
-        "name": "moveRelativeY",
-        "stages": ["moveRelativeY"]
+        "name": "rely1",
+        "stages": ["moveRelativeOneMillimeterY"]
     },
     {
-        "name": "moveRelativeZ",
-        "stages": ["moveRelativeZ"]
+        "name": "relz1",
+        "stages": ["moveRelativeOneMillimeterZ"]
     },
     {
-        "name": "X",
-        "stages": ["moveRelativeX"]
+        "name": "moveToA2",
+        "stages": ["A2"]
     },
     {
-        "name": "Y",
-        "stages": ["moveRelativeY"]
+        "name": "moveToM2",
+        "stages": ["M2"]
     },
     {
-        "name": "Z",
-        "stages": ["moveRelativeZ"]
+        "name": "moveToG4",
+        "stages": ["G4"]
     },
     {
-        "name": "pointSequence",
-        "stages": ["coordPoint1", "coordPoint2", "coordPoint3"]
+        "name": "moveToG1",
+        "stages": ["G1"]
     },
     {
-        "name": "jointSequence",
-        "stages": ["jointPoint1", "jointPoint2", "jointPoint3"]
+        "name": "moveToI1",
+        "stages": ["I1"]
     },
     {
-        "name": "relativeSequence",
-        "stages": ["moveRelativeX", "moveRelativeY", "moveRelativeZ"]
+        "name": "moveToE1",
+        "stages": ["E1"]
     },
     {
-        "name": "mixedPointJoint",
-        "stages": ["coordPoint1", "jointPoint2", "coordPoint3"]
+        "name": "moveToJ3",
+        "stages": ["J3"]
     },
     {
-        "name": "mixedPointRelative",
-        "stages": ["coordPoint1", "moveRelativeX", "coordPoint2"]
+        "name": "moveToD3",
+        "stages": ["D3"]
     },
     {
-        "name": "mixedJointPoint",
-        "stages": ["jointPoint1", "coordPoint2", "jointPoint3"]
+        "name": "moveToI3",
+        "stages": ["I3"]
     },
     {
-        "name": "mixedJointRelative",
-        "stages": ["jointPoint1", "moveRelativeY", "jointPoint2"]
-    },
-    {
-        "name": "mixedRelativePoint",
-        "stages": ["moveRelativeX", "coordPoint1", "moveRelativeY"]
-    },
-    {
-        "name": "mixedRelativeJoint",
-        "stages": ["moveRelativeY", "jointPoint1", "moveRelativeZ"]
-    },
-    {
-        "name": "allStageSequence",
-        "stages": ["home", "coordPoint1", "jointPoint1", "moveRelativeX", "coordPoint2", "jointPoint2", "moveRelativeY", "coordPoint3", "jointPoint3", "moveRelativeZ"]
+        "name": "moveToE3",
+        "stages": ["E3"]
     }
 ]
