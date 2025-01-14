@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://ros.org/wiki/xacro" name="worm_picker_robot">
-  <xacro:arg name="initial_positions_file" default="$(find worm_picker_moveit_config)/config/initial_positions.yaml" />
+  <!-- <xacro:arg name="initial_positions_file" default="$(find worm_picker_moveit_config)/config/initial_positions.yaml" /> -->
 
   <!-- Include necessary Xacro files -->
   <xacro:include filename="$(find worm_picker_description)/urdf/worm_picker_robot.urdf.xacro" />
-  <xacro:include filename="$(find worm_picker_moveit_config)/config/worm_picker_robot.ros2_control.xacro" />
+  <!-- <xacro:include filename="$(find worm_picker_moveit_config)/config/worm_picker_robot.ros2_control.xacro" /> -->
 
   <!-- Instantiate the ROS 2 control macro -->
-  <xacro:worm_picker_robot_ros2_control
+  <!-- <xacro:worm_picker_robot_ros2_control
     name="FakeSystem"
-    initial_positions_file="$(arg initial_positions_file)" />
+    initial_positions_file="$(arg initial_positions_file)" /> -->
 
 </robot>
