@@ -1,0 +1,20 @@
+{
+    "initial_calibration_points": [
+      {
+        "calibration_point": "G3",
+        "joint_positions": [0.00, 26.22, 9.25, 0.00, -13.07, 0.00]
+      },
+      {
+        "calibration_point": "D3",
+        "joint_positions": [-24.59, 42.54, 32.44, 0.01, -19.48, -0.02]
+      },
+      {
+        "calibration_point": "J3",
+        "joint_positions": [24.81, 42.54, 32.45, 0.01, -19.48, -0.02]
+      },
+      {
+        "calibration_point": "home",
+        "joint_positions": [0.00, 0.00, 0.00, 0.00, 0.00, 0.00]
+      }
+    ]
+  }

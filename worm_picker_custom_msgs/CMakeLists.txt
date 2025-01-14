@@ -31,6 +31,7 @@ find_package(rosidl_default_generators REQUIRED)
 # ---------------------------
 set(srv_files
   "srv/TaskCommand.srv"
+  "srv/CalibrationCommand.srv"
 )
 
 # ---------------------------

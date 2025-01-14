@@ -153,20 +153,12 @@
     </joint>
     <!-- end of joint list -->
 
-    <!-- ROS-Industrial 'flange' frame -->
+    <!-- 'flange' frame -->
     <link name="${prefix}flange"/>
     <joint name="${prefix}joint_6-flange" type="fixed">
       <origin xyz="0.072 0 0" rpy="0 0 0"/>
       <parent link="${prefix}joint_6"/>
       <child link="${prefix}flange"/>
-    </joint>
-
-    <!-- ROS-Industrial 'tool0' frame -->
-    <link name="${prefix}tool0"/>
-    <joint name="${prefix}flange-tool0" type="fixed">
-      <origin xyz="0 0 0" rpy="${radians(180)} ${radians(-90)} 0"/>
-      <parent link="${prefix}flange"/>
-      <child link="${prefix}tool0"/>
     </joint>
 
     <!-- End Effector -->
@@ -187,18 +179,61 @@
         </geometry>
       </collision> -->
     </link>
-    <joint name="flange-${prefix}eoat" type="fixed">
-      <origin xyz="0 0 0" rpy="0 0 0"/>
-      <parent link="flange"/>
-      <child link="${prefix}eoat"/> 
+    <joint name="${prefix}flange-eoat" type="fixed">
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <parent link="${prefix}flange"/>
+        <child link="${prefix}eoat"/> 
     </joint>
 
     <!-- EOAT TCP -->
-    <link name="${prefix}eoat_tcp"/>
-    <joint name="${prefix}eoat-${prefix}eoat_tcp" type="fixed">
-      <origin xyz="0.079 0 -0.0925" rpy="${radians(0)} ${radians(-60.0)} ${radians(180)}"/>
-      <parent link="${prefix}eoat"/>
-      <child link="${prefix}eoat_tcp"/> 
+    <link name="${prefix}eoat_tcp">
+        <visual>
+            <geometry>
+                <sphere radius="0.001"/>
+            </geometry>
+            <material name="red">
+                <color rgba="1 0 0 0.5"/>
+            </material>
+        </visual>
+    </link>
+    <joint name="${prefix}eoat-eoat_tcp" type="fixed">
+        <origin xyz="0.11024 0.00 -0.07075" rpy="${radians(180)} ${radians(-150.0)} ${radians(180)}"/>
+        <parent link="${prefix}eoat"/>
+        <child link="${prefix}eoat_tcp"/> 
+    </joint>
+
+    <!-- WORMPICK -->
+    <link name="${prefix}wormpick">
+        <visual>
+            <geometry>
+                <box size="0.01 0.01 0.01"/>
+            </geometry>
+            <material name="blue">
+                <color rgba="0 0 1 0.5"/>
+            </material>
+        </visual>
+    </link>
+    <joint name="${prefix}flange-wormpick" type="fixed">
+        <origin xyz="0 0 0" rpy="${radians(0)} ${radians(0)} ${radians(0)}"/>
+        <parent link="${prefix}flange"/>
+        <child link="${prefix}wormpick"/>
+    </joint>
+
+    <!-- WORMPICK TCP -->
+    <link name="${prefix}wormpick_tcp">
+        <visual>
+            <geometry>
+                <sphere radius="0.001"/>
+            </geometry>
+            <material name="green">
+                <color rgba="0 1 0 0.5"/>
+            </material>
+        </visual>
+    </link>
+    <joint name="${prefix}wormpick-wormpick_tcp" type="fixed">
+        <origin xyz="-0.05 -0.15 0.00" rpy="${radians(-90.0)} ${radians(0.0)} ${radians(0.0)}"/>
+        <parent link="${prefix}wormpick"/>
+        <child link="${prefix}wormpick_tcp"/> 
     </joint>
     
     <!-- ROS base_link to Robot Manufacturer World Coordinates transform -->

@@ -1,0 +1,71 @@
+# worm_picker_parameters.yaml
+# 
+# Copyright (c) 2025
+# SPDX-License-Identifier: Apache-2.0
+
+parameters:
+  config_files:
+    workstation: "/config/parameters/workstation_data.json"
+    hotel: "/config/parameters/hotel_data.json"
+    stages: "/config/parameters/defined_stages.json"
+    tasks: "/config/parameters/defined_tasks.json"
+    timer_log: "/worm-picker/worm_picker_core/config/logs"
+
+  actions:
+    exec_task: "/execute_task_solution"
+    task_command: "/task_command"
+
+  operation_modes:
+    group: "gp4_arm"
+    plate: "plateMode"
+    worm: "wormMode"
+
+  end_effectors:
+    current_factor: "eoat_tcp"
+    plate_factor: "eoat_tcp"
+    worm_factor: "wormpick_tcp"
+
+  settings:
+    server_timeout: 3
+    max_retries: 10
+    planning_attempts: 5
+
+  validation:
+    pos_tol: 0.001
+    ori_tol: 0.001
+    joint_tol: 0.001
+    step_size: 0.01
+    min_fraction: 0.01
+
+  commands:
+    zero_arg: ["home", "homeEndFactor", "moveToA2", "moveToM2", 
+              "moveToG4", "moveToG1", "moveToI1", "moveToE1", 
+              "moveToJ3", "moveToD3", "moveToI3", "moveToE3"]
+    one_arg: ["pickPlateWorkStation", "placePlateWorkStation", "swapEndFactor", "hoverWormPick",
+              "moveToPoint"]
+    two_arg: []
+    three_arg: ["moveRelative", "moveAbsolute"]
+
+  planners:   
+    move_to_point:
+      primary: "pilz"
+      backup: "cartesian"
+      configs:
+        pilz:
+        cartesian:
+          step_size: 0.01
+          min_fraction: 0.01
+    move_to_joint:
+      primary: "joint_interpolation"
+      backup:
+      configs:
+        joint_interpolation:
+        rrt:
+    move_relative:
+      primary: "pilz"
+      backup: "cartesian"
+      configs:
+        pilz:
+        cartesian:
+          step_size: 0.01
+          min_fraction: 0.01

@@ -1,27 +1,23 @@
 <?xml version="1.0"?>
 <package format="3">
   <name>worm_picker_core</name>
-  <version>0.0.1</version>
+  <version>0.1.0</version>
   <description>
     Worm Picker Core Functionality
   </description>
 
-  <license>Apache-2.0</license>
   <maintainer email="lkaising@outlook.com">Logan Kaising</maintainer>
+  <license>Apache-2.0</license>
 
-  <!-- Build Tool Dependencies -->
+  <!-- ROS 2 Build Tools -->
   <buildtool_depend>ament_cmake</buildtool_depend>
   <buildtool_depend>rosidl_default_generators</buildtool_depend>
 
-  <!-- Execution Dependencies -->
-  <exec_depend>rosidl_default_runtime</exec_depend>
-
-  <!-- Build Dependencies -->
+  <!-- Build Dependencies (for compiling this package) -->
   <build_depend>rclcpp</build_depend>
   <build_depend>geometry_msgs</build_depend>
   <build_depend>tf2</build_depend>
   <build_depend>tf2_geometry_msgs</build_depend>
-  <build_depend>std_srvs</build_depend>
   <build_depend>moveit_core</build_depend>
   <build_depend>moveit_msgs</build_depend>
   <build_depend>moveit_ros_planning</build_depend>
@@ -32,15 +28,59 @@
   <build_depend>worm_picker_moveit_config</build_depend>
   <build_depend>worm_picker_custom_msgs</build_depend>
   <build_depend>motoros2_interfaces</build_depend>
+  <build_depend>std_srvs</build_depend>
+  <build_depend>fmt</build_depend>
+  <build_depend>yaml-cpp</build_depend>
+  <build_depend>nlohmann-json-dev</build_depend>
+
+  <!-- Build-Export Dependencies (needed by downstream packages that link to this) -->
+  <build_export_depend>rclcpp</build_export_depend>
+  <build_export_depend>geometry_msgs</build_export_depend>
+  <build_export_depend>tf2</build_export_depend>
+  <build_export_depend>tf2_geometry_msgs</build_export_depend>
+  <build_export_depend>moveit_core</build_export_depend>
+  <build_export_depend>moveit_msgs</build_export_depend>
+  <build_export_depend>moveit_ros_planning</build_export_depend>
+  <build_export_depend>moveit_ros_planning_interface</build_export_depend>
+  <build_export_depend>moveit_task_constructor_core</build_export_depend>
+  <build_export_depend>moveit_task_constructor_msgs</build_export_depend>
+  <build_export_depend>moveit_task_constructor_visualization</build_export_depend>
+  <build_export_depend>worm_picker_moveit_config</build_export_depend>
+  <build_export_depend>worm_picker_custom_msgs</build_export_depend>
+  <build_export_depend>motoros2_interfaces</build_export_depend>
+  <build_export_depend>std_srvs</build_export_depend>
+  <build_export_depend>fmt</build_export_depend>
+  <build_export_depend>yaml-cpp</build_export_depend>
+  <build_export_depend>nlohmann-json-dev</build_export_depend>
+
+  <!-- Execution Dependencies (needed at runtime) -->
+  <exec_depend>rosidl_default_runtime</exec_depend>
+  <exec_depend>rclcpp</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>tf2</exec_depend>
+  <exec_depend>tf2_geometry_msgs</exec_depend>
+  <exec_depend>moveit_core</exec_depend>
+  <exec_depend>moveit_msgs</exec_depend>
+  <exec_depend>moveit_ros_planning</exec_depend>
+  <exec_depend>moveit_ros_planning_interface</exec_depend>
+  <exec_depend>moveit_task_constructor_core</exec_depend>
+  <exec_depend>moveit_task_constructor_msgs</exec_depend>
+  <exec_depend>moveit_task_constructor_visualization</exec_depend>
+  <exec_depend>worm_picker_moveit_config</exec_depend>
+  <exec_depend>worm_picker_custom_msgs</exec_depend>
+  <exec_depend>motoros2_interfaces</exec_depend>
+  <exec_depend>std_srvs</exec_depend>
+  <exec_depend>fmt</exec_depend>
+  <exec_depend>yaml-cpp</exec_depend>
+  <exec_depend>nlohmann-json-dev</exec_depend>
 
   <!-- Test Dependencies -->
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
+  <test_depend>ament_cmake_gtest</test_depend> <!-- For unit tests -->
 
-  <!-- Export Dependencies -->
+  <!-- Export -->
   <export>
     <build_type>ament_cmake</build_type>
   </export>
 </package>
-
-

@@ -1,0 +1,70 @@
+[
+    {
+        "name": "home",
+        "stages": ["home"]
+    },
+    {
+        "name": "homeEndFactor",
+        "stages": ["homeEndFactor"]
+    },
+    {
+        "name": "swapEndFactor:1",
+        "stages": ["swapEndFactor:1"]
+    },
+    {
+        "name": "swapEndFactor:2",
+        "stages": ["swapEndFactor:2"]
+    },
+    {
+        "name": "relx1",
+        "stages": ["moveRelativeOneMillimeterX"]
+    },
+    {
+        "name": "rely1",
+        "stages": ["moveRelativeOneMillimeterY"]
+    },
+    {
+        "name": "relz1",
+        "stages": ["moveRelativeOneMillimeterZ"]
+    },
+    {
+        "name": "moveToA2",
+        "stages": ["A2"]
+    },
+    {
+        "name": "moveToM2",
+        "stages": ["M2"]
+    },
+    {
+        "name": "moveToG4",
+        "stages": ["G4"]
+    },
+    {
+        "name": "moveToG1",
+        "stages": ["G1"]
+    },
+    {
+        "name": "moveToI1",
+        "stages": ["I1"]
+    },
+    {
+        "name": "moveToE1",
+        "stages": ["E1"]
+    },
+    {
+        "name": "moveToJ3",
+        "stages": ["J3"]
+    },
+    {
+        "name": "moveToD3",
+        "stages": ["D3"]
+    },
+    {
+        "name": "moveToI3",
+        "stages": ["I3"]
+    },
+    {
+        "name": "moveToE3",
+        "stages": ["E3"]
+    }
+]
