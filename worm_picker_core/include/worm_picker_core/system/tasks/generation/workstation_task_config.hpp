@@ -1,6 +1,6 @@
 // workstation_task_config.hpp
 //
-// Copyright (c)
+// Copyright (c) 2025
 // SPDX-License-Identifier: Apache-2.0
 
 #ifndef WORKSTATION_TASK_CONFIG_HPP
