@@ -79,33 +79,33 @@ void CoreCommandInterface::runCommandLoop()
 
 void CoreCommandInterface::processUserCommand(const std::string &command)
 {
-    if (command == "moveToAllPoints") {
-        moveToAllPoints();
+    if (command == "moveAllPoints") {
+        moveAllPoints();
     } 
-    else if (command == "movePlatesAll") {
-        movePlatesAll();
+    else if (command == "moveAllPlates") {
+        moveAllPlates();
     }
-    else if (command.rfind("moveToRowPoints:", 0) == 0) {
+    else if (command.rfind("moveRowPoints:", 0) == 0) {
         const auto row_letter = command.substr(16); 
-        moveToRowPoints(row_letter);
+        moveRowPoints(row_letter);
     }
-    else if (command.rfind("movePlatesRow:", 0) == 0) {
+    else if (command.rfind("moveRowPlates:", 0) == 0) {
         const auto row_letter = command.substr(14); 
-        movePlatesRow(row_letter);
+        moveRowPlates(row_letter);
     }
     else {
         sendRequest(command);
     }
 }
 
-void CoreCommandInterface::moveToAllPoints()
+void CoreCommandInterface::moveAllPoints()
 {
     for (const auto &point : move_to_points_) {
         sendRequest("moveToPoint:" + point);
     }
 }
 
-void CoreCommandInterface::moveToRowPoints(const std::string &row_letter)
+void CoreCommandInterface::moveRowPoints(const std::string &row_letter)
 {
     if (!isRowLetter(row_letter)) {
         RCLCPP_ERROR(node_->get_logger(), "Invalid row letter: '%s'", row_letter.c_str());
@@ -120,7 +120,7 @@ void CoreCommandInterface::moveToRowPoints(const std::string &row_letter)
     }
 }
 
-void CoreCommandInterface::movePlatesRow(const std::string &row_letter)
+void CoreCommandInterface::moveRowPlates(const std::string &row_letter)
 {
     if (!isRowLetter(row_letter)) {
         RCLCPP_ERROR(node_->get_logger(), "Invalid row letter: '%s'", row_letter.c_str());
@@ -132,7 +132,7 @@ void CoreCommandInterface::movePlatesRow(const std::string &row_letter)
     movePlatesRowSequence(row_points);
 }
 
-void CoreCommandInterface::movePlatesAll()
+void CoreCommandInterface::moveAllPlates()
 {
     sendRequest("pickPlateWorkStation:C1");
 

@@ -57,7 +57,6 @@ inline std::shared_ptr<void> MovementDataBase::createPlannerImpl(const NodePtr& 
                                        std::pair<std::optional<std::string>, std::string>> {
         auto it = type_map_.find(getType());
         const std::string base = "planners." + it->second;
-
         return std::make_pair(
             std::make_pair(param_utils::getParameter<std::string>(node, base + ".primary"), base),
             std::make_pair(param_utils::getParameter<std::string>(node, base + ".backup"), base)
