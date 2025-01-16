@@ -35,10 +35,16 @@ private:
     using ModeMap = std::unordered_map<std::string, std::string>;
     using TimerResults = std::vector<std::pair<std::string, double>>;
     using TaskValidatorPtr = std::shared_ptr<TaskValidator>;
+    using SolutionPtr = moveit::task_constructor::SolutionBaseConstPtr;
+    using OptionalSolutionRef = std::optional<std::reference_wrapper<const SolutionPtr>>;
 
     TaskExecutionStatus performTask(Task& task,
                                     const std::string& command,
                                     TimerResults& timer_results) const;
+    TaskExecutionStatus planTask(Task& task) const;
+    TaskExecutionStatus executeTask(Task& task, const std::string& command) const;
+    OptionalSolutionRef findValidSolution(const Task& task, 
+                                          const ordered<SolutionPtr>& solutions) const;
     std::optional<std::string> isModeSwitch(const std::string& command) const;
     TaskExecutionStatus checkExecutionResult(const MoveItErrorCodes& result,
                                              const std::string& command) const;
