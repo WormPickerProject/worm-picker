@@ -105,6 +105,10 @@ set(WORM_PICKER_DEPS
 add_library(${PROJECT_NAME} SHARED
   src/core/commands/command_config.cpp
   src/core/commands/command_info.cpp
+  src/core/tasks/stages/move_relative_data.cpp
+  src/core/tasks/stages/move_to_joint_data.cpp
+  src/core/tasks/stages/move_to_point_data.cpp
+  src/core/tasks/stages/movement_data_base.cpp
   src/core/tasks/planner_factory.cpp
   src/core/tasks/task_data.cpp
   src/infrastructure/interface/cli/cal_command_interface.cpp
