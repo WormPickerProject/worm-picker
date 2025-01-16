@@ -14,7 +14,7 @@
 #include <moveit/task_constructor/storage.h>
 
 #include "worm_picker_core/system/management/task_manager.hpp"
-#include "worm_picker_core/utils/execution_timer.hpp"
+#include "worm_picker_core/utils/scoped_timer.hpp"
 #include "worm_picker_core/utils/parameter_utils.hpp"
 
 TaskManager::TaskManager(const NodePtr& node,
@@ -54,9 +54,8 @@ TaskManager::TaskExecutionStatus TaskManager::executeTask(const std::string& com
     Task task;
 
     {
-        ExecutionTimer create_timer{"Create Task Timer"};
+        ScopedTimer timer("Create Task Timer", timer_results);
         task = task_factory_->createTask(command);
-        timer_results.emplace_back(create_timer.getName(), create_timer.stop());
     }
 
     const auto& status = performTask(task, command, timer_results);
@@ -69,48 +68,60 @@ TaskManager::TaskExecutionStatus TaskManager::performTask(Task& task,
                                                           const std::string& command,
                                                           TimerResults& timer_results) const 
 {
+    {
+        ScopedTimer timer("Plan Task Timer", timer_results);
+        if (auto status = planTask(task); status != TaskExecutionStatus::Success) {
+            return status;
+        }
+    }
+    {
+        ScopedTimer timer("Execute Task Timer", timer_results);
+        return executeTask(task, command);
+    }
+}
+
+TaskManager::TaskExecutionStatus TaskManager::planTask(Task& task) const 
+{
+    task.enableIntrospection();
+    task.init();
+    
     auto planning_attempts = param_utils::getParameter<int>(node_, "settings.planning_attempts");
-
-    {
-        ExecutionTimer plan_timer{"Initialize and Plan Task Timer"};
-        task.enableIntrospection();
-        task.init();
-        if (!task.plan(*planning_attempts)) {
-            return TaskExecutionStatus::PlanningFailed;
-        }
-        timer_results.emplace_back(plan_timer.getName(), plan_timer.stop());
+    if (!task.plan(*planning_attempts)) {
+        return TaskExecutionStatus::PlanningFailed;
     }
+    
+    return TaskExecutionStatus::Success;
+} 
 
-    {
-        ExecutionTimer execute_timer{"Execute Task Timer"};
-        const auto& solutions = task.solutions();
-        if (solutions.empty()) {
-            return TaskExecutionStatus::PlanningFailed;
-        }
-
-        auto it = std::find_if(solutions.begin(), solutions.end(), 
-            [this, &task](const auto& solution) {
-                if (solution->isFailure()) {
-                    return false;
-                }
-                return task_validator_->validateSolution(
-                    task,
-                    solution->start()->scene()->getCurrentState(),
-                    solution->end()->scene()->getCurrentState()
-                );
-            });
-
-        if (it == solutions.end()) {
-            return TaskExecutionStatus::PlanningFailed;
-        }
-
-        const auto& valid_solution = *it;
-        task.introspection().publishSolution(*valid_solution);
-        const auto result = task.execute(*valid_solution);
-
-        timer_results.emplace_back(execute_timer.getName(), execute_timer.stop());
-        return checkExecutionResult(result, command);
+TaskManager::TaskExecutionStatus TaskManager::executeTask(Task& task,
+                                                          const std::string& command) const 
+{
+    const auto& solutions = task.solutions();
+    if (solutions.empty()) {
+        return TaskExecutionStatus::PlanningFailed;
     }
+    auto valid_solution = findValidSolution(task, solutions);
+    if (!valid_solution) {
+        return TaskExecutionStatus::PlanningFailed;
+    }
+    task.introspection().publishSolution(*valid_solution->get());
+    const auto result = task.execute(*valid_solution->get());
+    
+    return checkExecutionResult(result, command);
+}
+
+TaskManager::OptionalSolutionRef 
+TaskManager::findValidSolution(const Task& task, const ordered<SolutionPtr>& solutions) const 
+{
+    if (auto it = std::find_if(solutions.begin(), solutions.end(), [&](const auto& solution) {
+            return !solution->isFailure() && task_validator_->validateSolution(
+                task,
+                solution->start()->scene()->getCurrentState(),
+                solution->end()->scene()->getCurrentState());
+        }); it != solutions.end()) {
+        return std::cref(*it);
+    }
+    return std::nullopt;
 }
 
 std::optional<std::string> TaskManager::isModeSwitch(const std::string& command) const
