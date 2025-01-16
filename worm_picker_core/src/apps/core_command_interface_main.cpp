@@ -10,7 +10,7 @@ int main(int argc, char **argv)
     rclcpp::init(argc, argv);
     auto node = rclcpp::Node::make_shared("core_command_interface");
 
-    auto command_interface = std::make_unique<CoreCommandInterface>(node);
+    auto command_interface = std::make_unique<worm_picker::CoreCommandInterface>(node);
     command_interface->runCommandLoop();
         
     rclcpp::shutdown();
