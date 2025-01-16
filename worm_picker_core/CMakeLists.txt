@@ -103,6 +103,8 @@ set(WORM_PICKER_DEPS
 # ----------------------------------------------------------------------------
 #
 add_library(${PROJECT_NAME} SHARED
+  src/core/commands/command_config.cpp
+  src/core/commands/command_info.cpp
   src/infrastructure/interface/cli/cal_command_interface.cpp
   src/infrastructure/interface/cli/core_command_interface.cpp
   src/infrastructure/interface/network/ros_command_client.cpp
