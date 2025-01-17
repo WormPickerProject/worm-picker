@@ -51,14 +51,12 @@ TaskManager::TaskExecutionStatus TaskManager::executeTask(const std::string& com
     }
 
     TimerResults timer_results;
-    Task task;
-
-    {
+    Result<Task> task = [&]() {
         ScopedTimer timer("Create Task Timer", timer_results);
-        task = task_factory_->createTask(command);
-    }
+        return task_factory_->createTask(command);
+    }();
 
-    const auto& status = performTask(task, command, timer_results);
+    const auto& status = performTask(task.value(), command, timer_results);
     timer_data_collector_->recordTimerData(command, timer_results);
     
     return status;

@@ -8,6 +8,7 @@
 
 #include <rclcpp/rclcpp.hpp>
 #include <worm_picker_custom_msgs/srv/task_command.hpp>
+#include "worm_picker_core/core/result.hpp"
 
 namespace worm_picker {
 
@@ -19,64 +20,6 @@ public:
 
 private:
     std::string value_;
-};
-
-template<typename T>
-class Result {
-public:
-    static Result<T> success(T value) {
-        return Result(std::move(value));
-    }
-
-    static Result<T> error(std::string message) {
-        return Result(std::move(message));
-    }
-    
-    bool isSuccess() const {
-        return std::holds_alternative<T>(value_);
-    }
-    
-    const T& value() const& {
-        return std::get<T>(value_);
-    }
-    
-    const std::string& error() const& {
-        return std::get<std::string>(value_);
-    }
-
-private:
-    std::variant<T, std::string> value_;
-    explicit Result(T value) : value_(std::move(value)) {}
-    explicit Result(std::string error) : value_(std::move(error)) {}
-};
-
-template<>
-class Result<void> {
-public:
-    static Result<void> success() {
-        return Result<void>(true);
-    }
-    
-    static Result<void> error(std::string message) {
-        return Result<void>(std::move(message));
-    }
-    
-    bool isSuccess() const {
-        return success_;
-    }
-    
-    const std::string& error() const& {
-        if (isSuccess()) {
-            throw std::runtime_error("Cannot access error on successful result");
-        }
-        return error_message_;
-    }
-
-private:
-    bool success_;
-    std::string error_message_;
-    explicit Result(bool success) : success_(success) {}
-    explicit Result(std::string error) : success_(false), error_message_(std::move(error)) {}
 };
 
 class CoreCommandInterface {

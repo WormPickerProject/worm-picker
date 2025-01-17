@@ -20,7 +20,7 @@ void CommandParser::initCommandConfigs(const NodePtr& node)
     };
 }
 
-CommandInfo CommandParser::parse(const std::string& command)
+Result<CommandInfo> CommandParser::parse(const std::string& command)
 {
     auto tokens = tokenizeByColon(command);
 
@@ -32,7 +32,7 @@ CommandInfo CommandParser::parse(const std::string& command)
     const CommandConfig* config = findConfigForCommand(base_command);
 
     if (!config) {
-        throw std::runtime_error(
+        return Result<CommandInfo>::error(
             fmt::format("No CommandConfig found for base command '{}'", base_command));
     }
 
@@ -47,7 +47,7 @@ CommandInfo CommandParser::parse(const std::string& command)
     info.setArgs(args);
     info.setSpeedOverride(extractSpeedOverride(args, config));
 
-    return info;
+    return Result<CommandInfo>::success(info);
 }
 
 const CommandConfig* CommandParser::findConfigForCommand(const std::string& base_command) const

@@ -10,6 +10,7 @@
 #include <rclcpp/rclcpp.hpp>
 #include <moveit/task_constructor/task.h>
 #include <moveit/task_constructor/stages.h>
+#include "worm_picker_core/core/result.hpp"
 #include "worm_picker_core/core/tasks/task_data.hpp"
 #include "worm_picker_core/infrastructure/parsers/command_parser.hpp"
 #include "worm_picker_core/infrastructure/parsers/workstation_data_parser.hpp"
@@ -21,7 +22,7 @@ public:
     using NodePtr = rclcpp::Node::SharedPtr;
 
     explicit TaskFactory(const NodePtr& node);
-    Task createTask(const std::string& command);
+    Result<Task> createTask(const std::string& command);
 
 private:
     using CurrentStateStage = moveit::task_constructor::stages::CurrentState;
@@ -37,8 +38,9 @@ private:
     void loadDefinedTasks(const WorkstationDataMap& workstation, const HotelDataMap& hotel);
 
     Task createBaseTask(const std::string& command);
-    TaskData fetchTaskData(const CommandInfo& info);
+    Result<TaskData> fetchTaskData(const CommandInfo& info);
     void applySpeedOverrides(TaskData& task_data, const SpeedOverride& override);
+    Task configureTaskWithStages(Task task, const TaskData& task_data, const std::string& command);
 
     void logTaskMap();
     void logCreatedTask(const std::string& command, const TaskData& task_data);
