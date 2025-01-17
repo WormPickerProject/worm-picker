@@ -8,6 +8,7 @@
 
 #include <rclcpp/rclcpp.hpp>
 #include <moveit_msgs/msg/move_it_error_codes.hpp>
+#include "worm_picker_core/core/result.hpp"
 #include "worm_picker_core/system/tasks/task_factory.hpp"
 #include "worm_picker_core/utils/timer_data_collector.hpp"
 #include "worm_picker_core/system/tasks/task_validator.hpp"

@@ -398,9 +398,7 @@ Result<void> CoreCommandInterface::executeMovementSequence(
 {
     for (const auto& point : points) {
         auto result = impl_->sendCommandsInOrder({"moveToPoint:" + point.value()});
-        if (!result.isSuccess()) {
-            return result;
-        }
+        if (!result.isSuccess()) return result;
     }
     return impl_->sendCommand(impl_->formatCommand("homeEndFactor"));
 }

@@ -7,6 +7,7 @@
 #define COMMAND_PARSER_HPP
 
 #include <rclcpp/rclcpp.hpp>
+#include "worm_picker_core/core/result.hpp"
 #include "worm_picker_core/core/commands/command_info.hpp"
 #include "worm_picker_core/core/commands/command_config.hpp"
 
@@ -16,7 +17,7 @@ public:
 
     explicit CommandParser() = default;
     explicit CommandParser(const NodePtr& node);
-    CommandInfo parse(const std::string& command);
+    Result<CommandInfo> parse(const std::string& command);
 
 private:
     using SpeedOverrideOpt = std::optional<std::pair<double, double>>;

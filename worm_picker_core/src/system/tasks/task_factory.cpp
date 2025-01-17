@@ -56,20 +56,22 @@ void TaskFactory::loadDefinedTasks(const WorkstationDataMap& workstation, const 
     task_data_map_.insert(generated_task_map.begin(), generated_task_map.end());
 }
 
-TaskData TaskFactory::fetchTaskData(const CommandInfo& info) 
+Result<TaskData> TaskFactory::fetchTaskData(const CommandInfo& info) 
 {
     if (info.getBaseCommand() == "moveRelative") {
-        return GenerateRelativeMovementTask::parseCommand(info.getArgs());
+        auto task = GenerateRelativeMovementTask::parseCommand(info.getArgs());
+        return Result<TaskData>::success(task);
     }
     auto it = task_data_map_.find(info.getBaseCommandKey());
     if (it == task_data_map_.end()) {
-        throw std::invalid_argument(fmt::format("Command '{}' not found", info.getBaseCommand()));
+        return Result<TaskData>::error(
+            fmt::format("Command '{}' not found", info.getBaseCommand()));
     }
     auto task_copy = it->second;
     if (info.getSpeedOverride()) {
         applySpeedOverrides(task_copy, *info.getSpeedOverride());
     }
-    return task_copy;
+    return Result<TaskData>::success(task_copy);
 }
 
 void TaskFactory::applySpeedOverrides(TaskData& task_data, const SpeedOverride& override) 
@@ -83,22 +85,18 @@ void TaskFactory::applySpeedOverrides(TaskData& task_data, const SpeedOverride& 
     }
 }
 
-TaskFactory::Task TaskFactory::createTask(const std::string& command) 
+Result<TaskFactory::Task> TaskFactory::createTask(const std::string& command) 
 {
     auto task = createBaseTask(command);
     task.add(std::make_unique<CurrentStateStage>("current"));
 
-    auto info = command_parser_->parse(command);
-    TaskData task_data = fetchTaskData(info);
-
-    for (int i = 1; const auto& stage_ptr : task_data.getStages()) {
-        auto name = fmt::format("stage_{}", i++);
-        auto stage = stage_ptr->createStage(name, node_);
-        task.add(std::move(stage));
-    }
-
-    logCreatedTask(command, task_data);
-    return task;
+    return command_parser_->parse(command)
+        .flatMap([this](const CommandInfo& info) { 
+            return fetchTaskData(info); 
+        })
+        .map([this, &task, command](const TaskData& task_data) {
+            return configureTaskWithStages(std::move(task), task_data, command);
+        });
 }
 
 TaskFactory::Task TaskFactory::createBaseTask(const std::string& command) 
@@ -117,6 +115,19 @@ TaskFactory::Task TaskFactory::createBaseTask(const std::string& command)
     execution_info.controller_names = { "follow_joint_trajectory" };
     task.setProperty("trajectory_execution_info", execution_info);
 
+    return task;
+}
+
+TaskFactory::Task TaskFactory::configureTaskWithStages(Task task, 
+                                                       const TaskData& task_data,
+                                                       const std::string& command)
+{
+    for (int stage_index = 1; const auto& stage_ptr : task_data.getStages()) {
+        auto stage = stage_ptr->createStage(fmt::format("stage_{}", stage_index++), node_);
+        task.add(std::move(stage));
+    }
+    
+    logCreatedTask(command, task_data);
     return task;
 }
 
