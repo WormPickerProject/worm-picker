@@ -113,6 +113,23 @@ public:
     }
 
     template <typename Func>
+    auto flatMap(Func&& func) 
+        -> std::invoke_result_t<Func, T&>
+    {
+        using ResultType = std::invoke_result_t<Func, T&>;
+        static_assert(
+            std::same_as<std::decay_t<ResultType>, 
+            Result<typename ResultType::ValueType, typename ResultType::ErrorType>>,
+            "flatMap must return a Result-compatible type"
+        );
+
+        if (isSuccess()) {
+            return std::invoke(std::forward<Func>(func), value());
+        }
+        return ResultType::error(std::get<E>(value_));
+    }
+
+    template <typename Func>
     auto mapError(Func&& func) const 
         -> Result<T, std::invoke_result_t<Func, const E&>>
     {
@@ -213,6 +230,40 @@ public:
         return std::move(errorValue_);
     }
 
+    template <typename Func>
+    auto flatMap(Func&& func) const
+        -> std::invoke_result_t<Func>
+    {
+        using ResultType = std::invoke_result_t<Func>;
+        static_assert(
+            std::same_as<std::decay_t<ResultType>,
+            Result<typename ResultType::ValueType, typename ResultType::ErrorType>>,
+            "flatMap must return a Result-compatible type"
+        );
+
+        if (isSuccess()) {
+            return std::invoke(std::forward<Func>(func));
+        }
+        return ResultType::error(errorValue_);
+    }
+
+    template <typename Func>
+    auto flatMap(Func&& func)
+        -> std::invoke_result_t<Func>
+    {
+        using ResultType = std::invoke_result_t<Func>;
+        static_assert(
+            std::same_as<std::decay_t<ResultType>,
+            Result<typename ResultType::ValueType, typename ResultType::ErrorType>>,
+            "flatMap must return a Result-compatible type"
+        );
+
+        if (isSuccess()) {
+            return std::invoke(std::forward<Func>(func));
+        }
+        return ResultType::error(errorValue_);
+    }
+
     template <typename SuccessFunc, typename ErrorFunc>
     auto match(SuccessFunc&& onSuccess, ErrorFunc&& onError) const
         -> std::invoke_result_t<SuccessFunc>
@@ -253,7 +304,6 @@ private:
     bool success_ = false;
     E errorValue_{};
 
-    // Private constructors
     explicit Result(bool success) : success_(success) {}
     explicit Result(E errorValue) : success_(false), errorValue_(std::move(errorValue)) {}
 };
