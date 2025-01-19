@@ -231,6 +231,22 @@ public:
     }
 
     template <typename Func>
+    auto map(Func&& func) const 
+        -> Result<std::invoke_result_t<Func>, E>
+    {
+        using U = std::invoke_result_t<Func>;
+        if (isSuccess()) {
+            if constexpr (std::is_void_v<U>) {
+                std::invoke(std::forward<Func>(func));
+                return Result<U, E>::success();
+            } else {
+                return Result<U, E>::success(std::invoke(std::forward<Func>(func)));
+            }
+        }
+        return Result<U, E>::error(errorValue_);
+    }
+
+    template <typename Func>
     auto flatMap(Func&& func) const
         -> std::invoke_result_t<Func>
     {
