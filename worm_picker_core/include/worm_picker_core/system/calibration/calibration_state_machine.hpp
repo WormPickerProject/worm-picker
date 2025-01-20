@@ -1,10 +1,9 @@
 // calibrations_state_machine.hpp
 //
-// Copyright (c) 2024
+// Copyright (c) 2025
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef CALIBRATION_STATE_MACHINE_HPP
-#define CALIBRATION_STATE_MACHINE_HPP
+#pragma once
 
 #include <fmt/format.h>
 #include <rclcpp/rclcpp.hpp>
@@ -84,5 +83,3 @@ private:
     std::map<std::string, Pose> recorded_positions_;
     const CommandHandlerMap command_handlers_;
 };
-
-#endif // CALIBRATION_STATE_MACHINE_HPP

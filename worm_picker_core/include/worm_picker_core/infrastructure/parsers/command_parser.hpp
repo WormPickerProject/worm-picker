@@ -1,10 +1,9 @@
 // command_parser.hpp
 //
-// Copyright (c) 2024
+// Copyright (c) 2025
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef COMMAND_PARSER_HPP
-#define COMMAND_PARSER_HPP
+#pragma once
 
 #include <rclcpp/rclcpp.hpp>
 #include "worm_picker_core/core/result.hpp"
@@ -32,5 +31,3 @@ private:
 
     CommandConfigVec configs_;
 };
-
-#endif // COMMAND_PARSER_HPP

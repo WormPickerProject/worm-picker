@@ -1,10 +1,9 @@
 // generate_hotel_task_generator.hpp
 //
-// Copyright (c)
+// Copyright (c) 2025
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef GENERATE_HOTEL_TASK_GENERATOR_HPP
-#define GENERATE_HOTEL_TASK_GENERATOR_HPP
+#pragma once
 
 #include "worm_picker_core/system/tasks/generation/generic_task_generator.hpp"
 #include "worm_picker_core/core/geometry/coordinate.hpp"
@@ -35,5 +34,3 @@ private:
 
     TaskType task_type_;
 };
-
-#endif // GENERATE_HOTEL_TASK_GENERATOR_HPP

@@ -3,8 +3,7 @@
 // Copyright (c) 2025
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef SCOPED_TIMER_HPP
-#define SCOPED_TIMER_HPP
+#pragma once
 
 #include <vector>
 #include "worm_picker_core/utils/execution_timer.hpp"
@@ -20,5 +19,3 @@ private:
     TimerResults& results_;
     ExecutionTimer timer_;
 };
-
-#endif // SCOPED_TIMER_HPP

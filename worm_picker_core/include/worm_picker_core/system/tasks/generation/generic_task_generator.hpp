@@ -1,10 +1,9 @@
 // generic_task_generator.hpp
 //
-// Copyright (c)
+// Copyright (c) 2025
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef GENERIC_TASK_GENERATOR_HPP
-#define GENERIC_TASK_GENERATOR_HPP
+#pragma once
 
 #include "worm_picker_core/system/tasks/generation/base_task_generator.hpp"
 
@@ -38,5 +37,3 @@ protected:
 
     const std::unordered_map<std::string, DataType>& data_map_;
 };
-
-#endif // GENERIC_TASK_GENERATOR_HPP

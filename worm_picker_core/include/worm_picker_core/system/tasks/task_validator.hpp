@@ -1,10 +1,9 @@
 // task_validator.hpp
 //
-// Copyright (c) 2024
+// Copyright (c) 2025
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef TASK_VALIDATOR_HPP
-#define TASK_VALIDATOR_HPP
+#pragma once
 
 #include <rclcpp/rclcpp.hpp>
 #include <moveit/task_constructor/task.h>
@@ -45,5 +44,3 @@ private:
     double orientation_tolerance_;
     double joint_tolerance_;
 };
-
-#endif // TASK_VALIDATOR_HPP

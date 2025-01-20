@@ -1,10 +1,9 @@
 // robot_controller.hpp
 //
-// Copyright (c) 2024
+// Copyright (c) 2025
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef ROBOT_CONTROLLER_HPP
-#define ROBOT_CONTROLLER_HPP
+#pragma once
 
 #include <rclcpp/rclcpp.hpp>
 #include <geometry_msgs/msg/pose_stamped.hpp>
@@ -48,5 +47,3 @@ private:
     std::shared_ptr<planning_scene::PlanningScene> current_scene_;
     mutable std::mutex scene_mutex_;
 };
-
-#endif // ROBOT_CONTROLLER_HPP

@@ -1,10 +1,9 @@
 // worm_picker_controller.hpp
 //
-// Copyright (c) 2024
+// Copyright (c) 2025
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef WORM_PICKER_CONTROLLER_HPP
-#define WORM_PICKER_CONTROLLER_HPP
+#pragma once
 
 #include <rclcpp/rclcpp.hpp>
 #include "worm_picker_core/system/tasks/task_factory.hpp"
@@ -53,5 +52,3 @@ private:
     TaskManagerPtr task_manager_;
     TimerDataCollectorPtr timer_data_collector_;
 };
-
-#endif // WORM_PICKER_CONTROLLER_HPP

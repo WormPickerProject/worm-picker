@@ -1,10 +1,9 @@
 // workstation_json_generator.hpp
 //
-// Copyright (c) 2024
+// Copyright (c) 2025
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef WORKSTATION_JSON_GENERATOR_HPP
-#define WORKSTATION_JSON_GENERATOR_HPP
+#pragma once
 
 #include <nlohmann/json.hpp>
 #include <geometry_msgs/msg/pose_stamped.hpp>
@@ -29,5 +28,3 @@ private:
 
     const PoseMap& averaged_poses_;
 };
-
-#endif // WORKSTATION_JSON_GENERATOR_HPP

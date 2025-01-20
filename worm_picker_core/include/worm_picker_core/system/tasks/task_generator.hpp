@@ -1,10 +1,9 @@
 // task_generator.hpp
 //
-// Copyright (c) 2024
+// Copyright (c) 2025
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef TASK_GENERATOR_HPP
-#define TASK_GENERATOR_HPP
+#pragma once
 
 #include "worm_picker_core/core/tasks/task_data.hpp"
 #include "worm_picker_core/system/tasks/generation/generate_workstation_task_generator.hpp"
@@ -51,5 +50,3 @@ private:
     /// @brief 
     TaskMap task_data_map_;
 };
-
-#endif // TASK_GENERATOR_HPP

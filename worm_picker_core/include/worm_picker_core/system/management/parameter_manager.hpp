@@ -1,10 +1,9 @@
 // parameter_manager.hpp
 //
-// Copyright (c) 2024
+// Copyright (c) 2025
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef PARAMETER_MANAGER_HPP
-#define PARAMETER_MANAGER_HPP
+#pragma once
 
 #include <rclcpp/rclcpp.hpp>
 #include <yaml-cpp/yaml.h>
@@ -53,5 +52,3 @@ inline bool ParameterManager::tryDeclareParam<std::vector<std::string>>(
         return false;
     }
 }
-
-#endif // PARAMETER_MANAGER_HPP

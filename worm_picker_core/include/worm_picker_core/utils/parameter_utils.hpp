@@ -1,10 +1,9 @@
 // parameter_utils.hpp
 //
-// Copyright (c) 2024
+// Copyright (c) 2025
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef PARAMETER_UTILS_HPP
-#define PARAMETER_UTILS_HPP
+#pragma once
 
 #include <rclcpp/rclcpp.hpp>
 
@@ -43,5 +42,3 @@ bool setParameter(const rclcpp::Node::SharedPtr& node, const std::string& name, 
 }
 
 } // namespace param_utils
-
-#endif // PARAMETER_UTILS_HPP
