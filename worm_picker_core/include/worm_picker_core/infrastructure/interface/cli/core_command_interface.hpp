@@ -3,8 +3,7 @@
 // Copyright (c) 2025
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef CORE_COMMAND_INTERFACE_HPP
-#define CORE_COMMAND_INTERFACE_HPP
+#pragma once
 
 #include <rclcpp/rclcpp.hpp>
 #include <worm_picker_custom_msgs/srv/task_command.hpp>
@@ -46,5 +45,3 @@ private:
 };
 
 } // namespace worm_picker
-
-#endif // CORE_COMMAND_INTERFACE_HPP

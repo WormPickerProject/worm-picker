@@ -3,8 +3,7 @@
 // Copyright (c) 2025
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef WORKSTATION_TASK_CONFIG_HPP
-#define WORKSTATION_TASK_CONFIG_HPP
+#pragma once
 
 /// @brief Configuration namespace for workstation task generation parameters and constants
 namespace workstation_config {
@@ -53,5 +52,3 @@ namespace angle {
 }
 
 } // namespace workstation_config
-
-#endif // WORKSTATION_TASK_CONFIG_HPP

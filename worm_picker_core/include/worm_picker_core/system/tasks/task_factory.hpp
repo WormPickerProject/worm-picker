@@ -1,10 +1,9 @@
 // task_factory.hpp
 //
-// Copyright (c) 2024
+// Copyright (c) 2025
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef TASK_FACTORY_HPP
-#define TASK_FACTORY_HPP
+#pragma once
 
 #include <fmt/format.h>
 #include <rclcpp/rclcpp.hpp>
@@ -49,5 +48,3 @@ private:
     std::unique_ptr<CommandParser> command_parser_;
     TaskDataMap task_data_map_;
 };
-
-#endif // TASK_FACTORY_HPP

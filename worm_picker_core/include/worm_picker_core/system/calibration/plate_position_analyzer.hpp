@@ -3,8 +3,7 @@
 // Copyright (c) 2025
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef PLATE_POSITION_ANALYZER_HPP
-#define PLATE_POSITION_ANALYZER_HPP
+#pragma once
 
 #include <map>
 // #include <string>
@@ -82,5 +81,3 @@ struct Quaternion {
         return Quaternion{-x, -y, -z, w};
     }
 };
-
-#endif // PLATE_POSITION_ANALYZER_HPP

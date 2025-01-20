@@ -1,10 +1,9 @@
 // coordinate.hpp
 //
-// Copyright (c) 2024
+// Copyright (c) 2025
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef COORDINATE_HPP
-#define COORDINATE_HPP
+#pragma once
 
 class Coordinate {
 public:
@@ -40,5 +39,3 @@ private:
     double orientation_z_{}; 
     double orientation_w_{};
 };
-
-#endif // COORDINATE_HPP

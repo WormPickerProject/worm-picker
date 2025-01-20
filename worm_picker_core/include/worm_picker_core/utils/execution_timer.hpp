@@ -1,10 +1,9 @@
 // execution_timer.hpp
 //
-// Copyright (c) 2024
+// Copyright (c) 2025
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef EXECUTION_TIMER_HPP
-#define EXECUTION_TIMER_HPP
+#pragma once
 
 #include <string>
 #include <chrono>
@@ -24,6 +23,3 @@ private:
     std::string timer_name_;
     std::chrono::time_point<std::chrono::steady_clock> start_time_;
 };
-
-#endif // EXECUTION_TIMER_HPP
-

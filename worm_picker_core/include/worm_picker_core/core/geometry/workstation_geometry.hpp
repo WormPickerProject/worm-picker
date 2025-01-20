@@ -1,10 +1,9 @@
 // workstation_geometry.hpp
 //
-// Copyright (c) 2024
+// Copyright (c) 2025
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef WORKSTATION_GEOMETRY_HPP
-#define WORKSTATION_GEOMETRY_HPP
+#pragma once
 
 #include <vector>
 #include "worm_picker_core/core/geometry/fixed_point.hpp"
@@ -28,5 +27,3 @@ private:
     double ray_separation_angle_{};
     std::vector<FixedPoint> fixed_points_{};
 };
-
-#endif // WORKSTATION_GEOMETRY_HPP

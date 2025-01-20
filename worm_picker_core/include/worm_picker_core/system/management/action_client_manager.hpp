@@ -1,10 +1,9 @@
 // action_client_manager.hpp
 //
-// Copyright (c) 2024
+// Copyright (c) 2025
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef ACTION_CLIENT_MANAGER_HPP
-#define ACTION_CLIENT_MANAGER_HPP
+#pragma once
 
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_action/rclcpp_action.hpp>
@@ -31,5 +30,3 @@ private:
     std::jthread wait_thread_;
     AtomicBool server_available_;
 };
-
-#endif // ACTION_CLIENT_MANAGER_HPP

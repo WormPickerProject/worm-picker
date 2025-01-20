@@ -1,10 +1,9 @@
 // fixed_point.hpp
 //
-// Copyright (c) 2024
+// Copyright (c) 2025
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef FIXED_POINT_HPP
-#define FIXED_POINT_HPP
+#pragma once
 
 #include <string>
 
@@ -28,5 +27,3 @@ private:
     double x_{};
     double y_{};
 };
-
-#endif // FIXED_POINT_HPP

@@ -1,10 +1,9 @@
 // hotel_data_parser.hpp
 //
-// Copyright (c) 2024
+// Copyright (c) 2025
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef HOTEL_DATA_PARSER_HPP
-#define HOTEL_DATA_PARSER_HPP
+#pragma once
 
 #include <nlohmann/json.hpp>
 #include "worm_picker_core/core/model/hotel_data.hpp"
@@ -19,5 +18,3 @@ public:
 private:
     HotelDataMap hotel_data_map_;
 };
-
-#endif // HOTEL_DATA_PARSER_HPP
