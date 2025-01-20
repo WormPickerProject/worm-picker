@@ -90,7 +90,28 @@ public:
     {
         using U = std::invoke_result_t<Func, const T&>;
         if (isSuccess()) {
-            return Result<U, E>::success(std::invoke(std::forward<Func>(func), value()));
+            if constexpr (std::is_void_v<U>) {
+                std::invoke(std::forward<Func>(func), value());
+                return Result<U, E>::success();
+            } else {
+                return Result<U, E>::success(std::invoke(std::forward<Func>(func), value()));
+            }
+        }
+        return Result<U, E>::error(std::get<E>(value_));
+    }
+
+    template <typename Func>
+    auto map(Func&& func)
+        -> Result<std::invoke_result_t<Func, T&>, E>
+    {
+        using U = std::invoke_result_t<Func, T&>;
+        if (isSuccess()) {
+            if constexpr (std::is_void_v<U>) {
+                std::invoke(std::forward<Func>(func), value());
+                return Result<U, E>::success();
+            } else {
+                return Result<U, E>::success(std::invoke(std::forward<Func>(func), value()));
+            }
         }
         return Result<U, E>::error(std::get<E>(value_));
     }
@@ -228,6 +249,22 @@ public:
             throwBadAccess("Attempted to access error of a successful void Result");
         }
         return std::move(errorValue_);
+    }
+
+    template <typename Func>
+    auto map(Func&& func)
+        -> Result<std::invoke_result_t<Func>, E>
+    {
+        using U = std::invoke_result_t<Func>;
+        if (isSuccess()) {
+            if constexpr (std::is_void_v<U>) {
+                std::invoke(std::forward<Func>(func));
+                return Result<U, E>::success();
+            } else {
+                return Result<U, E>::success(std::invoke(std::forward<Func>(func)));
+            }
+        }
+        return Result<U, E>::error(errorValue_);
     }
 
     template <typename Func>

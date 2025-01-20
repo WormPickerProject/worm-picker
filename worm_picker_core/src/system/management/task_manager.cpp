@@ -40,26 +40,33 @@ Result<void> TaskManager::executeTask(const std::string& command) const
     TimerResults timer_results;
     auto task_storage = std::make_shared<Task>();
 
-    return measureTime<Task>("Create Task Timer", timer_results, [&]() {
+    auto createTaskWithTimer = [&]() -> Result<Task> {
+        return measureTime<Task>("Create Task Timer", timer_results, [&]() {
             return task_factory_->createTask(command);
-        })
-        .flatMap([&](Task& created_task) -> Result<void> {
-            *task_storage = std::move(created_task);
-            return Result<void>::success();
-        })
-        .flatMap([&]() -> Result<void> {
-            return measureTime<void>("Plan Task Timer", timer_results, [&]() {
-                return planTask(*task_storage);
-            });
-        })
-        .flatMap([&]() -> Result<void> {
-            return measureTime<void>("Execute Task Timer", timer_results, [&]() {
-                return executeSolution(*task_storage, command);
-            });
-        })
-        .map([&]() -> void {
-            timer_data_collector_->recordTimerData(command, timer_results);
         });
+    };
+    auto storeCreatedTask = [&](Task& created_task) -> void {
+        *task_storage = std::move(created_task);
+    };
+    auto planTaskWithTimer = [&]() -> Result<void> {
+        return measureTime<void>("Plan Task Timer", timer_results, [&]() {
+            return planTask(*task_storage);
+        });
+    };
+    auto executeSolutionWithTimer = [&]() -> Result<void> {
+        return measureTime<void>("Execute Task Timer", timer_results, [&]() {
+            return executeSolution(*task_storage, command);
+        });
+    };
+    auto recordTimerResults = [&]() -> void {
+        timer_data_collector_->recordTimerData(command, timer_results);
+    };
+
+    return createTaskWithTimer()
+        .map(storeCreatedTask)
+        .flatMap(planTaskWithTimer)
+        .flatMap(executeSolutionWithTimer)
+        .map(recordTimerResults);
 }
 
 Result<void> TaskManager::planTask(Task& task) const

@@ -90,13 +90,19 @@ Result<TaskFactory::Task> TaskFactory::createTask(const std::string& command)
     auto task = createBaseTask(command);
     task.add(std::make_unique<CurrentStateStage>("current"));
 
-    return command_parser_->parse(command)
-        .flatMap([this](const CommandInfo& info) { 
-            return fetchTaskData(info); 
-        })
-        .map([this, &task, command](const TaskData& task_data) {
-            return configureTaskWithStages(std::move(task), task_data, command);
-        });
+    auto parseCommand = [&]() -> Result<CommandInfo> {
+        return command_parser_->parse(command);
+    };
+    auto getTaskData = [&](const CommandInfo& info) -> Result<TaskData> {
+        return fetchTaskData(info); 
+    };
+    auto configureTask = [&](const TaskData& task_data) -> Task {
+        return configureTaskWithStages(std::move(task), task_data, command);
+    };
+
+    return parseCommand()
+        .flatMap(getTaskData)
+        .map(configureTask);
 }
 
 TaskFactory::Task TaskFactory::createBaseTask(const std::string& command) 
