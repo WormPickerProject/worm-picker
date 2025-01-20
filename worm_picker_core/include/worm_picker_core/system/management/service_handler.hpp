@@ -1,6 +1,6 @@
 // service_handler.hpp
 //
-// Copyright (c) 2024
+// Copyright (c) 2025
 // SPDX-License-Identifier: Apache-2.0
 
 #ifndef SERVICE_HANDLER_HPP

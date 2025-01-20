@@ -1,10 +1,11 @@
 // service_handler.hpp
 //
-// Copyright (c) 2024
+// Copyright (c) 2025
 // SPDX-License-Identifier: Apache-2.0
 
 #include "worm_picker_core/system/management/service_handler.hpp"
 #include "worm_picker_core/utils/parameter_utils.hpp"
+#include "worm_picker_core/core/result.hpp"
 
 ServiceHandler::ServiceHandler(const NodePtr& node, 
                                const TaskManagerPtr& task_manager, 
@@ -35,7 +36,7 @@ void ServiceHandler::handleServiceRequest(const std::shared_ptr<const TaskComman
         }
 
         const auto status = task_manager_->executeTask(request->command);
-        response->success = (status == TaskManager::TaskExecutionStatus::Success);
+        response->success = (status.isSuccess());
 
     } catch (const std::exception& e) {
         RCLCPP_ERROR(node_->get_logger(), "Error in handleServiceRequest: %s", e.what());
