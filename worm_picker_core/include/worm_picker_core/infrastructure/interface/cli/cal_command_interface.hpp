@@ -1,10 +1,9 @@
 // cal_command_interface.hpp
 //
-// Copyright (c) 2024
+// Copyright (c) 2025
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef CAL_COMMAND_INTERFACE_HPP
-#define CAL_COMMAND_INTERFACE_HPP
+#pragma once
 
 #include <rclcpp/rclcpp.hpp>
 #include <worm_picker_custom_msgs/srv/calibration_command.hpp>
@@ -24,5 +23,3 @@ private:
     rclcpp::Node::SharedPtr node_;
     rclcpp::Client<CalibrationCommand>::SharedPtr client_;
 };
-
-#endif // CAL_COMMAND_INTERFACE_HPP

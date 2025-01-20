@@ -3,8 +3,7 @@
 // Copyright (c) 2025
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef COMMAND_CONFIG_HPP
-#define COMMAND_CONFIG_HPP
+#pragma once
 
 #include <rclcpp/rclcpp.hpp>
 #include "worm_picker_core/utils/parameter_utils.hpp"
@@ -51,5 +50,3 @@ public:
 private:
     StringVec argument_names_{};
 };
-
-#endif // COMMAND_CONFIG_HPP

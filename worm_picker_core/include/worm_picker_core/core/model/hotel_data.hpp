@@ -1,10 +1,9 @@
 // hotel_data.hpp
 //
-// Copyright (c) 2024
+// Copyright (c) 2025
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef HOTEL_DATA_HPP
-#define HOTEL_DATA_HPP
+#pragma once
 
 #include "worm_picker_core/core/geometry/coordinate.hpp"
 
@@ -21,5 +20,3 @@ public:
 private:
     Coordinate coordinate_{};
 };
-
-#endif // HOTEL_DATA_HPP

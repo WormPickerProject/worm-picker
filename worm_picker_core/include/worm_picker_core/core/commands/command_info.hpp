@@ -3,8 +3,7 @@
 // Copyright (c) 2025
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef COMMAND_INFO_HPP
-#define COMMAND_INFO_HPP
+#pragma once
 
 #include <string>
 #include <vector>
@@ -36,5 +35,3 @@ private:
     SpeedOverrideOpt speed_override_{};
     size_t base_args_amount_{0};
 };
-
-#endif // COMMAND_INFO_HPP

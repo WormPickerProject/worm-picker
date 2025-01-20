@@ -3,8 +3,7 @@
 // Copyright (c) 2025
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef SERVICE_HANDLER_HPP
-#define SERVICE_HANDLER_HPP
+#pragma once
 
 #include <rclcpp/rclcpp.hpp>
 #include <std_srvs/srv/trigger.hpp>
@@ -37,5 +36,3 @@ private:
     TaskManagerPtr task_manager_;
     ActionClientManagerPtr action_client_manager_;
 };
-
-#endif // SERVICE_HANDLER_HPP

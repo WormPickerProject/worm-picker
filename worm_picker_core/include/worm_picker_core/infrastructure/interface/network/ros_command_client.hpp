@@ -1,10 +1,9 @@
 // ros_command_client.hpp
 //
-// Copyright (c) 2024
+// Copyright (c) 2025
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef ROS_COMMAND_CLIENT_HPP
-#define ROS_COMMAND_CLIENT_HPP
+#pragma once
 
 #include <rclcpp/rclcpp.hpp> 
 #include <worm_picker_custom_msgs/srv/task_command.hpp> 
@@ -35,5 +34,3 @@ private:
     rclcpp::Client<Trigger>::SharedPtr stop_traj_client_;
     std::unordered_map<std::string, std::function<void(StatusCallback)>> command_handlers_;
 };
-
-#endif // ROS_COMMAND_CLIENT_HPP

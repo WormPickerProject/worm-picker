@@ -56,35 +56,6 @@ void TaskFactory::loadDefinedTasks(const WorkstationDataMap& workstation, const 
     task_data_map_.insert(generated_task_map.begin(), generated_task_map.end());
 }
 
-Result<TaskData> TaskFactory::fetchTaskData(const CommandInfo& info) 
-{
-    if (info.getBaseCommand() == "moveRelative") {
-        auto task = GenerateRelativeMovementTask::parseCommand(info.getArgs());
-        return Result<TaskData>::success(task);
-    }
-    auto it = task_data_map_.find(info.getBaseCommandKey());
-    if (it == task_data_map_.end()) {
-        return Result<TaskData>::error(
-            fmt::format("Command '{}' not found", info.getBaseCommand()));
-    }
-    auto task_copy = it->second;
-    if (info.getSpeedOverride()) {
-        applySpeedOverrides(task_copy, *info.getSpeedOverride());
-    }
-    return Result<TaskData>::success(task_copy);
-}
-
-void TaskFactory::applySpeedOverrides(TaskData& task_data, const SpeedOverride& override) 
-{
-    auto [velocity, acceleration] = override;
-    for (auto& stage : task_data.getStages()) {
-        if (auto* move_base = dynamic_cast<MovementDataBase*>(stage.get())) {
-            move_base->setVelocityScalingFactor(velocity);
-            move_base->setAccelerationScalingFactor(acceleration);
-        }
-    }
-}
-
 Result<TaskFactory::Task> TaskFactory::createTask(const std::string& command) 
 {
     auto task = createBaseTask(command);
@@ -122,6 +93,34 @@ TaskFactory::Task TaskFactory::createBaseTask(const std::string& command)
     task.setProperty("trajectory_execution_info", execution_info);
 
     return task;
+}
+
+Result<TaskData> TaskFactory::fetchTaskData(const CommandInfo& info) 
+{
+    if (info.getBaseCommand() == "moveRelative") {
+        return GenerateRelativeMovementTask::parseCommand(info.getArgs());
+    }
+    auto it = task_data_map_.find(info.getBaseCommandKey());
+    if (it == task_data_map_.end()) {
+        return Result<TaskData>::error(
+            fmt::format("Command '{}' not found", info.getBaseCommand()));
+    }
+    auto task_copy = it->second;
+    if (info.getSpeedOverride()) {
+        applySpeedOverrides(task_copy, *info.getSpeedOverride());
+    }
+    return Result<TaskData>::success(task_copy);
+}
+
+void TaskFactory::applySpeedOverrides(TaskData& task_data, const SpeedOverride& override) 
+{
+    auto [velocity, acceleration] = override;
+    for (auto& stage : task_data.getStages()) {
+        if (auto* move_base = dynamic_cast<MovementDataBase*>(stage.get())) {
+            move_base->setVelocityScalingFactor(velocity);
+            move_base->setAccelerationScalingFactor(acceleration);
+        }
+    }
 }
 
 TaskFactory::Task TaskFactory::configureTaskWithStages(Task task, 

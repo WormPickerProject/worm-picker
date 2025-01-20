@@ -1,10 +1,9 @@
 // workstation_geometry_parser.hpp
 //
-// Copyright (c) 2024
+// Copyright (c) 2025
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef WORKSTATION_GEOMETRY_PARSER_HPP
-#define WORKSTATION_GEOMETRY_PARSER_HPP
+#pragma once
 
 #include <nlohmann/json.hpp>
 #include "worm_picker_core/core/geometry/fixed_point.hpp"
@@ -22,5 +21,3 @@ private:
 
     WorkstationGeometry geometry_;
 };
-
-#endif // WORKSTATION_GEOMETRY_PARSER_HPP

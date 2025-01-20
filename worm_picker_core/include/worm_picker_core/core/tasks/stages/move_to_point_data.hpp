@@ -3,8 +3,7 @@
 // Copyright (c) 2025
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef MOVE_TO_POINT_DATA_HPP
-#define MOVE_TO_POINT_DATA_HPP
+#pragma once
 
 #include "worm_picker_core/core/tasks/stages/movement_data_base.hpp"
 
@@ -39,5 +38,3 @@ private:
     double qz_{};
     double qw_{};
 };
-
-#endif // MOVE_TO_POINT_DATA_HPP

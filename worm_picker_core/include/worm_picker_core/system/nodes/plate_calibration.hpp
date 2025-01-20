@@ -1,10 +1,9 @@
 // plate_calibration.hpp
 //
-// Copyright (c) 2024
+// Copyright (c) 2025
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef PLATE_CALIBRATION_HPP
-#define PLATE_CALIBRATION_HPP
+#pragma once
 
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_action/rclcpp_action.hpp>
@@ -41,5 +40,3 @@ private:
     std::shared_ptr<RobotController> robot_controller_;
     std::jthread server_wait_thread_;
 };
-
-#endif // PLATE_CALIBRATION_HPP

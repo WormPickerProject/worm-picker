@@ -1,10 +1,9 @@
 // defined_tasks_parser.hpp
 //
-// Copyright (c) 2024
+// Copyright (c) 2025
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef DEFINED_TASKS_PARSER_HPP
-#define DEFINED_TASKS_PARSER_HPP
+#pragma once
 
 #include <nlohmann/json.hpp>
 #include "worm_picker_core/core/tasks/task_data.hpp"
@@ -34,5 +33,3 @@ private:
     std::string tasks_file_;
     TaskDataMap task_data_map_;
 };
-
-#endif // DEFINED_TASKS_PARSER_HPP

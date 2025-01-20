@@ -3,8 +3,7 @@
 // Copyright (c) 2025
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef MOVEMENT_DATA_BASE_HPP
-#define MOVEMENT_DATA_BASE_HPP
+#pragma once
 
 #include "worm_picker_core/core/tasks/stage_data.hpp"
 
@@ -36,5 +35,3 @@ private:
     double velocity_scaling_;
     double acceleration_scaling_;
 };
-
-#endif // MOVEMENT_DATA_BASE_HPP
