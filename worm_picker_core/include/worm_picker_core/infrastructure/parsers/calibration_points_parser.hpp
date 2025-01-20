@@ -1,10 +1,9 @@
 // calibration_points_parser.hpp
 //
-// Copyright (c) 2024
+// Copyright (c) 2025
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef CALIBRATION_POINTS_PARSER_HPP
-#define CALIBRATION_POINTS_PARSER_HPP
+#pragma once
 
 #include <nlohmann/json.hpp>
 #include "worm_picker_core/core/tasks/stages/move_to_joint_data.hpp"
@@ -25,5 +24,3 @@ private:
     PointMap point_map_;
     std::vector<std::string> point_order_;
 };
-
-#endif // CALIBRATION_POINTS_PARSER_HPP

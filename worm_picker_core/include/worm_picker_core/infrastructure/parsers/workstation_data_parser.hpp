@@ -1,10 +1,9 @@
 // workstation_data_parser.hpp
 //
-// Copyright (c) 2024
+// Copyright (c) 2025
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef WORKSTATION_DATA_PARSER_HPP
-#define WORKSTATION_DATA_PARSER_HPP
+#pragma once
 
 #include <nlohmann/json.hpp>
 #include "worm_picker_core/core/model/workstation_data.hpp"
@@ -26,5 +25,3 @@ private:
     static constexpr double INVALID_VALUE = -9999.9;
     WorkstationDataMap workstation_data_map_;
 };
-
-#endif // WORKSTATION_DATA_PARSER_HPP

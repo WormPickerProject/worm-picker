@@ -3,8 +3,7 @@
 // Copyright (c) 2025
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef TASK_DATA_HPP
-#define TASK_DATA_HPP
+#pragma once
 
 #include "worm_picker_core/core/tasks/stage_data.hpp"
 
@@ -25,5 +24,3 @@ public:
 private:
     StageVector stages_{};
 };
-
-#endif // TASK_DATA_HPP

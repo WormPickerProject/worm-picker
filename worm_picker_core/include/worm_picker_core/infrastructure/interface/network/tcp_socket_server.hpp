@@ -1,10 +1,9 @@
 // tcp_socket_server.hpp
 //
-// Copyright (c) 2024
+// Copyright (c) 2025
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef TCP_SOCKET_SERVER_HPP
-#define TCP_SOCKET_SERVER_HPP
+#pragma once
 
 #include <netinet/in.h>
 #include <unistd.h>
@@ -110,5 +109,3 @@ private:
     CommandHandler command_handler_;  // The handler function for processing received commands.
     std::mutex command_handler_mutex_;  // Mutex for synchronizing access to the command handler.
 };
-
-#endif // TCP_SOCKET_SERVER_HPP

@@ -1,10 +1,9 @@
 // timer_data_collector.hpp
 //
-// Copyright (c) 2024
+// Copyright (c) 2025
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef TIMER_DATA_COLLECTOR_HPP
-#define TIMER_DATA_COLLECTOR_HPP
+#pragma once
 
 #include <filesystem>
 #include <nlohmann/json.hpp>
@@ -28,5 +27,3 @@ private:
     nlohmann::json data_;
     std::filesystem::path output_path_;
 };
-
-#endif  // TIMER_DATA_COLLECTOR_HPP

@@ -3,8 +3,7 @@
 // Copyright (c) 2025
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef PLANNER_FACTORY_HPP
-#define PLANNER_FACTORY_HPP
+#pragma once
 
 #include <rclcpp/rclcpp.hpp>
 #include <moveit/task_constructor/solvers.h>
@@ -32,5 +31,3 @@ private:
 
     std::map<std::string, CreatorFunc> planner_creators_;
 };
-
-#endif // PLANNER_FACTORY_HPP

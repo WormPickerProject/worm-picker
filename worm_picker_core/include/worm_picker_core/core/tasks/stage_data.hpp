@@ -3,8 +3,7 @@
 // Copyright (c) 2025
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef STAGE_DATA_HPP
-#define STAGE_DATA_HPP
+#pragma once
 
 #include <rclcpp/rclcpp.hpp>
 #include <moveit/task_constructor/stage.h>
@@ -35,5 +34,3 @@ inline const std::unordered_map<StageType, std::string> StageData::type_map_ = {
     {StageType::MOVE_TO_JOINT, "move_to_joint"},
     {StageType::MOVE_RELATIVE, "move_relative"}
 };
-
-#endif // STAGE_DATA_HPP
