@@ -15,39 +15,15 @@ public:
     using StageMap = std::unordered_map<std::string, StageDataPtr>;
 
     TaskData() = default;
-    explicit TaskData(StageVector stages) : stages_(std::move(stages)) {}
+    explicit TaskData(StageVector stages);
     TaskData(const TaskData& other);
     
     static std::optional<TaskData> create(const StageMap& stage_data_map,
-                                          const std::vector<std::string>& stage_names);
-    constexpr const StageVector& getStages() const { return stages_; }
+                                          const std::vector<std::string>& stage_names);                           
+    const StageVector& getStages() const;
 
 private:
     StageVector stages_{};
 };
-
-inline TaskData::TaskData(const TaskData& other) 
-{
-    stages_.reserve(other.stages_.size());
-    for (const auto& stage_ptr : other.stages_) {
-        stages_.push_back(std::shared_ptr<StageData>(stage_ptr->clone())); 
-    }
-}
-
-inline std::optional<TaskData> TaskData::create(const StageMap& stage_data_map,
-                                                const std::vector<std::string>& stage_names) 
-{
-    TaskData new_task;
-    new_task.stages_.reserve(stage_names.size());
-
-    for (const auto& name : stage_names) {
-        auto it = stage_data_map.find(name);
-        if (it == stage_data_map.end()) {
-            return std::nullopt;
-        }
-        new_task.stages_.emplace_back(it->second->clone());
-    }
-    return std::optional<TaskData>(new_task);
-}
 
 #endif // TASK_DATA_HPP
