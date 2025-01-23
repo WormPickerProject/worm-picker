@@ -10,22 +10,21 @@ GenerateHotelTaskGenerator::GenerateHotelTaskGenerator(const std::unordered_map<
 
 std::pair<char, int> GenerateHotelTaskGenerator::parseName(const std::string& name) const
 {
-    // TODO: Implement parsing logic specific to hotel names TODO
-    (void)name;
-    return std::make_pair('\0', -1);
+    char row_letter = name[0];
+    int col_number = std::stoi(name.substr(1));
+    return {row_letter, col_number};
 }
 
 std::string GenerateHotelTaskGenerator::generateTaskName(char row_letter, int col_number) const
 {
-    std::string prefix;
-    switch (task_type_) {
-    case TaskType::PickPlate:
-        prefix = "pickPlateHotel:";
-        break;
-    case TaskType::PlacePlate:
-        prefix = "placePlateHotel:";
-        break;
-    }
+    const auto prefix = [this]() -> std::string {
+        switch (task_type_) {
+        case TaskType::PickPlate: return hotel_config::prefix::PICK;
+        case TaskType::PlacePlate: return hotel_config::prefix::PLACE;
+        default: throw std::runtime_error("Unknown task type");
+        }
+    }();
+
     return prefix + std::string(1, row_letter) + std::to_string(col_number);
 }
 
