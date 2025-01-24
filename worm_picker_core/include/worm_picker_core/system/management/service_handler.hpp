@@ -6,33 +6,33 @@
 #pragma once
 
 #include <rclcpp/rclcpp.hpp>
-#include <std_srvs/srv/trigger.hpp>
+#include <moveit/planning_scene/planning_scene.h>
 #include <worm_picker_custom_msgs/srv/task_command.hpp>
-
 #include "worm_picker_core/system/management/task_manager.hpp"
 #include "worm_picker_core/system/management/action_client_manager.hpp"
 
 class ServiceHandler {
 public:
     using NodePtr = rclcpp::Node::SharedPtr;
-    using TaskManagerPtr = std::shared_ptr<TaskManager>;
-    using ActionClientManagerPtr = std::shared_ptr<ActionClientManager>;
 
-    ServiceHandler(const NodePtr& node, 
-                   const TaskManagerPtr& task_manager, 
-                   const ActionClientManagerPtr& action_client_manager);
+    ServiceHandler(NodePtr node, 
+                   std::shared_ptr<TaskManager> task_manager,
+                   std::shared_ptr<ActionClientManager> action_client_manager);
 
 private:
     using TaskCommandService = worm_picker_custom_msgs::srv::TaskCommand;
     using TaskCommandRequest = TaskCommandService::Request;
     using TaskCommandResponse = TaskCommandService::Response;
-    using TaskCommandServicePtr = rclcpp::Service<TaskCommandService>::SharedPtr;
 
     void handleServiceRequest(const std::shared_ptr<const TaskCommandRequest>& request,
                               const std::shared_ptr<TaskCommandResponse>& response);
+    std::optional<geometry_msgs::msg::PoseStamped> getCurrentPose() const;
     
     NodePtr node_;
-    TaskCommandServicePtr service_;
-    TaskManagerPtr task_manager_;
-    ActionClientManagerPtr action_client_manager_;
+    rclcpp::Service<TaskCommandService>::SharedPtr service_;
+    std::shared_ptr<TaskManager> task_manager_;
+    std::shared_ptr<ActionClientManager> action_client_manager_;
+    rclcpp::Subscription<moveit_msgs::msg::PlanningScene>::SharedPtr planning_scene_sub_;
+    std::shared_ptr<planning_scene::PlanningScene> current_scene_;
+    mutable std::mutex scene_mutex_;
 };
