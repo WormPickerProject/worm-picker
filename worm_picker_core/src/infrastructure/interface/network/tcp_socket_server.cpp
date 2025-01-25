@@ -5,106 +5,116 @@
 
 #include "worm_picker_core/infrastructure/interface/network/tcp_socket_server.hpp"
 
-TcpSocketServer::TcpSocketServer(int server_port)
-    : server_socket_file_descriptor_(-1), server_port_(server_port), is_server_running_(false)
-{
-}
+TcpSocketServer::TcpSocketServer(uint16_t port)
+    : port_(port)
+{}
 
 TcpSocketServer::~TcpSocketServer()
 {
     stopServer();
 }
 
-void TcpSocketServer::startServer()
+bool TcpSocketServer::startServer()
 {
-    if (is_server_running_) {
-        return;
+    if (is_running_) {
+        return true;
     }
 
     try {
         initializeServerSocket();
-        is_server_running_ = true;
-        server_thread_ = std::thread(&TcpSocketServer::waitForClientConnections, this);
-    } catch (const std::exception& exception) {
-        cleanupServerSocket();
-        throw;
+        is_running_ = true;
+        server_thread_ = std::jthread([this]() {
+            waitForClientConnections();
+        });
+        return true;
+    } catch (const std::exception& e) {
+        RCLCPP_ERROR(rclcpp::get_logger("tcp_server"), "Failed to start server: %s", e.what());
+        if (server_socket_ != -1) {
+            close(server_socket_);
+            server_socket_ = -1;
+        }
+        return false;
     }
 }
 
 void TcpSocketServer::stopServer()
 {
-    if (!is_server_running_) {
+    if (!is_running_) {
         return;
     }
 
-    cleanupServerSocket();
-
-    if (server_thread_.joinable()) {
-        server_thread_.join();
+    is_running_ = false;
+    
+    if (server_socket_ != -1) {
+        shutdown(server_socket_, SHUT_RDWR);
+        close(server_socket_);
+        server_socket_ = -1;
     }
 }
 
 void TcpSocketServer::initializeServerSocket()
 {
-    server_socket_file_descriptor_ = socket(AF_INET, SOCK_STREAM, 0);
-    if (server_socket_file_descriptor_ == -1) {
-        throw std::runtime_error("Failed to create server socket: " + std::string(std::strerror(errno)));
+    server_socket_ = socket(AF_INET, SOCK_STREAM, 0);
+    if (server_socket_ == -1) {
+        throw std::runtime_error("Failed to create socket: " + std::string(strerror(errno)));
     }
 
-    int enable_address_reuse_option = 1;
-    if (setsockopt(server_socket_file_descriptor_, SOL_SOCKET, SO_REUSEADDR, &enable_address_reuse_option, sizeof(enable_address_reuse_option)) == -1) {
-        throw std::runtime_error("Failed to set socket options: " + std::string(std::strerror(errno)));
+    int enable = 1;
+    if (setsockopt(server_socket_, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(enable)) == -1) {
+        throw std::runtime_error("Failed to set socket options: " + std::string(strerror(errno)));
     }
 
-    sockaddr_in server_socket_address;
-    std::memset(&server_socket_address, 0, sizeof(server_socket_address));
-    server_socket_address.sin_family = AF_INET;
-    server_socket_address.sin_addr.s_addr = INADDR_ANY;
-    server_socket_address.sin_port = htons(server_port_);
+    sockaddr_in addr{};
+    addr.sin_family = AF_INET;
+    addr.sin_addr.s_addr = INADDR_ANY;
+    addr.sin_port = htons(port_);
 
-    if (bind(server_socket_file_descriptor_, reinterpret_cast<sockaddr*>(&server_socket_address), sizeof(server_socket_address)) == -1) {
-        throw std::runtime_error("Failed to bind server socket: " + std::string(std::strerror(errno)));
+    if (bind(server_socket_, reinterpret_cast<sockaddr*>(&addr), sizeof(addr)) == -1) {
+        throw std::runtime_error("Failed to bind socket: " + std::string(strerror(errno)));
     }
 
-    if (listen(server_socket_file_descriptor_, SOCKET_BACKLOG) == -1) {
-        throw std::runtime_error("Failed to listen on server socket: " + std::string(std::strerror(errno)));
+    if (listen(server_socket_, SOCKET_BACKLOG) == -1) {
+        throw std::runtime_error("Failed to listen on socket: " + std::string(strerror(errno)));
     }
 }
 
-void TcpSocketServer::waitForClientConnections() 
+void TcpSocketServer::waitForClientConnections()
 {
-    while (is_server_running_) {
-        sockaddr_in client_socket_address{};
-        socklen_t client_socket_address_len = sizeof(client_socket_address);
+    while (is_running_) {
+        sockaddr_in client_addr{};
+        socklen_t addr_len = sizeof(client_addr);
 
-        int client_socket_file_descriptor = accept(server_socket_file_descriptor_, reinterpret_cast<sockaddr*>(&client_socket_address), &client_socket_address_len);
+        int client_socket = accept(
+            server_socket_,
+            reinterpret_cast<sockaddr*>(&client_addr),
+            &addr_len
+        );
 
-        if (client_socket_file_descriptor == -1) {
-            if (is_server_running_) {
-                if (errno == EINTR) continue;
-                if (errno == EBADF || errno == EINVAL) break;
-                continue;
-            } else {
-                break; 
-            }
-        } else {
-            std::thread(&TcpSocketServer::handleClientConnection, this, client_socket_file_descriptor).detach();
+        if (client_socket == -1) {
+            if (!is_running_) break;
+            if (errno == EINTR) continue;
+            if (errno == EBADF || errno == EINVAL) break;
+            continue;
         }
+
+        std::jthread([this, client_socket]() {
+            handleClientConnection(client_socket);
+        }).detach();
     }
 }
 
-void TcpSocketServer::handleClientConnection(int client_socket_file_descriptor) 
+void TcpSocketServer::handleClientConnection(int client_socket) 
 {
-    char receive_buffer[RECEIVE_BUFFER_SIZE];
-    std::string complete_received_data;
+    std::array<char, RECEIVE_BUFFER_SIZE> buffer;
+    std::string received_data;
 
-    while (is_server_running_) {
-        ssize_t bytes_received = recv(client_socket_file_descriptor, receive_buffer, sizeof(receive_buffer), 0);
+    while (is_running_) {
+        ssize_t bytes = recv(client_socket, buffer.data(), buffer.size(), 0);
 
-        if (bytes_received > 0) {
-            complete_received_data.append(receive_buffer, bytes_received);
-            processReceivedData(complete_received_data, client_socket_file_descriptor);
-        } else if (bytes_received == 0) {
+        if (bytes > 0) {
+            received_data.append(buffer.data(), bytes);
+            processReceivedData(received_data, client_socket);
+        } else if (bytes == 0) {
             break;
         } else {
             if (errno == EINTR) {
@@ -113,51 +123,45 @@ void TcpSocketServer::handleClientConnection(int client_socket_file_descriptor)
             break; 
         }
     }
-    close(client_socket_file_descriptor);
+
+    close(client_socket);
 }
 
-void TcpSocketServer::processReceivedData(std::string& received_data_buffer, int client_socket_file_descriptor) 
+void TcpSocketServer::processReceivedData(std::string& buffer, int client_socket) 
 {
-    size_t newline_position_index;
-    while ((newline_position_index = received_data_buffer.find('\n')) != std::string::npos) {
-        std::string extracted_command = received_data_buffer.substr(0, newline_position_index);
-        
-        if (!extracted_command.empty() && extracted_command.back() == '\r') {
-            extracted_command.pop_back();
+    size_t pos;
+    while ((pos = buffer.find('\n')) != std::string::npos) {
+        std::string_view command(buffer.data(), pos);
+        if (!command.empty() && command.back() == '\r') {
+            command.remove_suffix(1);
         }
 
-        executeCommand(extracted_command, client_socket_file_descriptor);
-        received_data_buffer.erase(0, newline_position_index + 1);
+        executeCommand(command, client_socket);
+        buffer.erase(0, pos + 1);
     }
 }
 
-void TcpSocketServer::executeCommand(const std::string& received_command, int client_socket_file_descriptor) 
+void TcpSocketServer::executeCommand(std::string_view command, int client_socket) 
 {
-    CommandHandler active_command_handler;
+    CommandHandler handler;
     {
         std::lock_guard<std::mutex> lock(command_handler_mutex_);
-        active_command_handler = command_handler_;
+        handler = command_handler_;
     }
 
-    if (active_command_handler) {
-        active_command_handler(received_command, [this, client_socket_file_descriptor](bool success) {
-            const std::string response = success ? "true\n" : "false\n";
-            send(client_socket_file_descriptor, response.c_str(), response.size(), 0);
+    if (handler) {
+        handler(std::string(command), [client_socket](bool success, std::string feedback) {
+            std::string response = 
+                std::string(success ? "true\n" : "false\n") +
+                std::string(feedback) + "\n";
+                
+            send(client_socket, response.data(), response.size(), 0);
         });
     }
 }
 
-void TcpSocketServer::setCommandHandler(CommandHandler new_command_handler) 
+void TcpSocketServer::setCommandHandler(CommandHandler handler) 
 {
     std::lock_guard<std::mutex> lock(command_handler_mutex_);
-    command_handler_ = new_command_handler;
-}
-
-void TcpSocketServer::cleanupServerSocket() 
-{
-    if (server_socket_file_descriptor_ != -1) {
-        shutdown(server_socket_file_descriptor_, SHUT_RDWR);
-        close(server_socket_file_descriptor_);
-        server_socket_file_descriptor_ = -1;
-    }
+    command_handler_ = std::move(handler);
 }
