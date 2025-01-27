@@ -24,7 +24,7 @@ void TaskFactory::initializeTaskMap()
     const auto& workstation = loadWorkstationData();
     const auto& hotel = loadHotelData();
     loadDefinedTasks(workstation, hotel);
-    logTaskMap();
+    // logTaskMap();
 }
 
 TaskFactory::WorkstationDataMap TaskFactory::loadWorkstationData() 
@@ -97,19 +97,24 @@ TaskFactory::Task TaskFactory::createBaseTask(const std::string& command)
 
 Result<TaskData> TaskFactory::fetchTaskData(const CommandInfo& info) 
 {
-    if (info.getBaseCommand() == "moveRelative") {
-        return GenerateRelativeMovementTask::parseCommand(info.getArgs());
-    }
-    auto it = task_data_map_.find(info.getBaseCommandKey());
-    if (it == task_data_map_.end()) {
-        return Result<TaskData>::error(
-            fmt::format("Command '{}' not found", info.getBaseCommand()));
-    }
-    auto task_copy = it->second;
-    if (info.getSpeedOverride()) {
-        applySpeedOverrides(task_copy, *info.getSpeedOverride());
-    }
-    return Result<TaskData>::success(task_copy);
+    auto fetchedTask = [&]() -> Result<TaskData> {
+        if (info.getBaseCommand() == "moveRelative") {
+            return GenerateRelativeMovementTask::parseCommand(info.getArgs());
+        }
+        auto it = task_data_map_.find(info.getBaseCommandKey());
+        if (it == task_data_map_.end()) {
+            return Result<TaskData>::error(
+                fmt::format("Command '{}' not found", info.getBaseCommand()));
+        }
+        return Result<TaskData>::success(it->second);
+    };
+
+    return fetchedTask().flatMap([&](TaskData task) -> Result<TaskData> {
+        if (info.getSpeedOverride()) {
+            applySpeedOverrides(task, *info.getSpeedOverride());
+        }
+        return Result<TaskData>::success(task);
+    });
 }
 
 void TaskFactory::applySpeedOverrides(TaskData& task_data, const SpeedOverride& override) 

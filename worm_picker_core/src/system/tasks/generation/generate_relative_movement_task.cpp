@@ -9,43 +9,51 @@
 
 Result<TaskData> GenerateRelativeMovementTask::parseCommand(const std::vector<std::string>& args) 
 {
-    auto createMovementData = [](const CoordinateTuple& values) -> std::shared_ptr<StageData> {
-        auto [x, y, z] = values;
-        return std::make_shared<MoveRelativeData>(x, y, z);
-    };
-    auto createTaskData = [](std::shared_ptr<StageData> movement_stage) -> TaskData {
-        return TaskData{std::vector<std::shared_ptr<StageData>>{movement_stage}};
+    auto createMovementData = [](const CoordinateVector& all_coords) -> TaskData {
+        std::vector<std::shared_ptr<StageData>> stages;
+        stages.reserve(all_coords.size());
+
+        for (const auto& coords : all_coords) {
+            auto [x, y, z] = coords;
+            stages.push_back(std::make_shared<MoveRelativeData>(x, y, z));
+        }
+
+        return TaskData{std::move(stages)};
     };
 
     return extractCoordinates(args)
-        .map(createMovementData)
-        .map(createTaskData);
+        .map(createMovementData);
 }
 
-Result<GenerateRelativeMovementTask::CoordinateTuple>
+Result<GenerateRelativeMovementTask::CoordinateVector>
 GenerateRelativeMovementTask::extractCoordinates(const std::vector<std::string>& args) 
 {
     if (args.size() < 3) {
-        return Result<CoordinateTuple>::error("Insufficient coordinates for relative movement");
+        return Result<CoordinateVector>::error("Insufficient coordinates for relative movement");
     }
 
     auto handleParseError = [](const std::string& value, const std::string& coordinateName) {
         auto msg = fmt::format("Failed to parse {} coordinate: {}", coordinateName, value);
-        return Result<CoordinateTuple>::error(msg);
+        return Result<CoordinateVector>::error(msg);
     };
+    
+    std::vector<CoordinateTuple> coordinates;
+    coordinates.reserve(args.size() / 3);
 
-    auto x_result = parseDouble(args[0]);
-    if (!x_result) return handleParseError(args[0], "X");
+    for (std::size_t i = 0; i < args.size() / 3; ++i) {
+        auto x_result = parseDouble(args[i * 3]);
+        if (!x_result) return handleParseError(args[i * 3], "X");
 
-    auto y_result = parseDouble(args[1]);
-    if (!y_result) return handleParseError(args[1], "Y");
+        auto y_result = parseDouble(args[i * 3 + 1]);
+        if (!y_result) return handleParseError(args[i * 3 + 1], "Y");
 
-    auto z_result = parseDouble(args[2]);
-    if (!z_result) return handleParseError(args[2], "Z");
+        auto z_result = parseDouble(args[i * 3 + 2]);
+        if (!z_result) return handleParseError(args[i * 3 + 2], "Z");
 
-    return Result<CoordinateTuple>::success(
-        std::make_tuple(x_result.value(), y_result.value(), z_result.value())
-    );
+        coordinates.emplace_back(x_result.value(), y_result.value(), z_result.value());
+    }
+
+    return Result<CoordinateVector>::success(std::move(coordinates));
 }
 
 Result<double> GenerateRelativeMovementTask::parseDouble(const std::string& value) 
