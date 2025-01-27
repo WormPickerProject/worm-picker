@@ -21,7 +21,7 @@ private:
     using TaskCommand = worm_picker_custom_msgs::srv::TaskCommand;
     using StartTrajMode = motoros2_interfaces::srv::StartTrajMode;
     using Trigger = std_srvs::srv::Trigger;
-    using StatusCallback = std::function<void(bool)>;
+    using StatusCallback = std::function<void(bool, std::string)>;
 
     void initializeCommandHandlers();
     void handleCommand(const std::string& command, StatusCallback completion_callback);

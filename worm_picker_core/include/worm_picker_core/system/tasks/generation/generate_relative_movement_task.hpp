@@ -14,7 +14,9 @@ public:
 
 private:
     using CoordinateTuple = std::tuple<double, double, double>;
+    using CoordinateVector = std::vector<CoordinateTuple>;
+    using StageDataVector = std::vector<std::shared_ptr<StageData>>; 
     
-    static Result<CoordinateTuple> extractCoordinates(const std::vector<std::string>& args);
+    static Result<CoordinateVector> extractCoordinates(const std::vector<std::string>& args);
     static Result<double> parseDouble(const std::string& value);
 };

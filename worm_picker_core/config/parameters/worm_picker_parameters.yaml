@@ -14,6 +14,7 @@ parameters:
   actions:
     exec_task: "/execute_task_solution"
     task_command: "/task_command"
+    scene_topic: "monitored_planning_scene"
 
   operation_modes:
     group: "gp4_arm"
@@ -29,6 +30,7 @@ parameters:
     server_timeout: 3
     max_retries: 10
     planning_attempts: 5
+    planning_scene_queue_size: 5
 
   validation:
     pos_tol: 0.001
@@ -45,6 +47,7 @@ parameters:
               "moveToPoint"]
     two_arg: []
     three_arg: ["moveRelative", "moveAbsolute"]
+    variable_arg: ["moveRelative"]
 
   planners:   
     move_to_point:
