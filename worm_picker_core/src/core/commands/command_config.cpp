@@ -3,68 +3,36 @@
 // Copyright (c) 2025
 // SPDX-License-Identifier: Apache-2.0
 
-#include <fmt/format.h>
 #include "worm_picker_core/core/commands/command_config.hpp"
 
-ZeroArgsConfig::ZeroArgsConfig(const NodePtr& node)
+VariableArgConfig::VariableArgConfig(const NodePtr& node, const std::string& param_key)
 {
-    if (auto names = param_utils::getParameter<StringVec>(node, "commands.zero_arg")) {
+    if (auto names = param_utils::getParameter<StringVec>(node, param_key)) {
         argument_names_ = std::move(names.value());
-        RCLCPP_INFO(rclcpp::get_logger("ZeroArgsConfig"), 
-            "Zero-arg commands loaded with %lu commands: %s", 
-            argument_names_.size(), fmt::format("{}", 
-            fmt::join(argument_names_, ", ")).c_str());
+        RCLCPP_INFO(rclcpp::get_logger("VariableArgConfig"), "Variable-arg commands loaded: %s",
+            fmt::format("{}", fmt::join(argument_names_, ", ")).c_str());
+        return;
     }
+    RCLCPP_WARN(rclcpp::get_logger("VariableArgConfig"),
+        "No commands found for key '%s'", param_key.c_str());
 }
 
-CommandConfig::StringVec ZeroArgsConfig::getArgumentNames() const
+CommandConfig::StringVec VariableArgConfig::getArgumentNames() const
 {
     return argument_names_;
 }
 
-size_t ZeroArgsConfig::getBaseArgumentCount() const
+size_t VariableArgConfig::getBaseArgumentCount() const
 {
-    return 0;
+    return base_argument_count_;
 }
 
-OneArgConfig::OneArgConfig(const NodePtr& node)
+bool VariableArgConfig::validateArgs(const StringVec& args) const
 {
-    if (auto names = param_utils::getParameter<StringVec>(node, "commands.one_arg")) {
-        argument_names_ = std::move(names.value());
-        RCLCPP_INFO(rclcpp::get_logger("OneArgConfig"), 
-            "One-arg commands loaded with %lu commands: %s", 
-            argument_names_.size(), fmt::format("{}", 
-            fmt::join(argument_names_, ", ")).c_str());
-    }
+    return (args.size() == base_argument_count_ || args.size() == base_argument_count_ + 2);
 }
 
-CommandConfig::StringVec OneArgConfig::getArgumentNames() const
+void VariableArgConfig::setDynamicMultiplier(size_t n, size_t base)
 {
-    return argument_names_;
-}
-
-size_t OneArgConfig::getBaseArgumentCount() const
-{
-    return 1;
-}
-
-ThreeArgsConfig::ThreeArgsConfig(const NodePtr& node)
-{
-    if (auto names = param_utils::getParameter<StringVec>(node, "commands.three_arg")) {
-        argument_names_ = std::move(names.value());
-        RCLCPP_INFO(rclcpp::get_logger("ThreeArgsConfig"), 
-            "Three-arg commands loaded with %lu commands: %s", 
-            argument_names_.size(), fmt::format("{}", 
-            fmt::join(argument_names_, ", ")).c_str());
-    }
-}
-
-CommandConfig::StringVec ThreeArgsConfig::getArgumentNames() const
-{
-    return argument_names_;
-}
-
-size_t ThreeArgsConfig::getBaseArgumentCount() const
-{
-    return 3;
+    base_argument_count_ = n * base;
 }

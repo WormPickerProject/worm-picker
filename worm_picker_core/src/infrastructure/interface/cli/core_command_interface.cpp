@@ -103,9 +103,11 @@ Result<void> CoreCommandInterface::Implementation::sendCommand(const std::string
 
     auto response = future.get();
     if (!response->success) {
-        return Result<void>::error("Task execution failed for command: " + command);
+        return Result<void>::error("Task execution failed for command: " + command + 
+                                   "\nFeedback: " + response->feedback);
     }
     
+    RCLCPP_INFO(node_->get_logger(), "Command feedback: %s", response->feedback.c_str());
     return Result<void>::success();
 }
 

@@ -1,6 +1,6 @@
 // ros_command_client.cpp
 //
-// Copyright (c) 2024
+// Copyright (c) 2025
 // SPDX-License-Identifier: Apache-2.0
 
 #include "worm_picker_core/infrastructure/interface/network/ros_command_client.hpp"
@@ -30,7 +30,7 @@ void RosCommandClient::initializeCommandHandlers()
             const rclcpp::Client<StartTrajMode>::SharedFuture future) {
                 auto response = future.get();
                 bool success = (response->result_code.value == ReadyEnum::READY);
-                completion_callback(success);
+                completion_callback(success, "");
         };
 
         start_traj_client_->async_send_request(request, std::move(response_handler));
@@ -39,7 +39,7 @@ void RosCommandClient::initializeCommandHandlers()
     command_handlers_["quit"] = [this](StatusCallback completion_callback) { 
         RCLCPP_INFO(node_->get_logger(), "Quit command received.");
         rclcpp::shutdown();
-        completion_callback(true);
+        completion_callback(true, "");
     };
     
     /* To be implemented in the future
@@ -73,7 +73,7 @@ void RosCommandClient::runSocketServer(int server_port)
             if (auto self = weak_self.lock()) {
                 self->handleCommand(command, completion_callback);
             } else {
-                completion_callback(false);
+                completion_callback(false, "Server is not available.");
             }
         }
     );
@@ -110,7 +110,7 @@ void RosCommandClient::sendTaskCommandRequest(const std::shared_ptr<TaskCommand:
     auto response_handler = [self = shared_from_this(), completion_callback](
         const rclcpp::Client<TaskCommand>::SharedFuture future) {
             auto response = future.get();
-            completion_callback(response->success);
+            completion_callback(response->success, response->feedback);
     };
 
     task_command_client_->async_send_request(request, std::move(response_handler));
