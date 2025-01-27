@@ -47,6 +47,7 @@ parameters:
               "moveToPoint"]
     two_arg: []
     three_arg: ["moveRelative", "moveAbsolute"]
+    variable_arg: ["moveRelative"]
 
   planners:   
     move_to_point:
