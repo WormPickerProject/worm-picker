@@ -32,7 +32,7 @@ TaskManager::TaskManager(const NodePtr& node,
 Result<void> TaskManager::executeTask(const std::string& command) const
 {
     if (auto effector = isModeSwitch(command)) {
-        return param_utils::setParameter(node_, "end_effecters.current_factor", *effector)
+        return param_utils::setParameter(node_, "end_effectors.current_factor", *effector)
             ? Result<void>::success()
             : Result<void>::error("Failed to set end effector parameter");
     }
