@@ -61,6 +61,7 @@ find_package(std_srvs REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 find_package(worm_picker_moveit_config REQUIRED)
 find_package(nlohmann_json REQUIRED)
+find_package(isaac_ros_cumotion_moveit REQUIRED)
 
 #
 # ----------------------------------------------------------------------------
@@ -95,6 +96,7 @@ set(WORM_PICKER_DEPS
   fmt
   yaml-cpp
   nlohmann_json
+  isaac_ros_cumotion_moveit
 )
 
 #
@@ -155,6 +157,11 @@ ament_target_dependencies(
   ${PROJECT_NAME}
   ${WORM_PICKER_DEPS}
 )
+
+# Optionally link the cuMotion libraries if you have C++ code calling them:
+# target_link_libraries(${PROJECT_NAME}
+#   isaac_ros_cumotion_moveit::isaac_ros_cumotion_moveit
+# )
 
 #
 # ----------------------------------------------------------------------------
