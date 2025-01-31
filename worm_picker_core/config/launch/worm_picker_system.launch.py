@@ -46,6 +46,9 @@ def launch_setup(context, *args, **kwargs):
         "robot_srdf": os.path.join(
             pkg_worm_picker_moveit, "config", "worm_picker_robot.srdf"
         ),
+        "robot_xrdf": os.path.join(
+            pkg_worm_picker_moveit, "config", "worm_picker_robot.xrdf.yaml"
+        ),
         "kinematics_yaml": os.path.join(
             pkg_worm_picker_moveit, "config", "kinematics.yaml"
         ),
@@ -81,7 +84,9 @@ def launch_setup(context, *args, **kwargs):
         .robot_description_semantic(file_path=config_files["robot_srdf"])
         .robot_description_kinematics(file_path=config_files["kinematics_yaml"])
         .trajectory_execution(file_path=moveit_controllers_path)
-        .planning_pipelines(pipelines=["ompl", "pilz_industrial_motion_planner"])
+        .planning_pipelines(pipelines=["ompl", 
+                                       "pilz_industrial_motion_planner", 
+                                       """isaac_ros_cumotion"""])
         .to_moveit_configs()
     )
 
@@ -179,6 +184,17 @@ def launch_setup(context, *args, **kwargs):
                 moveit_config.to_dict(),
             ],
         ),
+        # cuMotion Planner Node
+        # Node(
+        #     package="isaac_ros_cumotion",
+        #     executable="cumotion_planner_node",
+        #     name="cumotion_planner_node",
+        #     output="screen",
+        #     parameters=[{
+        #         "xrdf_path": config_files["robot_xrdf"],
+        #         "urdf_path": config_files["robot_urdf"],
+        #     }],
+        # ),
     ]
 
     return nodes

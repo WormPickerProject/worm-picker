@@ -1,0 +1,166 @@
+format: xrdf
+format_version: 1.0
+
+###############################################################################
+# 1) Optional: URDF Modifiers
+#
+#    - set_base_frame: "base_link"
+#         Tells the XRDF parser to treat "base_link" as the new root,
+#         removing any upstream frames/joints (like "world").
+#    - add_frame:
+#         You can add new fixed frames if needed. (Not shown here.)
+###############################################################################
+modifiers:
+  - set_base_frame: "base_link"
+  # Example if you needed an extra fixed frame:
+  # - add_frame:
+  #     frame_name: "my_extra_frame"
+  #     parent_frame_name: "joint_6"
+  #     joint_name: "my_extra_joint"
+  #     fixed_transform:
+  #       position: [0.05, 0.0, 0.0]
+  #       orientation: {w: 1.0, xyz: [0.0, 0.0, 0.0]}
+
+
+###############################################################################
+# 2) Optional: Default Joint Positions
+#
+#    Provide initial/bias joint angles for inverse kinematics or planning seeds.
+###############################################################################
+default_joint_positions:
+  joint_1: 0.0
+  joint_2: 0.0
+  joint_3: 0.0
+  joint_4: 0.0
+  joint_5: 0.0
+  joint_6: 0.0
+
+
+###############################################################################
+# 3) REQUIRED: C-space Definition
+#
+#    - Which joints are actually driven in the motion planner.
+#    - Each name here must match a non-fixed joint in the URDF.
+#    - Provide acceleration and jerk limits for each c-space joint.
+###############################################################################
+cspace:
+  joint_names:
+    - joint_1
+    - joint_2
+    - joint_3
+    - joint_4
+    - joint_5
+    - joint_6
+  acceleration_limits: [20.0, 20.0, 20.0, 25.0, 25.0, 30.0]  # rad/s² (guessed values: TODO)
+  jerk_limits:         [200.0, 200.0, 200.0, 250.0, 250.0, 300.0]  # rad/s³ (guessed values: TODO)
+
+
+###############################################################################
+# 4) Optional: Tool Frames
+#
+#    - Let cuMotion know about "end-effector" or other frames of interest.
+#    - The first one in the list is typically used as the main “EEF frame.”
+###############################################################################
+tool_frames: 
+  - eoat_tcp
+  - wormpick_tcp
+
+
+###############################################################################
+# 5) Collision Geometry
+#
+#    Isaac’s XRDF recommends “collision spheres” for each link or frame.
+#    (Below is a simple 1-sphere-per-link example. Adjust centers/radii carefully!)
+#
+#    The name "worm_picker_spheres" is arbitrary; it must match what's used
+#    under the 'collision:' and 'self_collision:' sections below.
+###############################################################################
+geometry:
+  worm_picker_spheres:
+    spheres:
+      base_link:
+        - center: [0.0, 0.0, 0.0]
+          radius: 0.01
+      joint_1:
+        - center: [0.0, 0.0, 0.0]
+          radius: 0.01
+      joint_2:
+        - center: [0.0, 0.0, 0.0]
+          radius: 0.01
+      joint_3:
+        - center: [0.0, 0.0, 0.0]
+          radius: 0.01
+      joint_4:
+        - center: [0.0, 0.0, 0.0]
+          radius: 0.01
+      joint_5:
+        - center: [0.0, 0.0, 0.0]
+          radius: 0.01
+      joint_6:
+        - center: [0.0, 0.0, 0.0]
+          radius: 0.01
+      flange:
+        - center: [0.0, 0.0, 0.0]
+          radius: 0.01
+      eoat:
+        - center: [0.0, 0.0, 0.0]
+          radius: 0.01
+      wormpick:
+        - center: [0.0, 0.0, 0.0]
+          radius: 0.01
+
+
+###############################################################################
+# 6) Collision With External Environment 
+#
+#    - Which geometry group to use for environment collision checks
+#    - Optional per-link "buffer_distance" to shrink/grow collision boundary
+###############################################################################
+collision:
+  geometry: "worm_picker_spheres"
+  buffer_distance:
+    base_link: 0.01
+    joint_1: 0.01
+    joint_2: 0.01
+    joint_3: 0.01
+    joint_4: 0.01
+    joint_5: 0.01
+    joint_6: 0.01
+    flange:   0.01
+    eoat:     0.01
+    wormpick: 0.01
+
+
+###############################################################################
+# 7) Self-Collision
+#
+#    - Which geometry group to use for robot self-collision checks
+#    - Optional buffer distances
+#    - "ignore:" can skip collision checks between frames you know never collide
+###############################################################################
+self_collision:
+  geometry: "worm_picker_spheres"
+  buffer_distance:
+    base_link: 0.02
+    joint_1: 0.02
+    joint_2: 0.02
+    joint_3: 0.02
+    joint_4: 0.02
+    joint_5: 0.02
+    joint_6: 0.02
+    flange:   0.02
+    eoat:     0.02
+    wormpick: 0.02
+
+  # Typically ignore adjacent link collisions & other known non-intersecting pairs
+  ignore:
+    base_link:  ["joint_1"]
+    joint_1:    ["joint_2", "base_link"]
+    joint_2:    ["joint_3", "joint_1"]
+    joint_3:    ["joint_4", "joint_2"]
+    joint_4:    ["joint_5", "joint_3"]
+    joint_5:    ["joint_6", "joint_4"]
+    joint_6:    ["flange", "joint_5"]
+    flange:     ["joint_6", "eoat", "wormpick"]
+    eoat:       ["flange", "wormpick"]
+    wormpick:   ["flange", "eoat"]
