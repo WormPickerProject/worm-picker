@@ -23,8 +23,21 @@ struct PositionOffset {
 namespace offset {
     static constexpr PositionOffset PICK{ -0.045, 0.0125};
     static constexpr PositionOffset PLACE{ 0.000, 0.0125};
-    static constexpr PositionOffset HOVER{ 0.035, 0.0220};
+    static constexpr PositionOffset HOVER{ 0.015, 0.023};
     static constexpr PositionOffset POINT{ 0.000, 0.0100};
+}
+
+struct OffsetXYZ {
+    double x;
+    double y; 
+    double z;
+};
+
+namespace AdditionalOffset {
+    static constexpr OffsetXYZ PICK{ 0, 0, 0};
+    static constexpr OffsetXYZ PLACE{ 0, 0, 0};
+    static constexpr OffsetXYZ HOVER{ 0, 0.01, 0};
+    static constexpr OffsetXYZ POINT{ 0, 0, 0};
 }
 
 struct MovementParams {

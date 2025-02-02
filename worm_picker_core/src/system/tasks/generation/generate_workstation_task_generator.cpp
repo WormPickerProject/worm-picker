@@ -81,10 +81,20 @@ Coordinate GenerateWorkstationTaskGenerator::calculateDerivedPoint(const Coordin
     const double cos_theta = std::cos(theta_rad);
     const double sin_theta = std::sin(theta_rad);
 
+    const auto additional_offset = [this]() -> OffsetXYZ {
+        switch (task_type_) {
+        case TaskType::PickPlate: return AdditionalOffset::PICK;
+        case TaskType::PlacePlate: return AdditionalOffset::PLACE;
+        case TaskType::HoverWormPick: return AdditionalOffset::HOVER;
+        case TaskType::MoveToPoint: return AdditionalOffset::POINT;
+        default: throw std::runtime_error("Unknown task type");
+        }
+    }();
+
     return {
-        coord.getPositionX() + (offset.xy * cos_theta),
-        coord.getPositionY() + (offset.xy * sin_theta),
-        coord.getPositionZ() + offset.z,
+        coord.getPositionX() + (offset.xy * cos_theta) + additional_offset.x,
+        coord.getPositionY() + (offset.xy * sin_theta) + additional_offset.y,
+        coord.getPositionZ() + offset.z + additional_offset.z,
         coord.getOrientationX(),
         coord.getOrientationY(),
         coord.getOrientationZ(),

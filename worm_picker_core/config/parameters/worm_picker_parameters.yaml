@@ -21,6 +21,9 @@ parameters:
     plate: "plateMode"
     worm: "wormMode"
 
+  frames: 
+    base_link: "base_link"
+
   end_effectors:
     current_factor: "eoat_tcp"
     plate_factor: "eoat_tcp"
@@ -29,7 +32,7 @@ parameters:
   settings:
     server_timeout: 3
     max_retries: 10
-    planning_attempts: 5
+    planning_attempts: 20
     planning_scene_queue_size: 5
 
   validation:
@@ -51,13 +54,13 @@ parameters:
 
   planners:   
     move_to_point:
-      primary: "pilz"
-      backup: "cartesian"
+      backup: "pilz"
+      primary: "cartesian"
       configs:
         pilz:
         cartesian:
           step_size: 0.01
-          min_fraction: 0.01
+          min_fraction: 0.00
     move_to_joint:
       primary: "joint_interpolation"
       backup:
@@ -70,5 +73,5 @@ parameters:
       configs:
         cartesian:
           step_size: 0.01
-          min_fraction: 0.01
+          min_fraction: 0.00
         pilz:
