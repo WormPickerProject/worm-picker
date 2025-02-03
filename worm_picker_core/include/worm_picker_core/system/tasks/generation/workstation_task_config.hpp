@@ -42,7 +42,7 @@ namespace offset {
     };
     static constexpr CombinedOffset HOVER{
         OffsetPosition{0.015, 0.023},
-        OffsetXYZ{0, 0.01, 0}
+        OffsetXYZ{0.005, 0.01, 0}
     };
     static constexpr CombinedOffset POINT{
         OffsetPosition{0.000, 0.0100},

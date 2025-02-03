@@ -54,8 +54,8 @@ parameters:
 
   planners:   
     move_to_point:
-      backup: "pilz"
-      primary: "cartesian"
+      primary: "pilz"
+      backup: "cartesian"
       configs:
         pilz:
         cartesian:
