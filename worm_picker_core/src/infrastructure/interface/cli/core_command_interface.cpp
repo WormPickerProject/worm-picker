@@ -107,7 +107,7 @@ Result<void> CoreCommandInterface::Implementation::sendCommand(const std::string
                                    "\nFeedback: " + response->feedback);
     }
     
-    RCLCPP_INFO(node_->get_logger(), "Command feedback: %s", response->feedback.c_str());
+    // RCLCPP_INFO(node_->get_logger(), "Command feedback: %s", response->feedback.c_str());
     return Result<void>::success();
 }
 
