@@ -38,6 +38,9 @@ GenerateWorkstationTaskGenerator::StageSequence
 GenerateWorkstationTaskGenerator::createStagesForTask(const WorkstationData& data, 
                                                       char row_letter) const
 {
+    Coordinate derived_position = calculateDerivedPoint(data.getCoordinate(), row_letter);
+    StageSequence stages{ createMoveToPointStage(derived_position) };
+
     const auto motion_params = [this]() -> std::optional<workstation_config::MovementParams> {
         switch (task_type_) {
         case TaskType::PickPlate: return workstation_config::motion::PICK;
@@ -47,9 +50,6 @@ GenerateWorkstationTaskGenerator::createStagesForTask(const WorkstationData& dat
         default: throw std::runtime_error("Unknown task type");
         }
     }();
-
-    Coordinate derived_position = calculateDerivedPoint(data.getCoordinate(), row_letter);
-    StageSequence stages{ createMoveToPointStage(derived_position) };
 
     if (motion_params) {
         stages.emplace_back(std::make_shared<MoveRelativeData>(
@@ -66,8 +66,8 @@ GenerateWorkstationTaskGenerator::createStagesForTask(const WorkstationData& dat
 Coordinate GenerateWorkstationTaskGenerator::calculateDerivedPoint(const Coordinate& coord, 
                                                                    char row_letter) const
 {
-    using namespace workstation_config; 
-    const auto offset = [this]() -> PositionOffset {
+    using namespace workstation_config;
+    const auto offsets = [this]() -> CombinedOffset {
         switch (task_type_) {
         case TaskType::PickPlate: return offset::PICK;
         case TaskType::PlacePlate: return offset::PLACE;
@@ -76,25 +76,15 @@ Coordinate GenerateWorkstationTaskGenerator::calculateDerivedPoint(const Coordin
         default: throw std::runtime_error("Unknown task type");
         }
     }();
-
+    
     const double theta_rad = angle::THETA_STEP_RAD * (row_letter - angle::REFERENCE_ROW);
     const double cos_theta = std::cos(theta_rad);
     const double sin_theta = std::sin(theta_rad);
 
-    const auto additional_offset = [this]() -> OffsetXYZ {
-        switch (task_type_) {
-        case TaskType::PickPlate: return AdditionalOffset::PICK;
-        case TaskType::PlacePlate: return AdditionalOffset::PLACE;
-        case TaskType::HoverWormPick: return AdditionalOffset::HOVER;
-        case TaskType::MoveToPoint: return AdditionalOffset::POINT;
-        default: throw std::runtime_error("Unknown task type");
-        }
-    }();
-
     return {
-        coord.getPositionX() + (offset.xy * cos_theta) + additional_offset.x,
-        coord.getPositionY() + (offset.xy * sin_theta) + additional_offset.y,
-        coord.getPositionZ() + offset.z + additional_offset.z,
+        coord.getPositionX() + (offsets.position.xy * cos_theta) + offsets.xyz.x,
+        coord.getPositionY() + (offsets.position.xy * sin_theta) + offsets.xyz.y,
+        coord.getPositionZ() + offsets.position.z + offsets.xyz.z,
         coord.getOrientationX(),
         coord.getOrientationY(),
         coord.getOrientationZ(),
@@ -102,8 +92,8 @@ Coordinate GenerateWorkstationTaskGenerator::calculateDerivedPoint(const Coordin
     };
 }
 
-std::shared_ptr<StageData> GenerateWorkstationTaskGenerator::createMoveToPointStage(
-    const Coordinate& coord) const
+std::shared_ptr<StageData> 
+GenerateWorkstationTaskGenerator::createMoveToPointStage(const Coordinate& coord) const
 {
     return std::make_shared<MoveToPointData>(
         coord.getPositionX(), coord.getPositionY(), coord.getPositionZ(),

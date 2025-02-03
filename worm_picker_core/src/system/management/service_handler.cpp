@@ -47,7 +47,7 @@ void ServiceHandler::handleServiceRequest(const std::shared_ptr<const TaskComman
     response->feedback = formatPose(getCurrentPose());
 }
 
-std::optional<geometry_msgs::msg::PoseStamped> ServiceHandler::getCurrentPose() const
+std::optional<ServiceHandler::Pose> ServiceHandler::getCurrentPose() const
 { 
     auto transform = tf_buffer_->lookupTransform(
         *param_utils::getParameter<std::string>(node_, "frames.base_link"),
@@ -65,8 +65,7 @@ std::optional<geometry_msgs::msg::PoseStamped> ServiceHandler::getCurrentPose() 
     return pose;
 }
 
-const std::string 
-ServiceHandler::formatPose(const std::optional<geometry_msgs::msg::PoseStamped>& maybe_pose) 
+const std::string ServiceHandler::formatPose(const std::optional<Pose>& maybe_pose) 
 {
     if (!maybe_pose) {
         return "position:{9999.90000,9999.90000,9999.90000} "

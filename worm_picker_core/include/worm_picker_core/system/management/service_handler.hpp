@@ -24,11 +24,12 @@ private:
     using TaskCommandService = worm_picker_custom_msgs::srv::TaskCommand;
     using TaskCommandRequest = TaskCommandService::Request;
     using TaskCommandResponse = TaskCommandService::Response;
+    using Pose = geometry_msgs::msg::PoseStamped;
 
     void handleServiceRequest(const std::shared_ptr<const TaskCommandRequest>& request,
                               const std::shared_ptr<TaskCommandResponse>& response);
-    std::optional<geometry_msgs::msg::PoseStamped> getCurrentPose() const;
-    const std::string formatPose(const std::optional<geometry_msgs::msg::PoseStamped>& maybe_pose);
+    std::optional<Pose> getCurrentPose() const;
+    const std::string formatPose(const std::optional<Pose>& maybe_pose);
     
     NodePtr node_;
     rclcpp::Service<TaskCommandService>::SharedPtr service_;
