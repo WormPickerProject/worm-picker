@@ -9,22 +9,20 @@
 #include "worm_picker_core/core/tasks/stages/move_relative_data.hpp"
 
 MoveRelativeData::MoveRelativeData() 
-    : MovementDataBase(0.1, 0.1) {}
+  : MovementDataBase(0.1, 0.1) {}
 
 MoveRelativeData::MoveRelativeData(double dx, double dy, double dz,
                                    double vel_scaling, double acc_scaling)
-    : MovementDataBase(vel_scaling, acc_scaling), 
-      dx_(dx), 
-      dy_(dy), 
-      dz_(dz) {}
+  : MovementDataBase(vel_scaling, acc_scaling), 
+    dx_(dx), dy_(dy), dz_(dz) {}
 
 MoveRelativeData::StagePtr 
 MoveRelativeData::createStageInstanceImpl(const std::string& name, 
                                           std::shared_ptr<void> planner) const 
 {
     using namespace moveit::task_constructor;
-    auto cartesian_planner = std::static_pointer_cast<solvers::CartesianPath>(planner);
-    auto stage = std::make_unique<stages::MoveRelative>(name, cartesian_planner);
+    auto planner_interface = std::static_pointer_cast<solvers::PlannerInterface>(planner);
+    auto stage = std::make_unique<stages::MoveRelative>(name, planner_interface);
     return stage;
 }
 
@@ -45,27 +43,9 @@ void MoveRelativeData::configureStageImpl(Stage& stage, const NodePtr& node) con
     setCommonInfo(move_relative_stage, node);
 }
 
-std::unique_ptr<StageData> MoveRelativeData::clone() const
-{
-    return std::make_unique<MoveRelativeData>(*this);
-}
-
-StageType MoveRelativeData::getType() const 
-{ 
-    return StageType::MOVE_RELATIVE; 
-}
-
-double MoveRelativeData::getDX() const 
-{ 
-    return dx_; 
-}
-
-double MoveRelativeData::getDY() const 
-{ 
-    return dy_; 
-}
-
-double MoveRelativeData::getDZ() const 
-{ 
-    return dz_; 
-}
+std::unique_ptr<StageData> 
+MoveRelativeData::clone() const { return std::make_unique<MoveRelativeData>(*this); }
+StageType MoveRelativeData::getType() const { return StageType::MOVE_RELATIVE; }
+double MoveRelativeData::getDX() const { return dx_; }
+double MoveRelativeData::getDY() const { return dy_; }
+double MoveRelativeData::getDZ() const { return dz_; }
