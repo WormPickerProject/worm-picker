@@ -68,8 +68,8 @@ parameters:
         joint_interpolation:
         rrt:
     move_relative:
-      primary: "cartesian"
-      backup: "pilz"
+      backup: "cartesian"
+      primary: "pilz"
       configs:
         cartesian:
           step_size: 0.01
