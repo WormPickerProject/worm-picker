@@ -23,11 +23,11 @@ std::string GenerateWorkstationTaskGenerator::generateTaskName(char row_letter,
 {
     const auto prefix = [this]() -> std::string {
         switch (task_type_) {
-        case TaskType::PickPlate: return workstation_config::prefix::PICK;
-        case TaskType::PlacePlate: return workstation_config::prefix::PLACE;
-        case TaskType::HoverWormPick: return workstation_config::prefix::HOVER;
-        case TaskType::MoveToPoint: return workstation_config::prefix::POINT;
-        default: throw std::runtime_error("Unknown task type");
+            case TaskType::PickPlate: return workstation_config::prefix::PICK;
+            case TaskType::PlacePlate: return workstation_config::prefix::PLACE;
+            case TaskType::HoverWormPick: return workstation_config::prefix::HOVER;
+            case TaskType::MoveToPoint: return workstation_config::prefix::POINT;
+            default: throw std::runtime_error("Unknown task type");
         }
     }();
 
@@ -43,11 +43,11 @@ GenerateWorkstationTaskGenerator::createStagesForTask(const WorkstationData& dat
 
     const auto motion_params = [this]() -> std::optional<workstation_config::MovementParams> {
         switch (task_type_) {
-        case TaskType::PickPlate: return workstation_config::motion::PICK;
-        case TaskType::PlacePlate: return workstation_config::motion::PLACE;
-        case TaskType::HoverWormPick: return std::nullopt;
-        case TaskType::MoveToPoint: return std::nullopt;
-        default: throw std::runtime_error("Unknown task type");
+            case TaskType::PickPlate: return workstation_config::motion::PICK;
+            case TaskType::PlacePlate: return workstation_config::motion::PLACE;
+            case TaskType::HoverWormPick: return std::nullopt;
+            case TaskType::MoveToPoint: return std::nullopt;
+            default: throw std::runtime_error("Unknown task type");
         }
     }();
 
@@ -67,13 +67,13 @@ Coordinate GenerateWorkstationTaskGenerator::calculateDerivedPoint(const Coordin
                                                                    char row_letter) const
 {
     using namespace workstation_config;
-    const auto offsets = [this]() -> CombinedOffset {
+    const auto offsets = [this]() -> workstation_config::OffsetXYZ {
         switch (task_type_) {
-        case TaskType::PickPlate: return offset::PICK;
-        case TaskType::PlacePlate: return offset::PLACE;
-        case TaskType::HoverWormPick: return offset::HOVER;
-        case TaskType::MoveToPoint: return offset::POINT;
-        default: throw std::runtime_error("Unknown task type");
+            case TaskType::PickPlate: return offset::PICK;
+            case TaskType::PlacePlate: return offset::PLACE;
+            case TaskType::HoverWormPick: return offset::HOVER;
+            case TaskType::MoveToPoint: return offset::POINT;
+            default: throw std::runtime_error("Unknown task type");
         }
     }();
     
@@ -82,9 +82,9 @@ Coordinate GenerateWorkstationTaskGenerator::calculateDerivedPoint(const Coordin
     const double sin_theta = std::sin(theta_rad);
 
     return {
-        coord.getPositionX() + (offsets.position.xy * cos_theta) + offsets.xyz.x,
-        coord.getPositionY() + (offsets.position.xy * sin_theta) + offsets.xyz.y,
-        coord.getPositionZ() + offsets.position.z + offsets.xyz.z,
+        coord.getPositionX() + (offsets.x * cos_theta) + (offsets.y * sin_theta),
+        coord.getPositionY() + (offsets.x * sin_theta) + (offsets.y * cos_theta),
+        coord.getPositionZ() + offsets.z,
         coord.getOrientationX(),
         coord.getOrientationY(),
         coord.getOrientationZ(),
