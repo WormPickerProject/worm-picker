@@ -7,57 +7,57 @@
                         "room": {
                             "1": {
                                 "coordinate": {
-                                    "position_x": 9999.9,
-                                    "position_y": 9999.9,
-                                    "position_z": 9999.9,
-                                    "orientation_x": 9999.9,
-                                    "orientation_y": 9999.9,
-                                    "orientation_z": 9999.9,
-                                    "orientation_w": 9999.9
+                                    "position_x": -9999.9,
+                                    "position_y": -9999.9,
+                                    "position_z": -9999.9,
+                                    "orientation_x": -9999.9,
+                                    "orientation_y": -9999.9,
+                                    "orientation_z": -9999.9,
+                                    "orientation_w": -9999.9
                                 }
                             },
                             "2": {
                                 "coordinate": {
-                                    "position_x": 9999.9,
-                                    "position_y": 9999.9,
-                                    "position_z": 9999.9,
-                                    "orientation_x": 9999.9,
-                                    "orientation_y": 9999.9,
-                                    "orientation_z": 9999.9,
-                                    "orientation_w": 9999.9
+                                    "position_x": -9999.9,
+                                    "position_y": -9999.9,
+                                    "position_z": -9999.9,
+                                    "orientation_x": -9999.9,
+                                    "orientation_y": -9999.9,
+                                    "orientation_z": -9999.9,
+                                    "orientation_w": -9999.9
                                 }
                             },
                             "3": {
                                 "coordinate": {
-                                    "position_x": 9999.9,
-                                    "position_y": 9999.9,
-                                    "position_z": 9999.9,
-                                    "orientation_x": 9999.9,
-                                    "orientation_y": 9999.9,
-                                    "orientation_z": 9999.9,
-                                    "orientation_w": 9999.9
+                                    "position_x": -9999.9,
+                                    "position_y": -9999.9,
+                                    "position_z": -9999.9,
+                                    "orientation_x": -9999.9,
+                                    "orientation_y": -9999.9,
+                                    "orientation_z": -9999.9,
+                                    "orientation_w": -9999.9
                                 }
                             },
                             "4": {
                                 "coordinate": {
-                                    "position_x": 9999.9,
-                                    "position_y": 9999.9,
-                                    "position_z": 9999.9,
-                                    "orientation_x": 9999.9,
-                                    "orientation_y": 9999.9,
-                                    "orientation_z": 9999.9,
-                                    "orientation_w": 9999.9
+                                    "position_x": -9999.9,
+                                    "position_y": -9999.9,
+                                    "position_z": -9999.9,
+                                    "orientation_x": -9999.9,
+                                    "orientation_y": -9999.9,
+                                    "orientation_z": -9999.9,
+                                    "orientation_w": -9999.9
                                 }
                             },
                             "5": {
                                 "coordinate": {
-                                    "position_x": 9999.9,
-                                    "position_y": 9999.9,
-                                    "position_z": 9999.9,
-                                    "orientation_x": 9999.9,
-                                    "orientation_y": 9999.9,
-                                    "orientation_z": 9999.9,
-                                    "orientation_w": 9999.9
+                                    "position_x": -9999.9,
+                                    "position_y": -9999.9,
+                                    "position_z": -9999.9,
+                                    "orientation_x": -9999.9,
+                                    "orientation_y": -9999.9,
+                                    "orientation_z": -9999.9,
+                                    "orientation_w": -9999.9
                                 }
                             }
                         }
@@ -66,68 +66,68 @@
                         "room": {
                             "1": {
                                 "coordinate": {
-                                    "position_x": 9999.9,
-                                    "position_y": 9999.9,
-                                    "position_z": 9999.9,
-                                    "orientation_x": 9999.9,
-                                    "orientation_y": 9999.9,
-                                    "orientation_z": 9999.9,
-                                    "orientation_w": 9999.9
+                                    "position_x": -9999.9,
+                                    "position_y": -9999.9,
+                                    "position_z": -9999.9,
+                                    "orientation_x": -9999.9,
+                                    "orientation_y": -9999.9,
+                                    "orientation_z": -9999.9,
+                                    "orientation_w": -9999.9
                                 }
                             },
                             "2": {
                                 "coordinate": {
-                                    "position_x": 9999.9,
-                                    "position_y": 9999.9,
-                                    "position_z": 9999.9,
-                                    "orientation_x": 9999.9,
-                                    "orientation_y": 9999.9,
-                                    "orientation_z": 9999.9,
-                                    "orientation_w": 9999.9
+                                    "position_x": -9999.9,
+                                    "position_y": -9999.9,
+                                    "position_z": -9999.9,
+                                    "orientation_x": -9999.9,
+                                    "orientation_y": -9999.9,
+                                    "orientation_z": -9999.9,
+                                    "orientation_w": -9999.9
                                 }
                             },
                             "3": {
                                 "coordinate": {
-                                    "position_x": 9999.9,
-                                    "position_y": 9999.9,
-                                    "position_z": 9999.9,
-                                    "orientation_x": 9999.9,
-                                    "orientation_y": 9999.9,
-                                    "orientation_z": 9999.9,
-                                    "orientation_w": 9999.9
+                                    "position_x": -9999.9,
+                                    "position_y": -9999.9,
+                                    "position_z": -9999.9,
+                                    "orientation_x": -9999.9,
+                                    "orientation_y": -9999.9,
+                                    "orientation_z": -9999.9,
+                                    "orientation_w": -9999.9
                                 }
                             },
                             "4": {
                                 "coordinate": {
-                                    "position_x": 9999.9,
-                                    "position_y": 9999.9,
-                                    "position_z": 9999.9,
-                                    "orientation_x": 9999.9,
-                                    "orientation_y": 9999.9,
-                                    "orientation_z": 9999.9,
-                                    "orientation_w": 9999.9
+                                    "position_x": -9999.9,
+                                    "position_y": -9999.9,
+                                    "position_z": -9999.9,
+                                    "orientation_x": -9999.9,
+                                    "orientation_y": -9999.9,
+                                    "orientation_z": -9999.9,
+                                    "orientation_w": -9999.9
                                 }
                             },
                             "5": {
                                 "coordinate": {
-                                    "position_x": 9999.9,
-                                    "position_y": 9999.9,
-                                    "position_z": 9999.9,
-                                    "orientation_x": 9999.9,
-                                    "orientation_y": 9999.9,
-                                    "orientation_z": 9999.9,
-                                    "orientation_w": 9999.9
+                                    "position_x": -9999.9,
+                                    "position_y": -9999.9,
+                                    "position_z": -9999.9,
+                                    "orientation_x": -9999.9,
+                                    "orientation_y": -9999.9,
+                                    "orientation_z": -9999.9,
+                                    "orientation_w": -9999.9
                                 }
                             },
                             "6": {
                                 "coordinate": {
-                                    "position_x": 9999.9,
-                                    "position_y": 9999.9,
-                                    "position_z": 9999.9,
-                                    "orientation_x": 9999.9,
-                                    "orientation_y": 9999.9,
-                                    "orientation_z": 9999.9,
-                                    "orientation_w": 9999.9
+                                    "position_x": -9999.9,
+                                    "position_y": -9999.9,
+                                    "position_z": -9999.9,
+                                    "orientation_x": -9999.9,
+                                    "orientation_y": -9999.9,
+                                    "orientation_z": -9999.9,
+                                    "orientation_w": -9999.9
                                 }
                             }
                         }
@@ -136,68 +136,68 @@
                         "room": {
                             "1": {
                                 "coordinate": {
-                                    "position_x": 9999.9,
-                                    "position_y": 9999.9,
-                                    "position_z": 9999.9,
-                                    "orientation_x": 9999.9,
-                                    "orientation_y": 9999.9,
-                                    "orientation_z": 9999.9,
-                                    "orientation_w": 9999.9
+                                    "position_x": -9999.9,
+                                    "position_y": -9999.9,
+                                    "position_z": -9999.9,
+                                    "orientation_x": -9999.9,
+                                    "orientation_y": -9999.9,
+                                    "orientation_z": -9999.9,
+                                    "orientation_w": -9999.9
                                 }
                             },
                             "2": {
                                 "coordinate": {
-                                    "position_x": 9999.9,
-                                    "position_y": 9999.9,
-                                    "position_z": 9999.9,
-                                    "orientation_x": 9999.9,
-                                    "orientation_y": 9999.9,
-                                    "orientation_z": 9999.9,
-                                    "orientation_w": 9999.9
+                                    "position_x": -9999.9,
+                                    "position_y": -9999.9,
+                                    "position_z": -9999.9,
+                                    "orientation_x": -9999.9,
+                                    "orientation_y": -9999.9,
+                                    "orientation_z": -9999.9,
+                                    "orientation_w": -9999.9
                                 }
                             },
                             "3": {
                                 "coordinate": {
-                                    "position_x": 9999.9,
-                                    "position_y": 9999.9,
-                                    "position_z": 9999.9,
-                                    "orientation_x": 9999.9,
-                                    "orientation_y": 9999.9,
-                                    "orientation_z": 9999.9,
-                                    "orientation_w": 9999.9
+                                    "position_x": -9999.9,
+                                    "position_y": -9999.9,
+                                    "position_z": -9999.9,
+                                    "orientation_x": -9999.9,
+                                    "orientation_y": -9999.9,
+                                    "orientation_z": -9999.9,
+                                    "orientation_w": -9999.9
                                 }
                             },
                             "4": {
                                 "coordinate": {
-                                    "position_x": 9999.9,
-                                    "position_y": 9999.9,
-                                    "position_z": 9999.9,
-                                    "orientation_x": 9999.9,
-                                    "orientation_y": 9999.9,
-                                    "orientation_z": 9999.9,
-                                    "orientation_w": 9999.9
+                                    "position_x": -9999.9,
+                                    "position_y": -9999.9,
+                                    "position_z": -9999.9,
+                                    "orientation_x": -9999.9,
+                                    "orientation_y": -9999.9,
+                                    "orientation_z": -9999.9,
+                                    "orientation_w": -9999.9
                                 }
                             },
                             "5": {
                                 "coordinate": {
-                                    "position_x": 9999.9,
-                                    "position_y": 9999.9,
-                                    "position_z": 9999.9,
-                                    "orientation_x": 9999.9,
-                                    "orientation_y": 9999.9,
-                                    "orientation_z": 9999.9,
-                                    "orientation_w": 9999.9
+                                    "position_x": -9999.9,
+                                    "position_y": -9999.9,
+                                    "position_z": -9999.9,
+                                    "orientation_x": -9999.9,
+                                    "orientation_y": -9999.9,
+                                    "orientation_z": -9999.9,
+                                    "orientation_w": -9999.9
                                 }
                             },
                             "6": {
                                 "coordinate": {
-                                    "position_x": 9999.9,
-                                    "position_y": 9999.9,
-                                    "position_z": 9999.9,
-                                    "orientation_x": 9999.9,
-                                    "orientation_y": 9999.9,
-                                    "orientation_z": 9999.9,
-                                    "orientation_w": 9999.9
+                                    "position_x": -9999.9,
+                                    "position_y": -9999.9,
+                                    "position_z": -9999.9,
+                                    "orientation_x": -9999.9,
+                                    "orientation_y": -9999.9,
+                                    "orientation_z": -9999.9,
+                                    "orientation_w": -9999.9
                                 }
                             }
                         }
@@ -206,68 +206,68 @@
                         "room": {
                             "1": {
                                 "coordinate": {
-                                    "position_x": 9999.9,
-                                    "position_y": 9999.9,
-                                    "position_z": 9999.9,
-                                    "orientation_x": 9999.9,
-                                    "orientation_y": 9999.9,
-                                    "orientation_z": 9999.9,
-                                    "orientation_w": 9999.9
+                                    "position_x": -9999.9,
+                                    "position_y": -9999.9,
+                                    "position_z": -9999.9,
+                                    "orientation_x": -9999.9,
+                                    "orientation_y": -9999.9,
+                                    "orientation_z": -9999.9,
+                                    "orientation_w": -9999.9
                                 }
                             },
                             "2": {
                                 "coordinate": {
-                                    "position_x": 9999.9,
-                                    "position_y": 9999.9,
-                                    "position_z": 9999.9,
-                                    "orientation_x": 9999.9,
-                                    "orientation_y": 9999.9,
-                                    "orientation_z": 9999.9,
-                                    "orientation_w": 9999.9
+                                    "position_x": -9999.9,
+                                    "position_y": -9999.9,
+                                    "position_z": -9999.9,
+                                    "orientation_x": -9999.9,
+                                    "orientation_y": -9999.9,
+                                    "orientation_z": -9999.9,
+                                    "orientation_w": -9999.9
                                 }
                             },
                             "3": {
                                 "coordinate": {
-                                    "position_x": 9999.9,
-                                    "position_y": 9999.9,
-                                    "position_z": 9999.9,
-                                    "orientation_x": 9999.9,
-                                    "orientation_y": 9999.9,
-                                    "orientation_z": 9999.9,
-                                    "orientation_w": 9999.9
+                                    "position_x": -9999.9,
+                                    "position_y": -9999.9,
+                                    "position_z": -9999.9,
+                                    "orientation_x": -9999.9,
+                                    "orientation_y": -9999.9,
+                                    "orientation_z": -9999.9,
+                                    "orientation_w": -9999.9
                                 }
                             },
                             "4": {
                                 "coordinate": {
-                                    "position_x": 9999.9,
-                                    "position_y": 9999.9,
-                                    "position_z": 9999.9,
-                                    "orientation_x": 9999.9,
-                                    "orientation_y": 9999.9,
-                                    "orientation_z": 9999.9,
-                                    "orientation_w": 9999.9
+                                    "position_x": -9999.9,
+                                    "position_y": -9999.9,
+                                    "position_z": -9999.9,
+                                    "orientation_x": -9999.9,
+                                    "orientation_y": -9999.9,
+                                    "orientation_z": -9999.9,
+                                    "orientation_w": -9999.9
                                 }
                             },
                             "5": {
                                 "coordinate": {
-                                    "position_x": 9999.9,
-                                    "position_y": 9999.9,
-                                    "position_z": 9999.9,
-                                    "orientation_x": 9999.9,
-                                    "orientation_y": 9999.9,
-                                    "orientation_z": 9999.9,
-                                    "orientation_w": 9999.9
+                                    "position_x": -9999.9,
+                                    "position_y": -9999.9,
+                                    "position_z": -9999.9,
+                                    "orientation_x": -9999.9,
+                                    "orientation_y": -9999.9,
+                                    "orientation_z": -9999.9,
+                                    "orientation_w": -9999.9
                                 }
                             },
                             "6": {
                                 "coordinate": {
-                                    "position_x": 9999.9,
-                                    "position_y": 9999.9,
-                                    "position_z": 9999.9,
-                                    "orientation_x": 9999.9,
-                                    "orientation_y": 9999.9,
-                                    "orientation_z": 9999.9,
-                                    "orientation_w": 9999.9
+                                    "position_x": -9999.9,
+                                    "position_y": -9999.9,
+                                    "position_z": -9999.9,
+                                    "orientation_x": -9999.9,
+                                    "orientation_y": -9999.9,
+                                    "orientation_z": -9999.9,
+                                    "orientation_w": -9999.9
                                 }
                             }
                         }
@@ -284,57 +284,57 @@
                         "room": {
                             "1": {
                                 "coordinate": {
-                                    "position_x": 9999.9,
-                                    "position_y": 9999.9,
-                                    "position_z": 9999.9,
-                                    "orientation_x": 9999.9,
-                                    "orientation_y": 9999.9,
-                                    "orientation_z": 9999.9,
-                                    "orientation_w": 9999.9
+                                    "position_x": -9999.9,
+                                    "position_y": -9999.9,
+                                    "position_z": -9999.9,
+                                    "orientation_x": -9999.9,
+                                    "orientation_y": -9999.9,
+                                    "orientation_z": -9999.9,
+                                    "orientation_w": -9999.9
                                 }
                             },
                             "2": {
                                 "coordinate": {
-                                    "position_x": 9999.9,
-                                    "position_y": 9999.9,
-                                    "position_z": 9999.9,
-                                    "orientation_x": 9999.9,
-                                    "orientation_y": 9999.9,
-                                    "orientation_z": 9999.9,
-                                    "orientation_w": 9999.9
+                                    "position_x": -9999.9,
+                                    "position_y": -9999.9,
+                                    "position_z": -9999.9,
+                                    "orientation_x": -9999.9,
+                                    "orientation_y": -9999.9,
+                                    "orientation_z": -9999.9,
+                                    "orientation_w": -9999.9
                                 }
                             },
                             "3": {
                                 "coordinate": {
-                                    "position_x": 9999.9,
-                                    "position_y": 9999.9,
-                                    "position_z": 9999.9,
-                                    "orientation_x": 9999.9,
-                                    "orientation_y": 9999.9,
-                                    "orientation_z": 9999.9,
-                                    "orientation_w": 9999.9
+                                    "position_x": -9999.9,
+                                    "position_y": -9999.9,
+                                    "position_z": -9999.9,
+                                    "orientation_x": -9999.9,
+                                    "orientation_y": -9999.9,
+                                    "orientation_z": -9999.9,
+                                    "orientation_w": -9999.9
                                 }
                             },
                             "4": {
                                 "coordinate": {
-                                    "position_x": 9999.9,
-                                    "position_y": 9999.9,
-                                    "position_z": 9999.9,
-                                    "orientation_x": 9999.9,
-                                    "orientation_y": 9999.9,
-                                    "orientation_z": 9999.9,
-                                    "orientation_w": 9999.9
+                                    "position_x": -9999.9,
+                                    "position_y": -9999.9,
+                                    "position_z": -9999.9,
+                                    "orientation_x": -9999.9,
+                                    "orientation_y": -9999.9,
+                                    "orientation_z": -9999.9,
+                                    "orientation_w": -9999.9
                                 }
                             },
                             "5": {
                                 "coordinate": {
-                                    "position_x": 9999.9,
-                                    "position_y": 9999.9,
-                                    "position_z": 9999.9,
-                                    "orientation_x": 9999.9,
-                                    "orientation_y": 9999.9,
-                                    "orientation_z": 9999.9,
-                                    "orientation_w": 9999.9
+                                    "position_x": -9999.9,
+                                    "position_y": -9999.9,
+                                    "position_z": -9999.9,
+                                    "orientation_x": -9999.9,
+                                    "orientation_y": -9999.9,
+                                    "orientation_z": -9999.9,
+                                    "orientation_w": -9999.9
                                 }
                             }
                         }
@@ -343,68 +343,68 @@
                         "room": {
                             "1": {
                                 "coordinate": {
-                                    "position_x": 9999.9,
-                                    "position_y": 9999.9,
-                                    "position_z": 9999.9,
-                                    "orientation_x": 9999.9,
-                                    "orientation_y": 9999.9,
-                                    "orientation_z": 9999.9,
-                                    "orientation_w": 9999.9
+                                    "position_x": -9999.9,
+                                    "position_y": -9999.9,
+                                    "position_z": -9999.9,
+                                    "orientation_x": -9999.9,
+                                    "orientation_y": -9999.9,
+                                    "orientation_z": -9999.9,
+                                    "orientation_w": -9999.9
                                 }
                             },
                             "2": {
                                 "coordinate": {
-                                    "position_x": 9999.9,
-                                    "position_y": 9999.9,
-                                    "position_z": 9999.9,
-                                    "orientation_x": 9999.9,
-                                    "orientation_y": 9999.9,
-                                    "orientation_z": 9999.9,
-                                    "orientation_w": 9999.9
+                                    "position_x": -9999.9,
+                                    "position_y": -9999.9,
+                                    "position_z": -9999.9,
+                                    "orientation_x": -9999.9,
+                                    "orientation_y": -9999.9,
+                                    "orientation_z": -9999.9,
+                                    "orientation_w": -9999.9
                                 }
                             },
                             "3": {
                                 "coordinate": {
-                                    "position_x": 9999.9,
-                                    "position_y": 9999.9,
-                                    "position_z": 9999.9,
-                                    "orientation_x": 9999.9,
-                                    "orientation_y": 9999.9,
-                                    "orientation_z": 9999.9,
-                                    "orientation_w": 9999.9
+                                    "position_x": -9999.9,
+                                    "position_y": -9999.9,
+                                    "position_z": -9999.9,
+                                    "orientation_x": -9999.9,
+                                    "orientation_y": -9999.9,
+                                    "orientation_z": -9999.9,
+                                    "orientation_w": -9999.9
                                 }
                             },
                             "4": {
                                 "coordinate": {
-                                    "position_x": 9999.9,
-                                    "position_y": 9999.9,
-                                    "position_z": 9999.9,
-                                    "orientation_x": 9999.9,
-                                    "orientation_y": 9999.9,
-                                    "orientation_z": 9999.9,
-                                    "orientation_w": 9999.9
+                                    "position_x": -9999.9,
+                                    "position_y": -9999.9,
+                                    "position_z": -9999.9,
+                                    "orientation_x": -9999.9,
+                                    "orientation_y": -9999.9,
+                                    "orientation_z": -9999.9,
+                                    "orientation_w": -9999.9
                                 }
                             },
                             "5": {
                                 "coordinate": {
-                                    "position_x": 9999.9,
-                                    "position_y": 9999.9,
-                                    "position_z": 9999.9,
-                                    "orientation_x": 9999.9,
-                                    "orientation_y": 9999.9,
-                                    "orientation_z": 9999.9,
-                                    "orientation_w": 9999.9
+                                    "position_x": -9999.9,
+                                    "position_y": -9999.9,
+                                    "position_z": -9999.9,
+                                    "orientation_x": -9999.9,
+                                    "orientation_y": -9999.9,
+                                    "orientation_z": -9999.9,
+                                    "orientation_w": -9999.9
                                 }
                             },
                             "6": {
                                 "coordinate": {
-                                    "position_x": 9999.9,
-                                    "position_y": 9999.9,
-                                    "position_z": 9999.9,
-                                    "orientation_x": 9999.9,
-                                    "orientation_y": 9999.9,
-                                    "orientation_z": 9999.9,
-                                    "orientation_w": 9999.9
+                                    "position_x": -9999.9,
+                                    "position_y": -9999.9,
+                                    "position_z": -9999.9,
+                                    "orientation_x": -9999.9,
+                                    "orientation_y": -9999.9,
+                                    "orientation_z": -9999.9,
+                                    "orientation_w": -9999.9
                                 }
                             }
                         }
@@ -413,68 +413,68 @@
                         "room": {
                             "1": {
                                 "coordinate": {
-                                    "position_x": 9999.9,
-                                    "position_y": 9999.9,
-                                    "position_z": 9999.9,
-                                    "orientation_x": 9999.9,
-                                    "orientation_y": 9999.9,
-                                    "orientation_z": 9999.9,
-                                    "orientation_w": 9999.9
+                                    "position_x": -9999.9,
+                                    "position_y": -9999.9,
+                                    "position_z": -9999.9,
+                                    "orientation_x": -9999.9,
+                                    "orientation_y": -9999.9,
+                                    "orientation_z": -9999.9,
+                                    "orientation_w": -9999.9
                                 }
                             },
                             "2": {
                                 "coordinate": {
-                                    "position_x": 9999.9,
-                                    "position_y": 9999.9,
-                                    "position_z": 9999.9,
-                                    "orientation_x": 9999.9,
-                                    "orientation_y": 9999.9,
-                                    "orientation_z": 9999.9,
-                                    "orientation_w": 9999.9
+                                    "position_x": -9999.9,
+                                    "position_y": -9999.9,
+                                    "position_z": -9999.9,
+                                    "orientation_x": -9999.9,
+                                    "orientation_y": -9999.9,
+                                    "orientation_z": -9999.9,
+                                    "orientation_w": -9999.9
                                 }
                             },
                             "3": {
                                 "coordinate": {
-                                    "position_x": 9999.9,
-                                    "position_y": 9999.9,
-                                    "position_z": 9999.9,
-                                    "orientation_x": 9999.9,
-                                    "orientation_y": 9999.9,
-                                    "orientation_z": 9999.9,
-                                    "orientation_w": 9999.9
+                                    "position_x": -9999.9,
+                                    "position_y": -9999.9,
+                                    "position_z": -9999.9,
+                                    "orientation_x": -9999.9,
+                                    "orientation_y": -9999.9,
+                                    "orientation_z": -9999.9,
+                                    "orientation_w": -9999.9
                                 }
                             },
                             "4": {
                                 "coordinate": {
-                                    "position_x": 9999.9,
-                                    "position_y": 9999.9,
-                                    "position_z": 9999.9,
-                                    "orientation_x": 9999.9,
-                                    "orientation_y": 9999.9,
-                                    "orientation_z": 9999.9,
-                                    "orientation_w": 9999.9
+                                    "position_x": -9999.9,
+                                    "position_y": -9999.9,
+                                    "position_z": -9999.9,
+                                    "orientation_x": -9999.9,
+                                    "orientation_y": -9999.9,
+                                    "orientation_z": -9999.9,
+                                    "orientation_w": -9999.9
                                 }
                             },
                             "5": {
                                 "coordinate": {
-                                    "position_x": 9999.9,
-                                    "position_y": 9999.9,
-                                    "position_z": 9999.9,
-                                    "orientation_x": 9999.9,
-                                    "orientation_y": 9999.9,
-                                    "orientation_z": 9999.9,
-                                    "orientation_w": 9999.9
+                                    "position_x": -9999.9,
+                                    "position_y": -9999.9,
+                                    "position_z": -9999.9,
+                                    "orientation_x": -9999.9,
+                                    "orientation_y": -9999.9,
+                                    "orientation_z": -9999.9,
+                                    "orientation_w": -9999.9
                                 }
                             },
                             "6": {
                                 "coordinate": {
-                                    "position_x": 9999.9,
-                                    "position_y": 9999.9,
-                                    "position_z": 9999.9,
-                                    "orientation_x": 9999.9,
-                                    "orientation_y": 9999.9,
-                                    "orientation_z": 9999.9,
-                                    "orientation_w": 9999.9
+                                    "position_x": -9999.9,
+                                    "position_y": -9999.9,
+                                    "position_z": -9999.9,
+                                    "orientation_x": -9999.9,
+                                    "orientation_y": -9999.9,
+                                    "orientation_z": -9999.9,
+                                    "orientation_w": -9999.9
                                 }
                             }
                         }
@@ -483,68 +483,68 @@
                         "room": {
                             "1": {
                                 "coordinate": {
-                                    "position_x": 9999.9,
-                                    "position_y": 9999.9,
-                                    "position_z": 9999.9,
-                                    "orientation_x": 9999.9,
-                                    "orientation_y": 9999.9,
-                                    "orientation_z": 9999.9,
-                                    "orientation_w": 9999.9
+                                    "position_x": -9999.9,
+                                    "position_y": -9999.9,
+                                    "position_z": -9999.9,
+                                    "orientation_x": -9999.9,
+                                    "orientation_y": -9999.9,
+                                    "orientation_z": -9999.9,
+                                    "orientation_w": -9999.9
                                 }
                             },
                             "2": {
                                 "coordinate": {
-                                    "position_x": 9999.9,
-                                    "position_y": 9999.9,
-                                    "position_z": 9999.9,
-                                    "orientation_x": 9999.9,
-                                    "orientation_y": 9999.9,
-                                    "orientation_z": 9999.9,
-                                    "orientation_w": 9999.9
+                                    "position_x": -9999.9,
+                                    "position_y": -9999.9,
+                                    "position_z": -9999.9,
+                                    "orientation_x": -9999.9,
+                                    "orientation_y": -9999.9,
+                                    "orientation_z": -9999.9,
+                                    "orientation_w": -9999.9
                                 }
                             },
                             "3": {
                                 "coordinate": {
-                                    "position_x": 9999.9,
-                                    "position_y": 9999.9,
-                                    "position_z": 9999.9,
-                                    "orientation_x": 9999.9,
-                                    "orientation_y": 9999.9,
-                                    "orientation_z": 9999.9,
-                                    "orientation_w": 9999.9
+                                    "position_x": -9999.9,
+                                    "position_y": -9999.9,
+                                    "position_z": -9999.9,
+                                    "orientation_x": -9999.9,
+                                    "orientation_y": -9999.9,
+                                    "orientation_z": -9999.9,
+                                    "orientation_w": -9999.9
                                 }
                             },
                             "4": {
                                 "coordinate": {
-                                    "position_x": 9999.9,
-                                    "position_y": 9999.9,
-                                    "position_z": 9999.9,
-                                    "orientation_x": 9999.9,
-                                    "orientation_y": 9999.9,
-                                    "orientation_z": 9999.9,
-                                    "orientation_w": 9999.9
+                                    "position_x": -9999.9,
+                                    "position_y": -9999.9,
+                                    "position_z": -9999.9,
+                                    "orientation_x": -9999.9,
+                                    "orientation_y": -9999.9,
+                                    "orientation_z": -9999.9,
+                                    "orientation_w": -9999.9
                                 }
                             },
                             "5": {
                                 "coordinate": {
-                                    "position_x": 9999.9,
-                                    "position_y": 9999.9,
-                                    "position_z": 9999.9,
-                                    "orientation_x": 9999.9,
-                                    "orientation_y": 9999.9,
-                                    "orientation_z": 9999.9,
-                                    "orientation_w": 9999.9
+                                    "position_x": -9999.9,
+                                    "position_y": -9999.9,
+                                    "position_z": -9999.9,
+                                    "orientation_x": -9999.9,
+                                    "orientation_y": -9999.9,
+                                    "orientation_z": -9999.9,
+                                    "orientation_w": -9999.9
                                 }
                             },
                             "6": {
                                 "coordinate": {
-                                    "position_x": 9999.9,
-                                    "position_y": 9999.9,
-                                    "position_z": 9999.9,
-                                    "orientation_x": 9999.9,
-                                    "orientation_y": 9999.9,
-                                    "orientation_z": 9999.9,
-                                    "orientation_w": 9999.9
+                                    "position_x": -9999.9,
+                                    "position_y": -9999.9,
+                                    "position_z": -9999.9,
+                                    "orientation_x": -9999.9,
+                                    "orientation_y": -9999.9,
+                                    "orientation_z": -9999.9,
+                                    "orientation_w": -9999.9
                                 }
                             }
                         }
