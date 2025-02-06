@@ -94,4 +94,18 @@ PlannerFactory::PlannerFactory()
             return planner;
         }
     );
+
+    registerPlannerCreator("pilz_circ",
+        [](const NodePtr& node, const std::string&, 
+           double vel_scaling, double acc_scaling) -> PlanPtr 
+        {
+            using namespace moveit::task_constructor::solvers;
+            auto planner = 
+                std::make_shared<PipelinePlanner>(node, "pilz_industrial_motion_planner");
+            planner->setPlannerId("CIRC");
+            planner->setMaxVelocityScalingFactor(vel_scaling);
+            planner->setMaxAccelerationScalingFactor(acc_scaling);
+            return planner;
+        }
+    );
 }
