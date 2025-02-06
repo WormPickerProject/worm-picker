@@ -14,7 +14,8 @@
 #include "worm_picker_core/system/tasks/generation/workstation_task_config.hpp"
 
 /// @brief Generator class for creating workstation-specific task sequences
-class GenerateWorkstationTaskGenerator : public GenericTaskGenerator<WorkstationData> {
+class GenerateWorkstationTaskGenerator 
+    : public GenericTaskGenerator<WorkstationData, std::pair<char,int>> {
 public:
     using TaskType = workstation_config::TaskType; 
 
@@ -32,16 +33,16 @@ protected:
     std::pair<char, int> parseName(const std::string& name) const override;
 
     /// @brief Generates a task name based on location and type
-    /// @param row_letter Row identifier (A-Z)
-    /// @param col_number Column number
+    /// @param parsed_name Row and column components of the workstation
     /// @return Full task name including prefix and location
-    std::string generateTaskName(char row_letter, int col_number) const override;
+    std::string generateTaskName(const std::pair<char,int>& parsed_name) const override;
 
     /// @brief Creates a sequence of stages for executing a task
     /// @param data Workstation data including position and orientation
-    /// @param row_letter Row identifier for angle calculations
+    /// @param parsed_name Row and column components of the workstation
     /// @return Sequence of stages comprising the task
-    StageSequence createStagesForTask(const WorkstationData& data, char row_letter) const override;
+    StageSequence createStagesForTask(const WorkstationData& data, 
+                                      const std::pair<char,int>& parsed_name) const override;
 
 private:
     /// @brief Calculates adjusted position based on workstation location

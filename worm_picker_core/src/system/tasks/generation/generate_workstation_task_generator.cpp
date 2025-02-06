@@ -18,8 +18,8 @@ std::pair<char, int> GenerateWorkstationTaskGenerator::parseName(const std::stri
     return {row_letter, col_number};
 }
 
-std::string GenerateWorkstationTaskGenerator::generateTaskName(char row_letter, 
-                                                               int col_number) const
+std::string 
+GenerateWorkstationTaskGenerator::generateTaskName(const std::pair<char,int>& parsed_name) const
 {
     const auto prefix = [this]() -> std::string {
         switch (task_type_) {
@@ -31,14 +31,14 @@ std::string GenerateWorkstationTaskGenerator::generateTaskName(char row_letter,
         }
     }();
 
-    return prefix + std::string(1, row_letter) + std::to_string(col_number);
+    return prefix + std::string(1, parsed_name.first) + std::to_string(parsed_name.second);
 }
 
 GenerateWorkstationTaskGenerator::StageSequence 
 GenerateWorkstationTaskGenerator::createStagesForTask(const WorkstationData& data, 
-                                                      char row_letter) const
+                                                      const std::pair<char,int>& parsed_name) const
 {
-    Coordinate derived_position = calculateDerivedPoint(data.getCoordinate(), row_letter);
+    Coordinate derived_position = calculateDerivedPoint(data.getCoordinate(), parsed_name.first);
     StageSequence stages{ createMoveToPointStage(derived_position) };
 
     const auto motion_params = [this]() -> std::optional<workstation_config::MovementParams> {
