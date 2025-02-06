@@ -31,20 +31,18 @@ void HotelDataParser::parseJsonFile(const std::string& file_path)
 
     for (const auto& hotel_entry : hotel_json) {
         for (const auto& [hotel_num, hotel_data] : hotel_entry["hotel"].items()) {
-            for (const auto& [floor_num, floor_data] : hotel_data["floor"].items()) {
-                for (const auto& [room_num, room_data] : floor_data["room"].items()) {
-                    const auto& coord_json = room_data["coordinate"];
-                    if (!hasInvalidValue(coord_json)) {
-                        Coordinate coord = parseCoordinate(coord_json);
-                        validRooms.emplace_back(hotel_num, floor_num, room_num, coord);
-                    }
+            for (const auto& [room_num, room_data] : hotel_data["room"].items()) {
+                const auto& coord_json = room_data["coordinate"];
+                if (!hasInvalidValue(coord_json)) {
+                    Coordinate coord = parseCoordinate(coord_json);
+                    validRooms.emplace_back(hotel_num, room_num, coord);
                 }
             }
         }
     }
 
-    for (const auto& [hotel, floor, room, coord] : validRooms) {
-        std::string key = hotel + floor + room;
+    for (const auto& [hotel_num, room_num, coord] : validRooms) {
+        const auto key = generateKey(hotel_num, room_num);
         hotel_data_map_.emplace(key, HotelData{coord});
     }
 }
@@ -73,4 +71,13 @@ Coordinate HotelDataParser::parseCoordinate(const json& coord_json) const
         coord_json["orientation_z"].get<double>(),
         coord_json["orientation_w"].get<double>()
     };
+}
+
+std::string HotelDataParser::generateKey(const std::string& hotel_num, 
+                                         const std::string& room_num) const
+{
+    int room = std::stoi(room_num);
+    std::ostringstream key;
+    key << hotel_num << std::setw(2) << std::setfill('0') << room;
+    return key.str();
 }
