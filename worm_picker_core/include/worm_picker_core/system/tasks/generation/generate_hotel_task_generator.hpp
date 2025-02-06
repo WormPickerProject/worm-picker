@@ -13,7 +13,7 @@
 #include "worm_picker_core/core/tasks/stages/move_to_point_data.hpp"
 #include "worm_picker_core/system/tasks/generation/hotel_task_config.hpp"
 
-class GenerateHotelTaskGenerator : public GenericTaskGenerator<HotelData> {
+class GenerateHotelTaskGenerator : public GenericTaskGenerator<HotelData, std::pair<int, int>> {
 public:
     using TaskType = hotel_config::TaskType;
     GenerateHotelTaskGenerator(const std::unordered_map<std::string, 
@@ -21,9 +21,10 @@ public:
                                TaskType task_type);
 
 protected:
-    std::pair<char, int> parseName(const std::string& name) const override;
-    std::string generateTaskName(char row_letter, int col_number) const override;
-    StageSequence createStagesForTask(const HotelData& data, char row_letter) const override;
+    std::pair<int, int> parseName(const std::string& name) const override;
+    std::string generateTaskName(const std::pair<int, int>& parsed_name) const override;
+    StageSequence createStagesForTask(const HotelData& data, 
+                                      const std::pair<int, int>& parsed_name) const override;
 
 private:
     Coordinate calculateDerivedPoint(const Coordinate& coord, char row_letter) const;

@@ -5,17 +5,20 @@
 
 #include "worm_picker_core/system/tasks/generation/generate_hotel_task_generator.hpp"
 
-GenerateHotelTaskGenerator::GenerateHotelTaskGenerator(const std::unordered_map<std::string, HotelData>& hotel_map, TaskType task_type)
-    : GenericTaskGenerator(hotel_map), task_type_(task_type) {}
+GenerateHotelTaskGenerator::GenerateHotelTaskGenerator(
+    const std::unordered_map<std::string, HotelData>& hotel_map, TaskType task_type)
+  : GenericTaskGenerator(hotel_map), task_type_(task_type) {}
 
-std::pair<char, int> GenerateHotelTaskGenerator::parseName(const std::string& name) const
+std::pair<int, int> GenerateHotelTaskGenerator::parseName(const std::string& name) const
 {
-    char row_letter = name[0];
-    int col_number = std::stoi(name.substr(1));
-    return {row_letter, col_number};
+    int num = std::stoi(name);
+    int hotel_number = num / 100;
+    int room_number = num % 100; 
+    return {hotel_number, room_number};
 }
 
-std::string GenerateHotelTaskGenerator::generateTaskName(char row_letter, int col_number) const
+std::string 
+GenerateHotelTaskGenerator::generateTaskName(const std::pair<int, int>& parsed_name) const
 {
     const auto prefix = [this]() -> std::string {
         switch (task_type_) {
@@ -25,18 +28,23 @@ std::string GenerateHotelTaskGenerator::generateTaskName(char row_letter, int co
         }
     }();
 
-    return prefix + std::string(1, row_letter) + std::to_string(col_number);
+    std::ostringstream key;
+    key << parsed_name.first << std::setw(2) << std::setfill('0') << parsed_name.second;
+    return prefix + key.str();
 }
 
-std::vector<std::shared_ptr<StageData>> GenerateHotelTaskGenerator::createStagesForTask(const HotelData& data, char row_letter) const
+std::vector<std::shared_ptr<StageData>> 
+GenerateHotelTaskGenerator::createStagesForTask(const HotelData& data, 
+                                                const std::pair<int, int>& parsed_name) const
 {
     // TODO: Implement the creation of stages specific to hotel tasks
     (void)data;
-    (void)row_letter;
+    (void)parsed_name;
     return std::vector<std::shared_ptr<StageData>>();
 }
 
-Coordinate GenerateHotelTaskGenerator::calculateDerivedPoint(const Coordinate& coord, char row_letter) const
+Coordinate GenerateHotelTaskGenerator::calculateDerivedPoint(const Coordinate& coord, 
+                                                             char row_letter) const
 {
     // TODO: Implement calculation specific to hotel tasks
     (void)row_letter;
@@ -49,7 +57,8 @@ Coordinate GenerateHotelTaskGenerator::calculateDerivedPoint(const Coordinate& c
             coord.getOrientationZ(), coord.getOrientationW()};
 }
 
-std::shared_ptr<StageData> GenerateHotelTaskGenerator::createMoveToPointStage(const Coordinate& coord) const
+std::shared_ptr<StageData> 
+GenerateHotelTaskGenerator::createMoveToPointStage(const Coordinate& coord) const
 {
     return std::make_shared<MoveToPointData>(
         coord.getPositionX(), coord.getPositionY(), coord.getPositionZ(),
