@@ -161,6 +161,7 @@ void TaskFactory::logTaskMap()
 
             switch (stage_type) {
                 case StageType::MOVE_TO_POINT: stage_type_str = "MOVE_TO_POINT"; break;
+                case StageType::MOVE_TO_CIRCLE: stage_type_str = "MOVE_TO_CIRCLE"; break;
                 case StageType::MOVE_TO_JOINT: stage_type_str = "MOVE_TO_JOINT"; break;
                 case StageType::MOVE_RELATIVE: stage_type_str = "MOVE_RELATIVE"; break;
                 default: stage_type_str = "UNKNOWN"; break;
@@ -201,6 +202,8 @@ void TaskFactory::logTaskMap()
                         formatVelAcc(move_to_point_data->getVelocityScalingFactor()).c_str(),
                         formatVelAcc(move_to_point_data->getAccelerationScalingFactor()).c_str());
                 }
+            } else if (stage_type == StageType::MOVE_TO_CIRCLE) {
+                // TODO: Implement logging for MOVE_TO_CIRCLE
             } else if (stage_type == StageType::MOVE_TO_JOINT) {
                 auto move_to_joint_data = std::dynamic_pointer_cast<MoveToJointData>(stage_ptr);
                 if (move_to_joint_data) {
@@ -261,6 +264,7 @@ void TaskFactory::logCreatedTask(const std::string& command, const TaskData& tas
 
         switch (stage_type) {
             case StageType::MOVE_TO_POINT: stage_type_str = "MOVE_TO_POINT"; break;
+            case StageType::MOVE_TO_CIRCLE: stage_type_str = "MOVE_TO_CIRCLE"; break;
             case StageType::MOVE_TO_JOINT: stage_type_str = "MOVE_TO_JOINT"; break;
             case StageType::MOVE_RELATIVE: stage_type_str = "MOVE_RELATIVE"; break;
             default: stage_type_str = "UNKNOWN"; break;
@@ -301,6 +305,8 @@ void TaskFactory::logCreatedTask(const std::string& command, const TaskData& tas
                     formatVelAcc(move_to_point_data->getVelocityScalingFactor()).c_str(),
                     formatVelAcc(move_to_point_data->getAccelerationScalingFactor()).c_str());
             }
+        } else if (stage_type == StageType::MOVE_TO_CIRCLE) {
+            // TODO: Implement logging for MOVE_TO_CIRCLE
         } else if (stage_type == StageType::MOVE_TO_JOINT) {
             auto move_to_joint_data = std::dynamic_pointer_cast<MoveToJointData>(stage_ptr);
             if (move_to_joint_data) {
