@@ -134,6 +134,7 @@ add_library(${PROJECT_NAME} SHARED
   src/system/management/task_manager.cpp
   src/system/nodes/plate_calibration.cpp
   src/system/nodes/worm_picker_controller.cpp
+  src/system/tasks/generation/generate_absolute_movement_task.cpp
   src/system/tasks/generation/generate_hotel_task_generator.cpp
   src/system/tasks/generation/generate_relative_movement_task.cpp
   src/system/tasks/generation/generate_workstation_task_generator.cpp

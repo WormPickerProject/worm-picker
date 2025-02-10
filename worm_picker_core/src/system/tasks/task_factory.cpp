@@ -5,6 +5,7 @@
 
 #include "worm_picker_core/system/tasks/task_generator.hpp"
 #include "worm_picker_core/system/tasks/generation/generate_relative_movement_task.hpp"
+#include "worm_picker_core/system/tasks/generation/generate_absolute_movement_task.hpp"
 #include "worm_picker_core/system/tasks/task_factory.hpp"
 #include "worm_picker_core/infrastructure/parsers/defined_tasks_parser.hpp"
 #include "worm_picker_core/core/tasks/stages/move_relative_data.hpp"
@@ -100,6 +101,9 @@ Result<TaskData> TaskFactory::fetchTaskData(const CommandInfo& info)
     auto fetchedTask = [&]() -> Result<TaskData> {
         if (info.getBaseCommand() == "moveRelative") {
             return GenerateRelativeMovementTask::parseCommand(info.getArgs());
+        } else if (info.getBaseCommand() == "moveAbsolutePos" ||
+                   info.getBaseCommand() == "moveAbsolutePose") {
+            return GenerateAbsoluteMovementTask::parseCommand(node_, info);
         }
         auto it = task_data_map_.find(info.getBaseCommandKey());
         if (it == task_data_map_.end()) {
