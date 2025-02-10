@@ -12,7 +12,7 @@ MoveToPointData::MoveToPointData()
   : MovementDataBase(0.1, 0.1) {}
 
 MoveToPointData::MoveToPointData(double px, double py, double pz,
-                                 double vel_scaling = 0.1, double acc_scaling = 0.1)
+                                 double vel_scaling, double acc_scaling)
   : MovementDataBase(vel_scaling, acc_scaling),
     x_(px), y_(py), z_(pz),
     has_orientation_(false) {}
@@ -50,7 +50,7 @@ void MoveToPointData::configureStageImpl(Stage& stage, const NodePtr& node) cons
     setCommonInfo(move_to_stage, node);
 }
 
-const geometry_msgs::msg::PoseStamped& MoveToPointData::createPoseGoal(const NodePtr& node) const 
+geometry_msgs::msg::PoseStamped MoveToPointData::createPoseGoal(const NodePtr& node) const 
 {
     geometry_msgs::msg::PoseStamped target_pose;
     target_pose.header.frame_id = "base_link";
@@ -65,7 +65,7 @@ const geometry_msgs::msg::PoseStamped& MoveToPointData::createPoseGoal(const Nod
     return target_pose;
 }
 
-const geometry_msgs::msg::PoseStamped& MoveToPointData::createPointGoal(const NodePtr& node) const 
+ geometry_msgs::msg::PoseStamped MoveToPointData::createPointGoal(const NodePtr& node) const 
 {
     geometry_msgs::msg::PoseStamped target_point;
     target_point.header.frame_id = "base_link";

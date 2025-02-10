@@ -141,6 +141,7 @@ add_library(${PROJECT_NAME} SHARED
   src/system/tasks/task_factory.cpp
   src/system/tasks/task_generator.cpp
   src/system/tasks/task_validator.cpp
+  src/utils/circular_motion_utils.cpp
   src/utils/execution_timer.cpp
   src/utils/scoped_timer.cpp
   src/utils/timer_data_collector.cpp

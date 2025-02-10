@@ -36,8 +36,8 @@ protected:
     void configureStageImpl(Stage& stage, const NodePtr& node) const override;
 
 private:
-    const geometry_msgs::msg::PoseStamped& createPoseGoal(const NodePtr& node) const;
-    const geometry_msgs::msg::PoseStamped& createPointGoal(const NodePtr& node) const; 
+    geometry_msgs::msg::PoseStamped createPoseGoal(const NodePtr& node) const;
+    geometry_msgs::msg::PoseStamped createPointGoal(const NodePtr& node) const; 
 
     double x_{};
     double y_{};

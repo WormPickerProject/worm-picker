@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include <geometry_msgs/msg/pose_stamped.hpp>
 #include "worm_picker_core/core/tasks/stages/movement_data_base.hpp"
 
 class MoveToPointData : public MovementDataBase {
@@ -32,8 +33,8 @@ protected:
     void configureStageImpl(Stage& stage, const NodePtr& node) const override;
 
 private:
-    const geometry_msgs::msg::PoseStamped& createPoseGoal(const NodePtr& node) const;
-    const geometry_msgs::msg::PoseStamped& createPointGoal(const NodePtr& node) const; 
+    geometry_msgs::msg::PoseStamped createPoseGoal(const NodePtr& node) const;
+    geometry_msgs::msg::PoseStamped createPointGoal(const NodePtr& node) const; 
 
     double x_{};
     double y_{};
