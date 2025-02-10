@@ -11,6 +11,8 @@ class MoveToPointData : public MovementDataBase {
 public:
     MoveToPointData();
     MoveToPointData(double px, double py, double pz,
+                    double vel_scaling = 0.1, double acc_scaling = 0.1);
+    MoveToPointData(double px, double py, double pz,
                     double ox, double oy, double oz, double ow,
                     double vel_scaling = 0.1, double acc_scaling = 0.1);
 
@@ -30,6 +32,9 @@ protected:
     void configureStageImpl(Stage& stage, const NodePtr& node) const override;
 
 private:
+    const geometry_msgs::msg::PoseStamped& createPoseGoal(const NodePtr& node) const;
+    const geometry_msgs::msg::PoseStamped& createPointGoal(const NodePtr& node) const; 
+
     double x_{};
     double y_{};
     double z_{};
@@ -37,4 +42,5 @@ private:
     double qy_{};
     double qz_{};
     double qw_{};
+    bool has_orientation_{false};
 };

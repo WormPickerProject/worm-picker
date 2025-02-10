@@ -49,7 +49,9 @@ parameters:
     one_arg: ["pickPlateWorkStation", "placePlateWorkStation", "swapEndFactor", "hoverWormPick",
               "moveToPoint"]
     two_arg: []
-    three_arg: ["moveRelative", "moveAbsolute"]
+    three_arg: ["moveRelative"]
+    four_arg: ["moveAbsolutePos"]
+    eight_arg: ["moveAbsolutePose"]
     variable_arg: ["moveRelative"]
 
   planners:   

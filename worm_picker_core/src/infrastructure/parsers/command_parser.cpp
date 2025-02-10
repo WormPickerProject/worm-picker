@@ -19,7 +19,9 @@ void CommandParser::initCommandParser(const NodePtr& node)
         std::make_shared<VariableArgConfig>(node),
         std::make_shared<ZeroArgConfig>(node),
         std::make_shared<OneArgConfig>(node),
-        std::make_shared<ThreeArgConfig>(node)
+        std::make_shared<ThreeArgConfig>(node),
+        std::make_shared<FourArgConfig>(node),
+        std::make_shared<EightArgConfig>(node)
     };
 }
 
