@@ -5,8 +5,6 @@
 
 #include <fmt/format.h>
 #include "worm_picker_core/utils/circular_motion_utils.hpp"
-#include "worm_picker_core/core/tasks/stages/move_to_point_data.hpp"
-#include "worm_picker_core/core/tasks/stages/move_to_circle_data.hpp"
 #include "worm_picker_core/system/tasks/generation/generate_absolute_movement_task.hpp"
 
 Result<TaskData> GenerateAbsoluteMovementTask::parseCommand(const NodePtr& node, 
@@ -22,9 +20,17 @@ Result<TaskData> GenerateAbsoluteMovementTask::parseCommand(const NodePtr& node,
     if (!motion_result) {
         return Result<TaskData>::error(motion_result.error());
     }
-    auto motion_type = motion_result.value();
+    auto [motion_type] = motion_result.value();
 
+    auto stage_result = createStage(pose, motion_type, node, info.getBaseArgsAmount());
+    if (!stage_result) {
+        return Result<TaskData>::error(stage_result.error());
+    }
+    TaskData::StageVector stages;
+    stages.push_back(stage_result.value());
 
+    TaskData task_data(stages);
+    return Result<TaskData>::success(task_data);
 }
 
 Result<geometry_msgs::msg::PoseStamped>
@@ -119,17 +125,22 @@ Result<double> GenerateAbsoluteMovementTask::parseDouble(const std::string& valu
     }
 }
 
-Result<std::string> GenerateAbsoluteMovementTask::parseMotionType(const CommandInfo& info) 
+Result<std::tuple<std::string>> 
+GenerateAbsoluteMovementTask::parseMotionType(const CommandInfo& info) 
 {
-    using StringResult = Result<std::string>;
+    // TODO: The use of this tuple is needed because of a type deduction issue with Result<T>. 
+    //       This is because in Result<E>::error() the type E is a std::string and if we try to 
+    //       asign a std::string to Result::success() it will cause the compiler to get confused. 
+    //       This should be fixed in the future by allowing Result to have type T as a std:string. 
+    using WrappedStringResult = Result<std::tuple<std::string>>;
     const auto& args = info.getArgs();
     const size_t base_args = info.getBaseArgsAmount();
     
     if (args.empty()) {
-        return StringResult::error("No arguments provided");
+        return WrappedStringResult::error("No arguments provided");
     }
     if (args.size() < base_args) {
-        return StringResult::error(
+        return WrappedStringResult::error(
             fmt::format("Expected {} arguments, got {}", base_args, args.size()));
     }
     
@@ -137,40 +148,45 @@ Result<std::string> GenerateAbsoluteMovementTask::parseMotionType(const CommandI
     const std::array<std::string_view, 2> valid_types = {"LIN", "CIRC"};
     if (!std::any_of(valid_types.begin(), valid_types.end(), 
                      [&](const auto& type) { return type == motion_type; })) {
-        return StringResult::error(fmt::format("Invalid motion type: '{}'", motion_type));
+        return WrappedStringResult::error(fmt::format("Invalid motion type: '{}'", motion_type));
     }
     
-    return StringResult::success(motion_type);
+    return WrappedStringResult::success(std::make_tuple(motion_type));
 }
 
 Result<std::shared_ptr<StageData>> GenerateAbsoluteMovementTask::createStage(
     const geometry_msgs::msg::PoseStamped& pose,
     const std::string& motion_type,
-    const NodePtr& node, 
+    [[maybe_unused]] const NodePtr& node, 
     size_t base_args)
 {
+    using StageResult = Result<std::shared_ptr<StageData>>;
     if (motion_type == "LIN") {
-        geometry_msgs::msg::PoseStamped modified_pose = pose;
-        // For a "pos" command (base_args == 4), there is no orientation;
-        // assign an identity quaternion.
-        if (base_args == 4) {
-            modified_pose.pose.orientation.x = 0.0;
-            modified_pose.pose.orientation.y = 0.0;
-            modified_pose.pose.orientation.z = 0.0;
-            modified_pose.pose.orientation.w = 1.0;
-        }
-        auto stage = std::make_shared<MoveToPointData>(
-            modified_pose.pose.position.x,
-            modified_pose.pose.position.y,
-            modified_pose.pose.position.z,
-            modified_pose.pose.orientation.x,
-            modified_pose.pose.orientation.y,
-            modified_pose.pose.orientation.z,
-            modified_pose.pose.orientation.w);
+        auto stage = createPointStage(pose, base_args);
+        return StageResult::success(stage);
+    }
+    if (motion_type == "CIRC") {
+        auto stage = createCircleStage(pose, base_args);
+        
+        // For now, use a placeholder to set the circular constraint.
+        auto constraint = circular_motion::makeCenterConstraint(pose);
+
+        stage->setCircularConstraint(constraint);
         return Result<std::shared_ptr<StageData>>::success(stage);
     }
-    else if (motion_type == "CIRC") {
-        auto stage = std::make_shared<MoveToCircleData>(
+    return StageResult::error("Unknown error occurred: GenerateAbsoluteMovementTask::createStage");
+}
+
+std::shared_ptr<MoveToPointData>
+GenerateAbsoluteMovementTask::createPointStage(const geometry_msgs::msg::PoseStamped& pose, 
+                                               size_t base_args)
+{
+    return base_args == 4 ?
+        std::make_shared<MoveToPointData>(
+            pose.pose.position.x,
+            pose.pose.position.y,
+            pose.pose.position.z) :
+        std::make_shared<MoveToPointData>(
             pose.pose.position.x,
             pose.pose.position.y,
             pose.pose.position.z,
@@ -178,12 +194,23 @@ Result<std::shared_ptr<StageData>> GenerateAbsoluteMovementTask::createStage(
             pose.pose.orientation.y,
             pose.pose.orientation.z,
             pose.pose.orientation.w);
-        
-        // For now, use a placeholder to set the circular constraint.
-        auto constraint = circular_motion::makeCenterConstraint(pose);
-        stage->setCircularConstraint(constraint);
-        return Result<std::shared_ptr<StageData>>::success(stage);
-    }
-    return Result<std::shared_ptr<StageData>>::error(
-        fmt::format("Unknown motion type: {}", motion_type));
+}
+
+std::shared_ptr<MoveToCircleData>
+GenerateAbsoluteMovementTask::createCircleStage(const geometry_msgs::msg::PoseStamped& pose, 
+                                                size_t base_args)
+{
+    return base_args == 4 ?
+        std::make_shared<MoveToCircleData>(
+            pose.pose.position.x,
+            pose.pose.position.y,
+            pose.pose.position.z) :
+        std::make_shared<MoveToCircleData>(
+            pose.pose.position.x,
+            pose.pose.position.y,
+            pose.pose.position.z,
+            pose.pose.orientation.x,
+            pose.pose.orientation.y,
+            pose.pose.orientation.z,
+            pose.pose.orientation.w);
 }

@@ -22,7 +22,7 @@ public:
     const std::vector<std::string>& getArgs() const;
     const SpeedOverrideOpt& getSpeedOverride() const;
     const std::string& getBaseCommandKey() const;
-    const size_t getBaseArgsAmount() const;
+    size_t getBaseArgsAmount() const;
     
     void setBaseCommand(const std::string& command);
     void setArgs(const std::vector<std::string>& args);

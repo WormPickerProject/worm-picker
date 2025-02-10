@@ -48,7 +48,7 @@ const CommandInfo::SpeedOverrideOpt& CommandInfo::getSpeedOverride() const
     return speed_override_; 
 }
 
-const size_t CommandInfo::getBaseArgsAmount() const 
+size_t CommandInfo::getBaseArgsAmount() const 
 { 
     return base_args_amount_; 
 }
