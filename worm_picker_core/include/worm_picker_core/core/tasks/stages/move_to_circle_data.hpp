@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include <moveit_msgs/msg/constraints.hpp>
 #include "worm_picker_core/core/tasks/stages/movement_data_base.hpp"
 #include "worm_picker_core/core/tasks/stages/circular_constraint.hpp"
 
@@ -36,6 +37,7 @@ protected:
     void configureStageImpl(Stage& stage, const NodePtr& node) const override;
 
 private:
+    moveit_msgs::msg::Constraints createCircularPathConstraints(const NodePtr& node) const;
     geometry_msgs::msg::PoseStamped createPoseGoal(const NodePtr& node) const;
     geometry_msgs::msg::PoseStamped createPointGoal(const NodePtr& node) const; 
 

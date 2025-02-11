@@ -34,6 +34,7 @@ parameters:
     max_retries: 10
     planning_attempts: 20
     planning_scene_queue_size: 5
+    circ_traj_height_scaler: 0.5
 
   validation:
     pos_tol: 0.001
@@ -60,6 +61,14 @@ parameters:
       backup: "cartesian"
       configs:
         pilz:
+        cartesian:
+          step_size: 0.01
+          min_fraction: 0.00
+    move_to_circle:
+      primary: "pilz_circ"
+      backup: "cartesian"
+      configs:
+        pilz_circ:
         cartesian:
           step_size: 0.01
           min_fraction: 0.00

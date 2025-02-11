@@ -310,7 +310,25 @@ void TaskFactory::logCreatedTask(const std::string& command, const TaskData& tas
                     formatVelAcc(move_to_point_data->getAccelerationScalingFactor()).c_str());
             }
         } else if (stage_type == StageType::MOVE_TO_CIRCLE) {
-            // TODO: Implement logging for MOVE_TO_CIRCLE
+            auto move_to_circle_data = std::dynamic_pointer_cast<MoveToCircleData>(stage_ptr);
+            if (move_to_circle_data) {
+                RCLCPP_INFO(logger, "*   [Stage %d] %s: Pos(%s, %s, %s)",
+                    stage_number,
+                    stage_type_str.c_str(),
+                    formatNumber(move_to_circle_data->getX()).c_str(),
+                    formatNumber(move_to_circle_data->getY()).c_str(),
+                    formatNumber(move_to_circle_data->getZ()).c_str());
+                RCLCPP_INFO(logger, "*%sOri(%s, %s, %s, %s)",
+                    continuation_indent.c_str(),
+                    formatNumber(move_to_circle_data->getQX()).c_str(),
+                    formatNumber(move_to_circle_data->getQY()).c_str(),
+                    formatNumber(move_to_circle_data->getQZ()).c_str(),
+                    formatNumber(move_to_circle_data->getQW()).c_str());
+                RCLCPP_INFO(logger, "*%sVel: %s; Acc: %s",
+                    continuation_indent.c_str(),
+                    formatVelAcc(move_to_circle_data->getVelocityScalingFactor()).c_str(),
+                    formatVelAcc(move_to_circle_data->getAccelerationScalingFactor()).c_str());
+            }
         } else if (stage_type == StageType::MOVE_TO_JOINT) {
             auto move_to_joint_data = std::dynamic_pointer_cast<MoveToJointData>(stage_ptr);
             if (move_to_joint_data) {

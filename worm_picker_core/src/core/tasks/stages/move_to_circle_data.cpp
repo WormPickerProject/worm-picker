@@ -46,21 +46,31 @@ MoveToCircleData::createStageInstanceImpl(const std::string& name,
 
 void MoveToCircleData::configureStageImpl(Stage& stage, const NodePtr& node) const 
 {
-    using PoseStamped = geometry_msgs::msg::PoseStamped;
-    using CircConfig = std::unordered_map<CircularMotionType, std::pair<std::string, std::string>>;
-
-    const CircConfig CIRC_CONFIG = {
-        {CircularMotionType::CENTER, {"center", "circ_center"}},
-        {CircularMotionType::INTERIM, {"interim", "circ_interim"}}
-    };
-    auto [type_str, pose_key] = CIRC_CONFIG.at(getCircularConstraint().type);
-
     auto& move_to_stage = dynamic_cast<moveit::task_constructor::stages::MoveTo&>(stage);
-    move_to_stage.properties().set<std::string>("circ_type", type_str);
-    move_to_stage.properties().set<PoseStamped>(pose_key, getCircularConstraint().aux_pose);
+
+    auto path_constraints = createCircularPathConstraints(node);
+    move_to_stage.setPathConstraints(path_constraints);
   
     move_to_stage.setGoal(has_orientation_ ? createPoseGoal(node) : createPointGoal(node));
     setCommonInfo(move_to_stage, node);
+}
+
+moveit_msgs::msg::Constraints 
+MoveToCircleData::createCircularPathConstraints(const NodePtr& node) const 
+{
+    moveit_msgs::msg::PositionConstraint aux_point;
+    aux_point.header.frame_id = getCircularConstraint().aux_pose.header.frame_id;
+    aux_point.link_name = *param_utils::getParameter<std::string>(
+        node, "end_effectors.current_factor");
+    aux_point.weight = 1.0;
+    aux_point.constraint_region.primitive_poses = {getCircularConstraint().aux_pose.pose};
+
+    moveit_msgs::msg::Constraints path_constraints;
+    path_constraints.name = (getCircularConstraint().type == CircularMotionType::CENTER) 
+        ? "center" : "interim";
+    path_constraints.position_constraints = {aux_point};
+
+    return path_constraints;
 }
 
 geometry_msgs::msg::PoseStamped MoveToCircleData::createPoseGoal(const NodePtr& node) const 
@@ -99,7 +109,7 @@ const CircularConstraint& MoveToCircleData::getCircularConstraint() const
 
 std::unique_ptr<StageData> 
 MoveToCircleData::clone() const { return std::make_unique<MoveToCircleData>(*this); }
-StageType MoveToCircleData::getType() const { return StageType::MOVE_TO_POINT; }
+StageType MoveToCircleData::getType() const { return StageType::MOVE_TO_CIRCLE; }
 void MoveToCircleData::setCircularConstraint(const CircularConstraint& c) { circ_ = c; }
 double MoveToCircleData::getX() const { return x_; }
 double MoveToCircleData::getY() const { return y_; }
