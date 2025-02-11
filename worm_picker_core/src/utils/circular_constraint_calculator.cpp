@@ -28,32 +28,106 @@ CircularConstraintCalculator::findRobustReference(const Eigen::Vector3d& chord_d
     return best_reference;
 }
   
+// Eigen::Vector3d CircularConstraintCalculator::computeConsistentPerpendicular(
+//     const Eigen::Vector3d& chord_direction,
+//     const Eigen::Vector3d& plane_normal,
+//     const Eigen::Vector3d& start_pos)
+// {
+//     // Compute the perpendicular as the cross product of the plane normal and chord direction.
+//     Eigen::Vector3d perpendicular = plane_normal.cross(chord_direction);
+//     perpendicular.normalize();
+
+//     // Use a reference direction based on the global up vector.
+//     Eigen::Vector3d global_up(0, 0, 1);
+//     Eigen::Vector3d reference_dir = global_up.cross(chord_direction);
+//     Eigen::Vector3d neg_reference_dir = global_up.cross(-chord_direction);
+
+//     ///////////////////////////
+//     auto logger = rclcpp::get_logger("TaskFactory");
+//     RCLCPP_INFO(logger, "Reference direction: (%f, %f, %f)", 
+//         reference_dir.x(), reference_dir.y(), reference_dir.z());
+//     RCLCPP_INFO(logger, "Negative reference direction: (%f, %f, %f)",
+//         neg_reference_dir.x(), neg_reference_dir.y(), neg_reference_dir.z());
+//     ///////////////////////////
+
+//     if (reference_dir.norm() < 1e-6) {
+//         // For near vertical movements, use the horizontal component of start.
+//         Eigen::Vector3d horizontal_start(start_pos.x(), start_pos.y(), 0);
+//         if (horizontal_start.norm() > 1e-6) {
+//             reference_dir = horizontal_start.normalized();
+//         } else {
+//             reference_dir = Eigen::Vector3d(1, 0, 0);
+//         }
+//     }
+
+//     if (perpendicular.dot(reference_dir) < 0) {
+//         perpendicular = -perpendicular;
+//     }
+
+//     return perpendicular;
+// }
+
 Eigen::Vector3d CircularConstraintCalculator::computeConsistentPerpendicular(
     const Eigen::Vector3d& chord_direction,
     const Eigen::Vector3d& plane_normal,
     const Eigen::Vector3d& start_pos)
 {
-    // Compute the perpendicular as the cross product of the plane normal and chord direction.
-    Eigen::Vector3d perpendicular = plane_normal.cross(chord_direction);
-    perpendicular.normalize();
+    // Define a strict epsilon for floating point comparisons
+    const double EPSILON = 1e-10;  // Stricter than default epsilon
 
-    // Use a reference direction based on the global up vector.
-    Eigen::Vector3d global_up(0, 0, 1);
-    Eigen::Vector3d reference_dir = global_up.cross(chord_direction);
-
-    if (reference_dir.norm() < 1e-6) {
-        // For near vertical movements, use the horizontal component of start.
-        Eigen::Vector3d horizontal_start(start_pos.x(), start_pos.y(), 0);
-        if (horizontal_start.norm() > 1e-6) {
-            reference_dir = horizontal_start.normalized();
-        } else {
-            reference_dir = Eigen::Vector3d(1, 0, 0);
-        }
+    // Ensure input vectors are properly normalized
+    Eigen::Vector3d chord_dir = chord_direction;
+    Eigen::Vector3d plane_norm = plane_normal;
+    
+    if (std::abs(chord_dir.norm() - 1.0) > EPSILON) {
+        chord_dir.normalize();
+    }
+    if (std::abs(plane_norm.norm() - 1.0) > EPSILON) {
+        plane_norm.normalize();
     }
 
-    if (perpendicular.dot(reference_dir) < 0) {
+    // Compute initial perpendicular
+    Eigen::Vector3d perpendicular = plane_norm.cross(chord_dir);
+    
+    // Check if perpendicular is well-defined
+    double perp_norm = perpendicular.norm();
+    if (perp_norm < EPSILON) {
+        // Vectors are nearly parallel, choose a robust fallback
+        Eigen::Vector3d global_up(0, 0, 1);
+        double up_alignment = std::abs(chord_dir.dot(global_up));
+        
+        if (up_alignment > 1.0 - EPSILON) {
+            // Nearly vertical, use X axis as reference
+            perpendicular = Eigen::Vector3d(1, 0, 0);
+        } else {
+            // Use cross product with global up
+            perpendicular = global_up.cross(chord_dir);
+            perpendicular.normalize();
+        }
+    } else {
+        perpendicular /= perp_norm;  // More precise than normalize() for small values
+    }
+
+    // Ensure consistent orientation using deterministic comparison
+    Eigen::Vector3d global_up(0, 0, 1);
+    double z_component = perpendicular.z();
+    
+    // Use strict comparison with zero
+    if (std::abs(z_component) < EPSILON) {
+        // If perpendicular is horizontal, use start position as reference
+        Eigen::Vector3d start_horizontal(start_pos.x(), start_pos.y(), 0);
+        if (start_horizontal.norm() > EPSILON) {
+            if (perpendicular.dot(start_horizontal) < 0) {
+                perpendicular = -perpendicular;
+            }
+        }
+    } else if (z_component < 0) {
         perpendicular = -perpendicular;
     }
+
+    // Final sanity check
+    assert(std::abs(perpendicular.norm() - 1.0) < EPSILON);
+    assert(std::abs(perpendicular.dot(chord_dir)) < EPSILON);
 
     return perpendicular;
 }
