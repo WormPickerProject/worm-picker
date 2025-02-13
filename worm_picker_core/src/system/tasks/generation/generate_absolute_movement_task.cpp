@@ -164,7 +164,7 @@ GenerateAbsoluteMovementTask::createStage(const Pose& goal_pose, const std::stri
     using StageResult = Result<std::shared_ptr<StageData>>;
     if (motion_type == "LIN") {
         ////////////////////////////////
-        auto logger = rclcpp::get_logger("TaskFactory");
+        auto logger = rclcpp::get_logger("GenerateAbsoluteMovementTask");
         RCLCPP_INFO(logger, "Creating Absolute LIN stage");
         ////////////////////////////////
         auto stage = createPointStage(goal_pose, base_args);
@@ -172,7 +172,7 @@ GenerateAbsoluteMovementTask::createStage(const Pose& goal_pose, const std::stri
     }
     if (motion_type == "CIRC") {
         ////////////////////////////////
-        auto logger = rclcpp::get_logger("TaskFactory");
+        auto logger = rclcpp::get_logger("GenerateAbsoluteMovementTask");
         RCLCPP_INFO(logger, "Creating Absolute CIRC stage");
         ////////////////////////////////
         auto stage = createCircleStage(goal_pose, base_args);
