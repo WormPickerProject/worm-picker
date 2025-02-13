@@ -9,6 +9,10 @@
 Eigen::Vector3d 
 CircularConstraintCalculator::findRobustReference(const Eigen::Vector3d& chord_direction)
 {
+    auto logger = rclcpp::get_logger("findRobustReference");
+    RCLCPP_INFO(logger, "Chord direction: [%.3f, %.3f, %.3f]", 
+                chord_direction.x(), chord_direction.y(), chord_direction.z());
+
     Eigen::Vector3d candidates[3] = {
         Eigen::Vector3d(1, 0, 0),
         Eigen::Vector3d(0, 1, 0),
@@ -20,11 +24,19 @@ CircularConstraintCalculator::findRobustReference(const Eigen::Vector3d& chord_d
 
     for (const auto& candidate : candidates) {
         double alignment = std::abs(chord_direction.dot(candidate));
-        if (alignment < min_alignment) {
-            min_alignment = alignment;
-            best_reference = candidate;
+        if (alignment < min_alignment + 1e-2) {
+            // Prefer Z axis over Y axis over X axis
+            if (candidate.z() > best_reference.z() ||
+                (candidate.z() == best_reference.z() && candidate.y() > best_reference.y())) {
+                min_alignment = alignment;
+                best_reference = candidate;
+            }
         }
     }
+
+    RCLCPP_INFO(logger, "Selected reference: [%.3f, %.3f, %.3f]", 
+        best_reference.x(), best_reference.y(), best_reference.z());
+
     return best_reference;
 }
   
@@ -72,58 +84,81 @@ Eigen::Vector3d CircularConstraintCalculator::computeConsistentPerpendicular(
     const Eigen::Vector3d& plane_normal,
     const Eigen::Vector3d& start_pos)
 {
-    // Define a strict epsilon for floating point comparisons
-    const double EPSILON = 1e-10;  // Stricter than default epsilon
+    auto logger = rclcpp::get_logger("computeConsistentPerpendicular");
+    RCLCPP_INFO(logger, "Input vectors:");
+    RCLCPP_INFO(logger, "  chord_direction: [%.6f, %.6f, %.6f]", 
+                chord_direction.x(), chord_direction.y(), chord_direction.z());
+    RCLCPP_INFO(logger, "  plane_normal: [%.6f, %.6f, %.6f]", 
+                plane_normal.x(), plane_normal.y(), plane_normal.z());
+    RCLCPP_INFO(logger, "  start_pos: [%.6f, %.6f, %.6f]", 
+                start_pos.x(), start_pos.y(), start_pos.z());
+
+    const double EPSILON = 1e-10;
 
     // Ensure input vectors are properly normalized
     Eigen::Vector3d chord_dir = chord_direction;
     Eigen::Vector3d plane_norm = plane_normal;
     
     if (std::abs(chord_dir.norm() - 1.0) > EPSILON) {
+        RCLCPP_INFO(logger, "Normalizing chord_dir (norm: %.6f)", chord_dir.norm());
         chord_dir.normalize();
     }
     if (std::abs(plane_norm.norm() - 1.0) > EPSILON) {
+        RCLCPP_INFO(logger, "Normalizing plane_norm (norm: %.6f)", plane_norm.norm());
         plane_norm.normalize();
     }
 
     // Compute initial perpendicular
     Eigen::Vector3d perpendicular = plane_norm.cross(chord_dir);
+    RCLCPP_INFO(logger, "Initial perpendicular: [%.6f, %.6f, %.6f]", 
+                perpendicular.x(), perpendicular.y(), perpendicular.z());
     
     // Check if perpendicular is well-defined
     double perp_norm = perpendicular.norm();
+    RCLCPP_INFO(logger, "Perpendicular norm: %.6f", perp_norm);
+
     if (perp_norm < EPSILON) {
-        // Vectors are nearly parallel, choose a robust fallback
+        RCLCPP_INFO(logger, "Vectors nearly parallel, using fallback");
         Eigen::Vector3d global_up(0, 0, 1);
         double up_alignment = std::abs(chord_dir.dot(global_up));
+        RCLCPP_INFO(logger, "Up alignment: %.6f", up_alignment);
         
         if (up_alignment > 1.0 - EPSILON) {
-            // Nearly vertical, use X axis as reference
+            RCLCPP_INFO(logger, "Nearly vertical, using X axis as reference");
             perpendicular = Eigen::Vector3d(1, 0, 0);
         } else {
-            // Use cross product with global up
+            RCLCPP_INFO(logger, "Using cross product with global up");
             perpendicular = global_up.cross(chord_dir);
             perpendicular.normalize();
         }
     } else {
-        perpendicular /= perp_norm;  // More precise than normalize() for small values
+        perpendicular /= perp_norm;
     }
 
-    // Ensure consistent orientation using deterministic comparison
+    RCLCPP_INFO(logger, "Perpendicular after normalization: [%.6f, %.6f, %.6f]", 
+                perpendicular.x(), perpendicular.y(), perpendicular.z());
+
+    // Ensure consistent orientation
     Eigen::Vector3d global_up(0, 0, 1);
     double z_component = perpendicular.z();
+    RCLCPP_INFO(logger, "Z component: %.6f", z_component);
     
-    // Use strict comparison with zero
     if (std::abs(z_component) < EPSILON) {
-        // If perpendicular is horizontal, use start position as reference
+        RCLCPP_INFO(logger, "Perpendicular is horizontal, using start position as reference");
         Eigen::Vector3d start_horizontal(start_pos.x(), start_pos.y(), 0);
         if (start_horizontal.norm() > EPSILON) {
             if (perpendicular.dot(start_horizontal) < 0) {
+                RCLCPP_INFO(logger, "Flipping perpendicular based on start position");
                 perpendicular = -perpendicular;
             }
         }
     } else if (z_component < 0) {
+        RCLCPP_INFO(logger, "Flipping perpendicular due to negative Z");
         perpendicular = -perpendicular;
     }
+
+    RCLCPP_INFO(logger, "Final perpendicular: [%.6f, %.6f, %.6f]", 
+                perpendicular.x(), perpendicular.y(), perpendicular.z());
 
     // Final sanity check
     assert(std::abs(perpendicular.norm() - 1.0) < EPSILON);
@@ -139,45 +174,78 @@ void CircularConstraintCalculator::computeConstraintPositionAndPerpendicular(
     Eigen::Vector3d &constraint_pos,
     Eigen::Vector3d &perpendicular)
 {
-    // Compute chord vector and its length.
+    auto logger = rclcpp::get_logger("computeConstraintPosition");
+    RCLCPP_INFO(logger, "Computing constraint for movement:");
+    RCLCPP_INFO(logger, "  Start: [%.3f, %.3f, %.3f]", 
+                start_pos.x(), start_pos.y(), start_pos.z());
+    RCLCPP_INFO(logger, "  Goal:  [%.3f, %.3f, %.3f]", 
+                goal_pos.x(), goal_pos.y(), goal_pos.z());
+
+    // Compute chord vector and its length
     Eigen::Vector3d chord = goal_pos - start_pos;
     double chord_length = chord.norm();
     if (chord_length < 1e-6) {
+        RCLCPP_ERROR(logger, "Start and Goal positions are too close together (distance: %.6f)", 
+                     chord_length);
         throw std::runtime_error("Start and Goal positions are too close together");
     }
-    Eigen::Vector3d chord_direction = chord.normalized();
-    
-    // Find a robust reference vector.
-    Eigen::Vector3d reference_vector = findRobustReference(chord_direction);
 
-    // Compute the plane normal.
+    Eigen::Vector3d chord_direction = chord.normalized();
+    RCLCPP_INFO(logger, "Chord direction: [%.3f, %.3f, %.3f] (length: %.3f)", 
+                chord_direction.x(), chord_direction.y(), chord_direction.z(), chord_length);
+    
+    // Find a robust reference vector
+    Eigen::Vector3d reference_vector = findRobustReference(chord_direction);
+    RCLCPP_INFO(logger, "Reference vector: [%.3f, %.3f, %.3f]", 
+                reference_vector.x(), reference_vector.y(), reference_vector.z());
+
+    // Compute the plane normal
     Eigen::Vector3d plane_normal = chord_direction.cross(reference_vector);
     plane_normal.normalize();
+    RCLCPP_INFO(logger, "Plane normal: [%.3f, %.3f, %.3f]", 
+                plane_normal.x(), plane_normal.y(), plane_normal.z());
 
-    // Compute a consistent perpendicular.
-    perpendicular = 
-        computeConsistentPerpendicular(chord_direction, plane_normal, start_pos);
+    // Compute a consistent perpendicular
+    perpendicular = computeConsistentPerpendicular(chord_direction, plane_normal, start_pos);
+    RCLCPP_INFO(logger, "Initial perpendicular: [%.3f, %.3f, %.3f]", 
+                perpendicular.x(), perpendicular.y(), perpendicular.z());
     
-    // Scale the perpendicular by the chord length.
+    // Scale the perpendicular by the chord length
     const auto scale = *param_utils::getParameter<double>(node, "settings.circ_traj_height_scaler"); 
     perpendicular *= (chord_length * scale / 2.0);
+    RCLCPP_INFO(logger, "Scaled perpendicular (scale: %.3f): [%.3f, %.3f, %.3f]", 
+                scale, perpendicular.x(), perpendicular.y(), perpendicular.z());
 
-    // Special handling for near-vertical movements.
+    // Special handling for near-vertical movements
     Eigen::Vector3d vertical_dir(0, 0, 1);
     if (chord_direction.isApprox(vertical_dir, 1e-6) ||
         chord_direction.isApprox(-vertical_dir, 1e-6)) {
+        RCLCPP_INFO(logger, "Detected near-vertical movement");
+        
         Eigen::Vector3d horizontal_start(start_pos.x(), start_pos.y(), 0);
-        if (horizontal_start.norm() > 1e-6) {
+        double horiz_norm = horizontal_start.norm();
+        RCLCPP_INFO(logger, "Horizontal start norm: %.6f", horiz_norm);
+        
+        if (horiz_norm > 1e-6) {
+            RCLCPP_INFO(logger, "Using horizontal start direction");
             perpendicular = horizontal_start.normalized() * (chord_length * scale / 2.0);
         } else {
+            RCLCPP_INFO(logger, "Using default X-axis direction");
             perpendicular = Eigen::Vector3d(1, 0, 0) * (chord_length * scale / 2.0);
         }
+        RCLCPP_INFO(logger, "Adjusted perpendicular: [%.3f, %.3f, %.3f]", 
+                    perpendicular.x(), perpendicular.y(), perpendicular.z());
     }
     
-    // Compute the midpoint between start and goal.
+    // Compute the midpoint and final constraint position
     Eigen::Vector3d midpoint = (start_pos + goal_pos) / 2.0;
-    // Final constraint position is the midpoint offset by the perpendicular.
     constraint_pos = midpoint + perpendicular;
+    
+    RCLCPP_INFO(logger, "Final positions:");
+    RCLCPP_INFO(logger, "  Midpoint: [%.3f, %.3f, %.3f]", 
+                midpoint.x(), midpoint.y(), midpoint.z());
+    RCLCPP_INFO(logger, "  Constraint: [%.3f, %.3f, %.3f]", 
+                constraint_pos.x(), constraint_pos.y(), constraint_pos.z());
 }
 
 Eigen::Quaterniond CircularConstraintCalculator::computeConstraintOrientation(

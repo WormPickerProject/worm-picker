@@ -6,12 +6,14 @@
 #include <tf2_eigen/tf2_eigen.hpp>
 #include "worm_picker_core/system/management/service_handler.hpp"
 #include "worm_picker_core/utils/parameter_utils.hpp"
-#include "worm_picker_core/core/result.hpp"
+#include "worm_picker_core/core/tasks/stages/move_to_point_data.hpp"
 
 ServiceHandler::ServiceHandler(NodePtr node, 
+                               std::shared_ptr<TaskFactory> task_factory,
                                std::shared_ptr<TaskManager> task_manager,
                                std::shared_ptr<ActionClientManager> action_client_manager)
   : node_{node}, 
+    task_factory_{task_factory},
     task_manager_{task_manager}, 
     action_client_manager_{action_client_manager}
 {
@@ -37,6 +39,14 @@ void ServiceHandler::handleServiceRequest(const std::shared_ptr<const TaskComman
         return;
     }
 
+    const std::string& command = request->command;
+    if (command.starts_with(GET_PREFIX)) {
+        auto pose = handleGetRequest(command);
+        response->success = pose.isSuccess();
+        response->feedback = pose.isSuccess() ? formatPose(pose.value()) : pose.error();
+        return;
+    }
+
     auto status = task_manager_->executeTask(request->command);
     if (!status.isSuccess()) {
         response->feedback = status.error();
@@ -45,6 +55,51 @@ void ServiceHandler::handleServiceRequest(const std::shared_ptr<const TaskComman
 
     response->success = true;
     response->feedback = formatPose(getCurrentPose());
+}
+
+Result<ServiceHandler::Pose> ServiceHandler::handleGetRequest(const std::string& command) 
+{
+    const std::string task_key = extractTaskKey(command);
+    
+    const auto& task_data_map = task_factory_->getTaskDataMap();
+    auto it = task_data_map.find(task_key);
+    if (it == task_data_map.end()) {
+        return Result<Pose>::error(fmt::format("Unknown task key: {}", task_key));
+    }
+
+    const auto& task_data = it->second;
+    const auto& stage_data = task_data.getStages()[0];
+    if (stage_data->getType() != StageType::MOVE_TO_POINT) {
+        return Result<Pose>::error("First stage is not a move-to-point operation");
+    }
+
+    auto move_to_point_data = std::dynamic_pointer_cast<MoveToPointData>(stage_data);
+    if (!move_to_point_data) {
+        return Result<Pose>::error("Failed to cast stage data to MoveToPointData");
+    }
+
+    Pose pose;
+    pose.pose.position.x = move_to_point_data->getX();
+    pose.pose.position.y = move_to_point_data->getY();
+    pose.pose.position.z = move_to_point_data->getZ();
+    pose.pose.orientation.x = move_to_point_data->getQX();
+    pose.pose.orientation.y = move_to_point_data->getQY();
+    pose.pose.orientation.z = move_to_point_data->getQZ();
+    pose.pose.orientation.w = move_to_point_data->getQW();
+
+    return Result<Pose>::success(pose);
+}
+
+const std::string ServiceHandler::extractTaskKey(const std::string& command) const 
+{
+    size_t start = strlen(GET_PREFIX);
+    
+    size_t end = command.find(":0.");
+    if (end != std::string::npos) {
+        return command.substr(start, end - start);
+    }
+    
+    return command.substr(start);
 }
 
 std::optional<ServiceHandler::Pose> ServiceHandler::getCurrentPose() const

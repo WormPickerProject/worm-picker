@@ -145,6 +145,11 @@ TaskFactory::Task TaskFactory::configureTaskWithStages(Task task,
     return task;
 }
 
+const std::unordered_map<std::string, TaskData>& TaskFactory::getTaskDataMap() const
+{
+    return task_data_map_;
+}
+
 void TaskFactory::logTaskMap()
 {
     auto logger = rclcpp::get_logger("TaskFactory");
