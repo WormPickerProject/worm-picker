@@ -37,6 +37,7 @@ void WormPickerController::initializeComponents()
     );
     service_handler_ = std::make_shared<ServiceHandler>(
         node_,
+        task_factory_,
         task_manager_,
         action_client_manager_
     );
