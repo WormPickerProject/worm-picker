@@ -16,42 +16,52 @@ public:
 
     CircularConstraintCalculator() = default;
 
-    /**
-     * @brief Computes the constraint pose given the current and goal states.
-     * 
-     * @param node The ROS node pointer (used to access parameters).
-     * @param current_state The current pose.
-     * @param goal_state The target pose.
-     * @return PoseStamped The computed constraint pose.
-     */
-    static Pose calculate(const NodePtr& node, 
-                         const Pose& current_state, 
-                         const Pose& goal_state);
+    static Pose calculate(const NodePtr& node, const Pose& current_state, const Pose& goal_state);
 
 private:
+    static constexpr double EPSILON = 1e-10;
+    static constexpr double ALIGNMENT_TOLERANCE = 1e-2;
+
     static Eigen::Vector3d findRobustReference(const Eigen::Vector3d& chord_direction);
 
-    static Eigen::Vector3d computeConsistentPerpendicular(
+    static Eigen::Vector3d computePerpendicular(
         const Eigen::Vector3d& chord_direction,
         const Eigen::Vector3d& plane_normal,
         const Eigen::Vector3d& start_pos);
 
     static Eigen::Vector3d computeInitialPerpendicular(
         const Eigen::Vector3d &chord_dir,
-        const Eigen::Vector3d &plane_norm,
-        const double epsilon);
+        const Eigen::Vector3d &plane_norm);
 
     static Eigen::Vector3d adjustPerpendicularOrientation(
         const Eigen::Vector3d &perpendicular,
-        const Eigen::Vector3d &start_pos,
-        const double epsilon);
+        const Eigen::Vector3d &start_pos);
 
-    static void computeConstraintPositionAndPerpendicular(
+    static std::pair<Eigen::Vector3d, Eigen::Vector3d> computeConstraintGeometry(
         const NodePtr& node,
         const Eigen::Vector3d& start_pos,
-        const Eigen::Vector3d& goal_pos,
-        Eigen::Vector3d& constraint_pos,
-        Eigen::Vector3d& perpendicular);
+        const Eigen::Vector3d& goal_pos);
+
+    static void validateInputPositions(
+        const Eigen::Vector3d& start_pos,
+        const Eigen::Vector3d& goal_pos);
+
+    static Eigen::Vector3d computeScaledPerpendicular(
+        const Eigen::Vector3d& chord_direction,
+        const Eigen::Vector3d& start_pos,
+        double chord_length,
+        double scale);
+
+    static Eigen::Vector3d computeVerticalCasePerpendicular(
+        const Eigen::Vector3d& start_pos,
+        double chord_length,
+        double scale);
+    
+    static Eigen::Vector3d computeStandardCasePerpendicular(
+        const Eigen::Vector3d& chord_direction,
+        const Eigen::Vector3d& start_pos,
+        double chord_length,
+        double scale);
 
     static Eigen::Quaterniond computeConstraintOrientation(
         const Eigen::Vector3d& start_pos,

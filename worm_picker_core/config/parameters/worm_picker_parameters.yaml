@@ -34,7 +34,7 @@ parameters:
     max_retries: 10
     planning_attempts: 20
     planning_scene_queue_size: 5
-    circ_traj_height_scaler: 0.5
+    circ_height_scaler: 0.5
 
   validation:
     pos_tol: 0.001
