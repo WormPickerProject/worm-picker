@@ -9,6 +9,30 @@ GenerateHotelTaskGenerator::GenerateHotelTaskGenerator(
     const std::unordered_map<std::string, HotelData>& hotel_map, TaskType task_type)
   : GenericTaskGenerator(hotel_map), task_type_(task_type) {}
 
+void GenerateHotelTaskGenerator::generateTasks() {
+    for (const auto& name : getDataMapKeys()) {
+        auto parsed_name = parseName(name);
+        if (!shouldGenerateTaskForRoom(parsed_name.second)) continue;
+        std::string task_name = generateTaskName(parsed_name);
+        auto stages = createStagesForTaskImpl(name, parsed_name);
+        auto task_data = TaskData(std::move(stages));
+        task_data_map_.emplace(std::move(task_name), std::move(task_data));
+    }
+}
+
+
+bool GenerateHotelTaskGenerator::shouldGenerateTaskForRoom(int room_number) const 
+{
+    if (task_type_ == TaskType::MoveToPoint) {
+        return true;
+    }
+
+    static const std::unordered_set<int> lid_rooms = {6, 12, 18};
+    const bool is_lid_room = lid_rooms.find(room_number) != lid_rooms.end();
+    const bool is_lid_task = (task_type_ == TaskType::PickLid || task_type_ == TaskType::PlaceLid);
+    return is_lid_task ? is_lid_room : !is_lid_room;
+}
+
 std::pair<int, int> GenerateHotelTaskGenerator::parseName(const std::string& name) const
 {
     int num = std::stoi(name);
