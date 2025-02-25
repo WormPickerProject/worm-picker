@@ -59,6 +59,7 @@ Eigen::Vector3d CircularConstraintCalculator::computeVerticalCasePerpendicular(
     double chord_length,
     double scale)
 {
+    (void) start_pos;
     const double scaled_length = chord_length * scale / 2.0;
     
     // Eigen::Vector3d horizontal_start(start_pos.x(), start_pos.y(), 0);
@@ -119,6 +120,7 @@ Eigen::Vector3d CircularConstraintCalculator::computePerpendicular(
     const Eigen::Vector3d &plane_normal,
     const Eigen::Vector3d &start_pos)
 {
+    (void) start_pos;
     Eigen::Vector3d chord_dir = chord_direction.normalized();
     Eigen::Vector3d plane_norm = plane_normal.normalized();
 
@@ -137,10 +139,10 @@ Eigen::Vector3d CircularConstraintCalculator::computePerpendicular(
     return perpendicular;
 }
 
-Eigen::Vector3d CircularConstraintCalculator::computeInitialPerpendicular(
-    const Eigen::Vector3d &chord_dir,
-    const Eigen::Vector3d &plane_norm)
-{
+// Eigen::Vector3d CircularConstraintCalculator::computeInitialPerpendicular(
+//     const Eigen::Vector3d &chord_dir,
+//     const Eigen::Vector3d &plane_norm)
+// {
     // Eigen::Vector3d perpendicular = plane_norm.cross(chord_dir).normalized();
     // double perp_norm = perpendicular.norm();
 
@@ -163,12 +165,12 @@ Eigen::Vector3d CircularConstraintCalculator::computeInitialPerpendicular(
     // perpendicular = global_up.cross(chord_dir);
     // perpendicular.normalize();
     // return perpendicular;
-}
+// }
 
-Eigen::Vector3d CircularConstraintCalculator::adjustPerpendicularOrientation(
-    const Eigen::Vector3d& perpendicular,
-    const Eigen::Vector3d& start_pos)
-{
+// Eigen::Vector3d CircularConstraintCalculator::adjustPerpendicularOrientation(
+//     const Eigen::Vector3d& perpendicular,
+//     const Eigen::Vector3d& start_pos)
+// {
     // Case 1: Vector has vertical component - ensure it points up
     // if (std::abs(perpendicular.z()) >= EPSILON) {
         // return perpendicular.z() < 0 ? -perpendicular : perpendicular;
@@ -188,7 +190,7 @@ Eigen::Vector3d CircularConstraintCalculator::adjustPerpendicularOrientation(
     // MAYBE REMOVE THIS
     // Case 3: Align with start position's horizontal direction
     // return perpendicular.dot(start_horizontal) < 0 ? -perpendicular : perpendicular;
-}
+// }
 
 Eigen::Quaterniond CircularConstraintCalculator::computeConstraintOrientation(
     const Eigen::Vector3d& start_pos,

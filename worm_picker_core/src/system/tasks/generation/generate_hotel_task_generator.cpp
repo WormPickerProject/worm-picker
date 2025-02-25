@@ -24,6 +24,9 @@ GenerateHotelTaskGenerator::generateTaskName(const std::pair<int, int>& parsed_n
         switch (task_type_) {
         case TaskType::PickPlate: return hotel_config::prefix::PICK;
         case TaskType::PlacePlate: return hotel_config::prefix::PLACE;
+        case TaskType::PickLid: return hotel_config::prefix::PICK_LID;
+        case TaskType::PlaceLid: return hotel_config::prefix::PLACE_LID;
+        case TaskType::MoveToPoint: return hotel_config::prefix::POINT;
         default: throw std::runtime_error("Unknown task type");
         }
     }();
@@ -37,24 +40,64 @@ std::vector<std::shared_ptr<StageData>>
 GenerateHotelTaskGenerator::createStagesForTask(const HotelData& data, 
                                                 const std::pair<int, int>& parsed_name) const
 {
-    // TODO: Implement the creation of stages specific to hotel tasks
-    (void)data;
-    (void)parsed_name;
-    return std::vector<std::shared_ptr<StageData>>();
+    Coordinate derived_position = calculateDerivedPoint(data.getCoordinate(), parsed_name.first);
+    StageSequence stages{ createMoveToPointStage(derived_position) };
+
+
+    const auto motion_params = [this]() -> std::optional<hotel_config::MovementParams> {
+        switch (task_type_) {
+            case TaskType::PickPlate: return hotel_config::motion::PICK;
+            case TaskType::PlacePlate: return hotel_config::motion::PLACE;
+            case TaskType::PickLid: return hotel_config::motion::PICK_LID;
+            case TaskType::PlaceLid: return hotel_config::motion::PLACE_LID;
+            case TaskType::MoveToPoint: return std::nullopt;
+            default: throw std::runtime_error("Unknown task type");
+        }
+    }();
+
+    if (motion_params) {
+        stages.emplace_back(std::make_shared<MoveRelativeData>(
+            motion_params->horizontal_approach, 0.0, 0.0));
+        stages.emplace_back(std::make_shared<MoveRelativeData>(
+            0.0, 0.0, motion_params->vertical_motion));
+        stages.emplace_back(std::make_shared<MoveRelativeData>(
+            motion_params->horizontal_retreat, 0.0, 0.0));
+    }
+
+    return stages;
 }
 
 Coordinate GenerateHotelTaskGenerator::calculateDerivedPoint(const Coordinate& coord, 
-                                                             char row_letter) const
+                                                             int hotel_number) const
 {
-    // TODO: Implement calculation specific to hotel tasks
-    (void)row_letter;
-    double adjusted_x = coord.getPositionX();
-    double adjusted_y = coord.getPositionY();
-    double adjusted_z = coord.getPositionZ();
+    (void)hotel_number;
+    const auto offsets = [this]() -> hotel_config::OffsetXYZ {
+        switch (task_type_) {
+            case TaskType::PickPlate: return hotel_config::offset::PICK;
+            case TaskType::PlacePlate: return hotel_config::offset::PLACE;
+            case TaskType::PickLid: return hotel_config::offset::PICK_LID;
+            case TaskType::PlaceLid: return hotel_config::offset::PLACE_LID;
+            case TaskType::MoveToPoint: return hotel_config::offset::POINT;
+            default: throw std::runtime_error("Unknown task type");
+        }
+    }();
+    
+    // TODO: Implement more robust orientation calculation
+    const auto& [x, y, z, w] = coord.getOrientation();
+    const double theta_rad = std::atan2(2 * (w * z + x * y), 1 - 2 * (y * y + z * z));
 
-    return {adjusted_x, adjusted_y, adjusted_z,
-            coord.getOrientationX(), coord.getOrientationY(),
-            coord.getOrientationZ(), coord.getOrientationW()};
+    const double cos_theta = std::cos(theta_rad);
+    const double sin_theta = std::sin(theta_rad);
+
+    return {
+        coord.getPositionX() + (offsets.x * cos_theta) + (offsets.y * sin_theta),
+        coord.getPositionY() + (offsets.x * sin_theta) + (offsets.y * cos_theta),
+        coord.getPositionZ() + offsets.z,
+        coord.getOrientationX(),
+        coord.getOrientationY(),
+        coord.getOrientationZ(),
+        coord.getOrientationW()
+    };
 }
 
 std::shared_ptr<StageData> 

@@ -16,8 +16,7 @@
 class GenerateHotelTaskGenerator : public GenericTaskGenerator<HotelData, std::pair<int, int>> {
 public:
     using TaskType = hotel_config::TaskType;
-    GenerateHotelTaskGenerator(const std::unordered_map<std::string, 
-                               HotelData>& hotel_map, 
+    GenerateHotelTaskGenerator(const std::unordered_map<std::string, HotelData>& hotel_map, 
                                TaskType task_type);
 
 protected:
@@ -27,7 +26,7 @@ protected:
                                       const std::pair<int, int>& parsed_name) const override;
 
 private:
-    Coordinate calculateDerivedPoint(const Coordinate& coord, char row_letter) const;
+    Coordinate calculateDerivedPoint(const Coordinate& coord, int hotel_number) const;
     std::shared_ptr<StageData> createMoveToPointStage(const Coordinate& coord) const;
 
     TaskType task_type_;

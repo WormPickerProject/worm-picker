@@ -46,9 +46,10 @@ parameters:
   commands:
     zero_arg: ["home", "homeEndFactor", "moveToA2", "moveToM2", 
               "moveToG4", "moveToG1", "moveToI1", "moveToE1", 
-              "moveToJ3", "moveToD3", "moveToI3", "moveToE3"]
+              "moveToJ3", "moveToD3", "moveToI3", "moveToE3",
+              "alignToHotel1"]
     one_arg: ["pickPlateWorkStation", "placePlateWorkStation", "swapEndFactor", "hoverWormPick",
-              "moveToPoint"]
+              "moveToPoint", "pickPlateHotel", "placePlateHotel", "pickLidHotel", "placeLidHotel"]
     two_arg: []
     three_arg: ["moveRelative"]
     four_arg: ["moveAbsolutePos"]

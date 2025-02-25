@@ -4,6 +4,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "worm_picker_core/system/tasks/task_generator.hpp"
+#include "worm_picker_core/system/tasks/generation/hotel_task_config.hpp"
 #include "worm_picker_core/system/tasks/generation/workstation_task_config.hpp"
 
 TaskGenerator::TaskGenerator(const WorkstationMap& workstation_map, const HotelMap& hotel_map) 
@@ -35,10 +36,19 @@ TaskGenerator::GeneratorList TaskGenerator::initializeGenerators(
         workstation_map, workstation_config::TaskType::MoveToPoint));
 
     generators.emplace_back(std::make_unique<GenerateHotelTaskGenerator>(
-        hotel_map, GenerateHotelTaskGenerator::TaskType::PickPlate));
+        hotel_map, hotel_config::TaskType::PickPlate));
 
     generators.emplace_back(std::make_unique<GenerateHotelTaskGenerator>(
-        hotel_map, GenerateHotelTaskGenerator::TaskType::PlacePlate));
+        hotel_map, hotel_config::TaskType::PlacePlate));
+
+    generators.emplace_back(std::make_unique<GenerateHotelTaskGenerator>(
+        hotel_map, hotel_config::TaskType::PickLid));
+
+    generators.emplace_back(std::make_unique<GenerateHotelTaskGenerator>(
+        hotel_map, hotel_config::TaskType::PlaceLid));
+
+    generators.emplace_back(std::make_unique<GenerateHotelTaskGenerator>(
+        hotel_map, hotel_config::TaskType::MoveToPoint));  
 
     return generators;
 }
