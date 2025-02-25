@@ -29,13 +29,13 @@ private:
         const Eigen::Vector3d& plane_normal,
         const Eigen::Vector3d& start_pos);
 
-    static Eigen::Vector3d computeInitialPerpendicular(
-        const Eigen::Vector3d &chord_dir,
-        const Eigen::Vector3d &plane_norm);
+    // static Eigen::Vector3d computeInitialPerpendicular(
+    //     const Eigen::Vector3d &chord_dir,
+    //     const Eigen::Vector3d &plane_norm);
 
-    static Eigen::Vector3d adjustPerpendicularOrientation(
-        const Eigen::Vector3d &perpendicular,
-        const Eigen::Vector3d &start_pos);
+    // static Eigen::Vector3d adjustPerpendicularOrientation(
+    //     const Eigen::Vector3d &perpendicular,
+    //     const Eigen::Vector3d &start_pos);
 
     static std::pair<Eigen::Vector3d, Eigen::Vector3d> computeConstraintGeometry(
         const NodePtr& node,

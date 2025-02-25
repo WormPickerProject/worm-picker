@@ -22,6 +22,13 @@ public:
     constexpr double getOrientationZ() const { return orientation_z_; }
     constexpr double getOrientationW() const { return orientation_w_; }
 
+    constexpr std::tuple<double, double, double> getPosition() const { 
+        return {position_x_, position_y_, position_z_}; 
+    }
+    constexpr std::tuple<double, double, double, double> getOrientation() const { 
+        return {orientation_x_, orientation_y_, orientation_z_, orientation_w_}; 
+    }
+
     constexpr void setPositionX(double x) { position_x_ = x; }
     constexpr void setPositionY(double y) { position_y_ = y; }
     constexpr void setPositionZ(double z) { position_z_ = z; }

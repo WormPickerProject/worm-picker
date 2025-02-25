@@ -66,5 +66,9 @@
     {
         "name": "moveToE3",
         "stages": ["E3"]
+    }, 
+    {
+        "name": "alignToHotel1",
+        "stages": ["hotelRelativeAlignment", "Hotel1"]
     }
 ]
