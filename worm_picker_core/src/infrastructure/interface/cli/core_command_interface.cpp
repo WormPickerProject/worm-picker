@@ -319,7 +319,7 @@ Result<void> CoreCommandInterface::handleMovePlateAroundHotel()
     auto result = impl_->sendCommandsInOrder({"pickPlateHotel:117"});
     if (!result.isSuccess()) return result;
     
-    int randomPos1 = getRandomInRange(101, 105);
+    int randomPos1 = getRandomInRange(102, 105);
     RCLCPP_INFO(impl_->node_->get_logger(), "Placing plate at random position: %d", randomPos1);
     result = impl_->sendCommandsInOrder({
         "placePlateHotel:" + std::to_string(randomPos1),
