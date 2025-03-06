@@ -6,11 +6,10 @@
 #include "worm_picker_core/system/tasks/task_generator.hpp"
 #include "worm_picker_core/system/tasks/generation/hotel_task_config.hpp"
 #include "worm_picker_core/system/tasks/generation/workstation_task_config.hpp"
+#include "worm_picker_core/system/tasks/generation/transfer_task_config.hpp"
 
 TaskGenerator::TaskGenerator(const WorkstationMap& workstation_map, const HotelMap& hotel_map) 
-    : task_data_map_{ generateTasks(initializeGenerators(workstation_map, hotel_map)) } 
-{
-}
+    : task_data_map_{ generateTasks(initializeGenerators(workstation_map, hotel_map)) } {}
 
 const TaskGenerator::TaskMap& TaskGenerator::getGeneratedTaskPlans() const 
 {
@@ -49,6 +48,12 @@ TaskGenerator::GeneratorList TaskGenerator::initializeGenerators(
 
     generators.emplace_back(std::make_unique<GenerateHotelTaskGenerator>(
         hotel_map, hotel_config::TaskType::MoveToPoint));  
+
+    generators.emplace_back(std::make_unique<GenerateTransferTaskGenerator>(
+        hotel_map, transfer_config::TaskType::ToHotel));  
+
+    generators.emplace_back(std::make_unique<GenerateTransferTaskGenerator>(
+        hotel_map, transfer_config::TaskType::ToWorkstation));  
 
     return generators;
 }

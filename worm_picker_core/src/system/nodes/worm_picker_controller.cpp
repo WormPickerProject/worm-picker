@@ -1,9 +1,10 @@
 // worm_picker_controller.cpp
 //
-// Copyright (c) 2024
+// Copyright (c) 2025
 // SPDX-License-Identifier: Apache-2.0
 
 #include <ament_index_cpp/get_package_share_directory.hpp>
+#include "worm_picker_core/utils/global_node.hpp"
 #include "worm_picker_core/system/nodes/worm_picker_controller.hpp"
 
 WormPickerController::WormPickerController(const rclcpp::NodeOptions& options)
@@ -12,6 +13,8 @@ WormPickerController::WormPickerController(const rclcpp::NodeOptions& options)
     if (!node_) {
         throw std::runtime_error("Failed to create WormPicker controller node");
     }
+    
+    worm_picker::setGlobalNode(node_);
     
     try {
         initializeComponents();

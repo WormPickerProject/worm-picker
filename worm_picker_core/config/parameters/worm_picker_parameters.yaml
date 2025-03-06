@@ -23,6 +23,7 @@ parameters:
 
   frames: 
     base_link: "base_link"
+    flange_link: "flange"
 
   end_effectors:
     current_factor: "eoat_tcp"
@@ -49,7 +50,8 @@ parameters:
               "moveToJ3", "moveToD3", "moveToI3", "moveToE3",
               "alignToHotel1"]
     one_arg: ["pickPlateWorkStation", "placePlateWorkStation", "swapEndFactor", "hoverWormPick",
-              "moveToPoint", "pickPlateHotel", "placePlateHotel", "pickLidHotel", "placeLidHotel"]
+              "moveToPoint", "pickPlateHotel", "placePlateHotel", "pickLidHotel", "placeLidHotel",
+              "workStationToHotel", "hotelToWorkStation"]
     two_arg: []
     three_arg: ["moveRelative"]
     four_arg: ["moveAbsolutePos"]
