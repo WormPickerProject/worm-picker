@@ -1,6 +1,6 @@
 // generate_hotel_task_generator.cpp
 //
-// Copyright (c)
+// Copyright (c) 2025
 // SPDX-License-Identifier: Apache-2.0
 
 #include "worm_picker_core/system/tasks/generation/generate_hotel_task_generator.hpp"
@@ -9,7 +9,8 @@ GenerateHotelTaskGenerator::GenerateHotelTaskGenerator(
     const std::unordered_map<std::string, HotelData>& hotel_map, TaskType task_type)
   : GenericTaskGenerator(hotel_map), task_type_(task_type) {}
 
-void GenerateHotelTaskGenerator::generateTasks() {
+void GenerateHotelTaskGenerator::generateTasks() 
+{
     for (const auto& name : getDataMapKeys()) {
         auto parsed_name = parseName(name);
         if (!shouldGenerateTaskForRoom(parsed_name.second)) continue;
@@ -19,7 +20,6 @@ void GenerateHotelTaskGenerator::generateTasks() {
         task_data_map_.emplace(std::move(task_name), std::move(task_data));
     }
 }
-
 
 bool GenerateHotelTaskGenerator::shouldGenerateTaskForRoom(int room_number) const 
 {
