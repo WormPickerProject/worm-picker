@@ -23,7 +23,7 @@ Result<TaskData> GenerateAbsoluteMovementTask::parseCommand(const NodePtr& node,
     if (!motion_result) {
         return Result<TaskData>::error(motion_result.error());
     }
-    auto [motion_type] = motion_result.value();
+    auto motion_type = motion_result.value();
 
     auto stage_result = createStage(pose, motion_type, node, info.getBaseArgsAmount());
     if (!stage_result) {
@@ -128,33 +128,27 @@ Result<double> GenerateAbsoluteMovementTask::parseDouble(const std::string& valu
     }
 }
 
-Result<std::tuple<std::string>> 
-GenerateAbsoluteMovementTask::parseMotionType(const CommandInfo& info) 
+Result<std::string> GenerateAbsoluteMovementTask::parseMotionType(const CommandInfo& info) 
 {
-    // TODO: The use of this tuple is needed because of a type deduction issue with Result<T>. 
-    //       This is because in Result<E>::error() the type E is a std::string and if we try to 
-    //       asign a std::string to Result::success() it will cause the compiler to get confused. 
-    //       This should be fixed in the future by allowing Result to have type T as a std:string. 
-    using WrappedStringResult = Result<std::tuple<std::string>>;
     const auto& args = info.getArgs();
     const size_t base_args = info.getBaseArgsAmount();
-    
+
     if (args.empty()) {
-        return WrappedStringResult::error("No arguments provided");
+        return Result<std::string>::error("No arguments provided");
     }
     if (args.size() < base_args) {
-        return WrappedStringResult::error(
+        return Result<std::string>::error(
             fmt::format("Expected {} arguments, got {}", base_args, args.size()));
     }
-    
+
     const std::string& motion_type = args[base_args - 1];
     const std::array<std::string_view, 2> valid_types = {"LIN", "CIRC"};
-    if (!std::any_of(valid_types.begin(), valid_types.end(), 
+    if (!std::any_of(valid_types.begin(), valid_types.end(),
                      [&](const auto& type) { return type == motion_type; })) {
-        return WrappedStringResult::error(fmt::format("Invalid motion type: '{}'", motion_type));
+        return Result<std::string>::error(fmt::format("Invalid motion type: '{}'", motion_type));
     }
-    
-    return WrappedStringResult::success(std::make_tuple(motion_type));
+
+    return Result<std::string>::success(motion_type);
 }
 
 Result<std::shared_ptr<StageData>> 
