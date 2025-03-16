@@ -15,16 +15,17 @@ enum class TaskType {
     MoveToPoint
 };
 
-struct PositionOffset {
-    double xy;
+struct OffsetXYZ {
+    double x;
+    double y; 
     double z;
 };
 
 namespace offset {
-    static constexpr PositionOffset PICK{ -0.045, 0.0125};
-    static constexpr PositionOffset PLACE{ 0.000, 0.0125};
-    static constexpr PositionOffset HOVER{ 0.035, 0.0220};
-    static constexpr PositionOffset POINT{ 0.000, 0.0100};
+    static constexpr OffsetXYZ PICK {-0.045, 0.000, 0.0125};
+    static constexpr OffsetXYZ PLACE{ 0.000, 0.000, 0.0125};
+    static constexpr OffsetXYZ HOVER{ 0.020, 0.010, 0.0230};
+    static constexpr OffsetXYZ POINT{ 0.000, 0.000, 0.0100};
 }
 
 struct MovementParams {

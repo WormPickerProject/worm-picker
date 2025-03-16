@@ -10,8 +10,7 @@
 #include <stdexcept>
 #include <utility>
 
-class ExecutionTimer
-{
+class ExecutionTimer {
 public:
     ExecutionTimer(const std::string& name);
 

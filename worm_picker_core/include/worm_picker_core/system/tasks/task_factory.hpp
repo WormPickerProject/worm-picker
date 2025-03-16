@@ -22,6 +22,7 @@ public:
 
     explicit TaskFactory(const NodePtr& node);
     Result<Task> createTask(const std::string& command);
+    const std::unordered_map<std::string, TaskData>& getTaskDataMap() const;
 
 private:
     using CurrentStateStage = moveit::task_constructor::stages::CurrentState;

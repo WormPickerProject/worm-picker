@@ -23,6 +23,7 @@ private:
     using CommandConfigPtr = std::shared_ptr<CommandConfig>;
     using CommandConfigVec = std::vector<CommandConfigPtr>;
     using CommandConfigMap = std::unordered_map<std::string, CommandConfigPtr>;
+    using BaseConfigOptPair = std::optional<std::pair<const CommandConfig*, std::size_t>>;
 
     struct ParseContext {
         std::unique_ptr<VariableArgConfig> var_config;
@@ -35,8 +36,11 @@ private:
     void buildCommandMap();
     const CommandConfig* findConfigForCommand(ParseContext& ctx) const;
     const CommandConfig* handleVariableConfig(ParseContext& ctx) const;
-    static StringVec tokenizeByColon(const std::string& str);
-    std::optional<size_t> extractMovementCount(const std::string& token) const;
+    BaseConfigOptPair findBaseConfigForVariableCommand(const std::string& base_command) const;
+    std::unique_ptr<VariableArgConfig> createVariableConfig(std::size_t N, 
+                                                            std::size_t base_count) const;
+    static StringVec tokenizeByColon(const std::string& input);
+    std::optional<std::size_t> extractMovementCount(const std::string& token) const;
     SpeedOverrideOpt extractSpeedOverride(const StringVec& args, 
                                           const CommandConfig* config) const;
     Result<CommandInfo> createCommandInfo(ParseContext& ctx, 

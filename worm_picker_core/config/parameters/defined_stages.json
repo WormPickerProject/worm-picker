@@ -119,5 +119,20 @@
         "parameters": [-16.701, 27.905, 10.833, 0.002, -12.95, -0.006],
         "velocity_scaling": 0.1,
         "acceleration_scaling": 0.1
+    }, 
+    {
+        "name": "Hotel1",
+        "type": "JOINT",
+        "parameters": [109.43, 0.0, 0.0, 0.0, 0.0, 0.0],
+        "joints_to_move": [1],
+        "velocity_scaling": 0.1,
+        "acceleration_scaling": 0.1
+    }, 
+    {
+        "name": "hotelRelativeAlignment",
+        "type": "RELATIVE",
+        "parameters": [-0.1, 0.0, -0.1],
+        "velocity_scaling": 0.1,
+        "acceleration_scaling": 0.1
     }
 ]

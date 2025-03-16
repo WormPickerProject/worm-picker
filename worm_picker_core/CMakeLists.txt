@@ -61,6 +61,7 @@ find_package(std_srvs REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 find_package(worm_picker_moveit_config REQUIRED)
 find_package(nlohmann_json REQUIRED)
+find_package(isaac_ros_cumotion_moveit REQUIRED)
 
 #
 # ----------------------------------------------------------------------------
@@ -95,6 +96,7 @@ set(WORM_PICKER_DEPS
   fmt
   yaml-cpp
   nlohmann_json
+  isaac_ros_cumotion_moveit
 )
 
 #
@@ -106,6 +108,7 @@ add_library(${PROJECT_NAME} SHARED
   src/core/commands/command_config.cpp
   src/core/commands/command_info.cpp
   src/core/tasks/stages/move_relative_data.cpp
+  src/core/tasks/stages/move_to_circle_data.cpp
   src/core/tasks/stages/move_to_joint_data.cpp
   src/core/tasks/stages/move_to_point_data.cpp
   src/core/tasks/stages/movement_data_base.cpp
@@ -131,13 +134,16 @@ add_library(${PROJECT_NAME} SHARED
   src/system/management/task_manager.cpp
   src/system/nodes/plate_calibration.cpp
   src/system/nodes/worm_picker_controller.cpp
-  src/system/tasks/generation/base_task_generator.cpp
+  src/system/tasks/generation/generate_absolute_movement_task.cpp
   src/system/tasks/generation/generate_hotel_task_generator.cpp
   src/system/tasks/generation/generate_relative_movement_task.cpp
+  src/system/tasks/generation/generate_transfer_task_generator.cpp
   src/system/tasks/generation/generate_workstation_task_generator.cpp
   src/system/tasks/task_factory.cpp
   src/system/tasks/task_generator.cpp
   src/system/tasks/task_validator.cpp
+  src/utils/circular_constraint_calculator.cpp
+  src/utils/circular_motion_utils.cpp
   src/utils/execution_timer.cpp
   src/utils/scoped_timer.cpp
   src/utils/timer_data_collector.cpp
@@ -155,6 +161,11 @@ ament_target_dependencies(
   ${PROJECT_NAME}
   ${WORM_PICKER_DEPS}
 )
+
+# Optionally link the cuMotion libraries if you have C++ code calling them:
+# target_link_libraries(${PROJECT_NAME}
+#   isaac_ros_cumotion_moveit::isaac_ros_cumotion_moveit
+# )
 
 #
 # ----------------------------------------------------------------------------

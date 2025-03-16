@@ -17,7 +17,7 @@ TaskData::TaskData(const TaskData& other)
 }
 
 std::optional<TaskData> TaskData::create(const StageMap& stage_data_map,
-                                       const std::vector<std::string>& stage_names) 
+                                         const std::vector<std::string>& stage_names) 
 {
     TaskData new_task;
     new_task.stages_.reserve(stage_names.size());

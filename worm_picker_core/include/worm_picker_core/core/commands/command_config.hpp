@@ -39,6 +39,16 @@ struct ConfigTraits<3> {
     inline static constexpr char param_key[] = "commands.three_arg";
 };
 
+template <>
+struct ConfigTraits<4> {
+    inline static constexpr char param_key[] = "commands.four_arg";
+};
+
+template <>
+struct ConfigTraits<8> {
+    inline static constexpr char param_key[] = "commands.eight_arg";
+};
+
 template <std::size_t BaseArgCount>
 class FixedArgsConfig : public CommandConfig {
 public:
@@ -77,6 +87,8 @@ private:
 using ZeroArgConfig = FixedArgsConfig<0>;
 using OneArgConfig   = FixedArgsConfig<1>;
 using ThreeArgConfig = FixedArgsConfig<3>;
+using FourArgConfig = FixedArgsConfig<4>;
+using EightArgConfig = FixedArgsConfig<8>;
 
 class VariableArgConfig : public CommandConfig {
 public:

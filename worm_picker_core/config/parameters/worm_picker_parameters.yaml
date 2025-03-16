@@ -21,6 +21,10 @@ parameters:
     plate: "plateMode"
     worm: "wormMode"
 
+  frames: 
+    base_link: "base_link"
+    flange_link: "flange"
+
   end_effectors:
     current_factor: "eoat_tcp"
     plate_factor: "eoat_tcp"
@@ -29,8 +33,9 @@ parameters:
   settings:
     server_timeout: 3
     max_retries: 10
-    planning_attempts: 5
+    planning_attempts: 20
     planning_scene_queue_size: 5
+    circ_height_scaler: 0.5
 
   validation:
     pos_tol: 0.001
@@ -42,11 +47,15 @@ parameters:
   commands:
     zero_arg: ["home", "homeEndFactor", "moveToA2", "moveToM2", 
               "moveToG4", "moveToG1", "moveToI1", "moveToE1", 
-              "moveToJ3", "moveToD3", "moveToI3", "moveToE3"]
+              "moveToJ3", "moveToD3", "moveToI3", "moveToE3",
+              "alignToHotel1"]
     one_arg: ["pickPlateWorkStation", "placePlateWorkStation", "swapEndFactor", "hoverWormPick",
-              "moveToPoint"]
+              "moveToPoint", "pickPlateHotel", "placePlateHotel", "pickLidHotel", "placeLidHotel",
+              "workStationToHotel", "hotelToWorkStation"]
     two_arg: []
-    three_arg: ["moveRelative", "moveAbsolute"]
+    three_arg: ["moveRelative"]
+    four_arg: ["moveAbsolutePos"]
+    eight_arg: ["moveAbsolutePose"]
     variable_arg: ["moveRelative"]
 
   planners:   
@@ -57,7 +66,15 @@ parameters:
         pilz:
         cartesian:
           step_size: 0.01
-          min_fraction: 0.01
+          min_fraction: 0.00
+    move_to_circle:
+      primary: "pilz_circ"
+      backup: "cartesian"
+      configs:
+        pilz_circ:
+        cartesian:
+          step_size: 0.01
+          min_fraction: 0.00
     move_to_joint:
       primary: "joint_interpolation"
       backup:
@@ -65,10 +82,10 @@ parameters:
         joint_interpolation:
         rrt:
     move_relative:
-      primary: "pilz"
       backup: "cartesian"
+      primary: "pilz"
       configs:
-        pilz:
         cartesian:
           step_size: 0.01
-          min_fraction: 0.01
+          min_fraction: 0.00
+        pilz:
