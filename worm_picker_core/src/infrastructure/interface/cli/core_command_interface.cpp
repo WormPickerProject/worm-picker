@@ -36,6 +36,13 @@ namespace {
         }
         return tokens;
     }
+
+    int getRandomInRange(int min, int max) {
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::uniform_int_distribution<> distrib(min, max);
+        return distrib(gen);
+    }
 }
 
 //------------------- PointIdentifier ----------------------------------
@@ -107,7 +114,7 @@ Result<void> CoreCommandInterface::Implementation::sendCommand(const std::string
                                    "\nFeedback: " + response->feedback);
     }
     
-    RCLCPP_INFO(node_->get_logger(), "Command feedback: %s", response->feedback.c_str());
+    // RCLCPP_INFO(node_->get_logger(), "Command feedback: %s", response->feedback.c_str());
     return Result<void>::success();
 }
 
@@ -217,6 +224,9 @@ Result<void> CoreCommandInterface::processUserCommand(const std::string& full_co
             if (parts.size() < 2) return Result<void>::error("Row argument missing");
             return self->handleMoveRowPlates(parts[1]);
         }},
+        {"movePlateAroundHotel", [](auto self, auto){ 
+            return self->handleMovePlateAroundHotel(); 
+        }},
     };
 
     const std::string& base_command = parts[0];
@@ -302,6 +312,67 @@ Result<void> CoreCommandInterface::handleMoveAllPlates()
     }
 
     return impl_->sendCommand(impl_->formatCommand("homeEndFactor"));
+}
+
+Result<void> CoreCommandInterface::handleMovePlateAroundHotel()
+{
+    auto result = impl_->sendCommandsInOrder({"pickPlateHotel:117"});
+    if (!result.isSuccess()) return result;
+    
+    int randomPos1 = getRandomInRange(102, 105);
+    RCLCPP_INFO(impl_->node_->get_logger(), "Placing plate at random position: %d", randomPos1);
+    result = impl_->sendCommandsInOrder({
+        "placePlateHotel:" + std::to_string(randomPos1),
+        "pickPlateHotel:" + std::to_string(randomPos1)
+    });
+    if (!result.isSuccess()) return result;
+    
+    result = impl_->sendCommandsInOrder({"placeLidHotel:106"});
+    if (!result.isSuccess()) return result;
+    
+    int randomPos2 = getRandomInRange(107, 111);
+    RCLCPP_INFO(impl_->node_->get_logger(), "Placing plate at random position: %d", randomPos2);
+    result = impl_->sendCommandsInOrder({
+        "placePlateHotel:" + std::to_string(randomPos2),
+        "pickPlateHotel:" + std::to_string(randomPos2)
+    });
+    if (!result.isSuccess()) return result;
+    
+    result = impl_->sendCommandsInOrder({"pickLidHotel:106"});
+    if (!result.isSuccess()) return result;
+    
+    result = impl_->sendCommandsInOrder({"placeLidHotel:112"});
+    if (!result.isSuccess()) return result;
+
+    int randomPos3 = getRandomInRange(113, 117);
+    RCLCPP_INFO(impl_->node_->get_logger(), "Placing plate at random position: %d", randomPos3);
+    result = impl_->sendCommandsInOrder({
+        "placePlateHotel:" + std::to_string(randomPos3),
+        "pickPlateHotel:" + std::to_string(randomPos3)
+    });
+    if (!result.isSuccess()) return result;
+    
+    result = impl_->sendCommandsInOrder({"pickLidHotel:112"});
+    if (!result.isSuccess()) return result;
+    
+    result = impl_->sendCommandsInOrder({"placeLidHotel:118"});
+    if (!result.isSuccess()) return result;
+    
+    int randomPos4 = getRandomInRange(119, 122);
+    RCLCPP_INFO(impl_->node_->get_logger(), "Placing plate at random position: %d", randomPos4);
+    result = impl_->sendCommandsInOrder({
+        "placePlateHotel:" + std::to_string(randomPos4),
+        "pickPlateHotel:" + std::to_string(randomPos4)
+    });
+    if (!result.isSuccess()) return result;
+    
+    result = impl_->sendCommandsInOrder({"pickLidHotel:118"});
+    if (!result.isSuccess()) return result;
+    
+    result = impl_->sendCommandsInOrder({"placePlateHotel:117"});
+    if (!result.isSuccess()) return result;
+    
+    return Result<void>::success();
 }
 
 Result<void> CoreCommandInterface::handleMoveAllPlatesRandom()

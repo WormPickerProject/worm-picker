@@ -48,6 +48,11 @@ const CommandInfo::SpeedOverrideOpt& CommandInfo::getSpeedOverride() const
     return speed_override_; 
 }
 
+size_t CommandInfo::getBaseArgsAmount() const 
+{ 
+    return base_args_amount_; 
+}
+
 void CommandInfo::setBaseCommand(const std::string& command) 
 { 
     base_command_ = command; 

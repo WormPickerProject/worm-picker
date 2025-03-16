@@ -1,0 +1,44 @@
+isaac_ros_cumotion:
+ planning_plugin: "isaac_ros_cumotion/CuMotionPlanning"
+ request_adapters: >-
+   default_planner_request_adapters/AddTimeOptimalParameterization
+   default_planner_request_adapters/ResolveConstraintFrames
+   default_planner_request_adapters/FixStartStateBounds
+   default_planner_request_adapters/FixStartStateCollision
+   default_planner_request_adapters/FixStartStatePathConstraints
+
+ start_state_max_bounds_error: 0.1
+
+ planner_configs:
+   CuMotionDefault:
+     type: "geometric::CuMotion"
+     disable_collision_detection: true
+     max_iterations: 2000 
+     planning_time: 5.0
+     interpolation_distance: 0.01
+     smooth_solution: true
+     simplify_solution: true
+
+   CuMotionCartesian:
+     type: "geometric::CuMotion"
+     disable_collision_detection: true
+     planning_mode: "cartesian"
+     max_cartesian_step: 0.005
+     planning_time: 5.0
+
+   CuMotionJoint:
+     type: "geometric::CuMotion" 
+     planning_mode: "joint"
+     disable_collision_detection: true
+     joint_step_size: 0.05
+     max_iterations: 1000
+     planning_time: 5.0
+     smooth_solution: true
+     simplify_solution: true
+
+ gp4_arm:
+   default_planner_config: "CuMotionDefault"
+   planner_configs:
+     - CuMotionDefault
+     - CuMotionCartesian 
+     - CuMotionJoint

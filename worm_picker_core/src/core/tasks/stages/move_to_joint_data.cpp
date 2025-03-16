@@ -8,12 +8,12 @@
 #include "worm_picker_core/core/tasks/stages/move_to_joint_data.hpp"
 
 MoveToJointData::MoveToJointData() 
-    : MovementDataBase(0.1, 0.1) {}
+  : MovementDataBase(0.1, 0.1) {}
 
 MoveToJointData::MoveToJointData(double joint_1, double joint_2, double joint_3,
                                  double joint_4, double joint_5, double joint_6,
                                  double vel_scaling, double acc_scaling)
-    : MovementDataBase(vel_scaling, acc_scaling) 
+  : MovementDataBase(vel_scaling, acc_scaling) 
 {
     joint_positions_ = {
         {"joint_1", joint_1 * DEG_TO_RAD},
@@ -39,8 +39,8 @@ MoveToJointData::createStageInstanceImpl(const std::string& name,
                                         std::shared_ptr<void> planner) const 
 {
     using namespace moveit::task_constructor;
-    auto joint_planner = std::static_pointer_cast<solvers::JointInterpolationPlanner>(planner);
-    auto stage = std::make_unique<stages::MoveTo>(name, joint_planner);
+    auto planner_interface = std::static_pointer_cast<solvers::PlannerInterface>(planner);
+    auto stage = std::make_unique<stages::MoveTo>(name, planner_interface);
     return stage;
 }
 
@@ -52,17 +52,8 @@ void MoveToJointData::configureStageImpl(Stage& stage, const NodePtr& node) cons
     setCommonInfo(move_to_stage, node);
 }
 
-std::unique_ptr<StageData> MoveToJointData::clone() const
-{
-    return std::make_unique<MoveToJointData>(*this);
-}
-
-StageType MoveToJointData::getType() const 
-{ 
-    return StageType::MOVE_TO_JOINT; 
-}
-
-const std::map<std::string, double>& MoveToJointData::getJointPositions() const 
-{ 
-    return joint_positions_; 
-}
+std::unique_ptr<StageData> 
+MoveToJointData::clone() const { return std::make_unique<MoveToJointData>(*this); }
+StageType MoveToJointData::getType() const { return StageType::MOVE_TO_JOINT; }
+const std::map<std::string, double>& 
+MoveToJointData::getJointPositions() const { return joint_positions_; }

@@ -18,7 +18,7 @@ public:
     TaskData(const TaskData& other);
     
     static std::optional<TaskData> create(const StageMap& stage_data_map,
-                                          const std::vector<std::string>& stage_names);                           
+                                          const std::vector<std::string>& stage_names);
     const StageVector& getStages() const;
 
 private:

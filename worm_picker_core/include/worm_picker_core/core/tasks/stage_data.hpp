@@ -10,6 +10,7 @@
 
 enum class StageType { 
     MOVE_TO_POINT, 
+    MOVE_TO_CIRCLE,
     MOVE_TO_JOINT, 
     MOVE_RELATIVE 
 };
@@ -31,6 +32,7 @@ protected:
 
 inline const std::unordered_map<StageType, std::string> StageData::type_map_ = {
     {StageType::MOVE_TO_POINT, "move_to_point"},
+    {StageType::MOVE_TO_CIRCLE, "move_to_circle"},
     {StageType::MOVE_TO_JOINT, "move_to_joint"},
     {StageType::MOVE_RELATIVE, "move_relative"}
 };
