@@ -26,7 +26,7 @@ private:
     static Result<Pose> parsePointStamped(const CommandInfo& info);
     static Result<Pose> parsePoseStamped(const CommandInfo& info);
     static Result<double> parseDouble(const std::string& value); 
-    static Result<std::tuple<std::string>> parseMotionType(const CommandInfo& info);
+    static Result<std::string> parseMotionType(const CommandInfo& info);
     static Result<StageDataPtr> createStage(const Pose& pose, const std::string& motion_type,
                                             const NodePtr& node, size_t base_args);
     static std::shared_ptr<MoveToPointData> createPointStage(const Pose& pose, size_t base_args);
