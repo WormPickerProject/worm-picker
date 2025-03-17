@@ -105,6 +105,11 @@ set(WORM_PICKER_DEPS
 # ----------------------------------------------------------------------------
 #
 add_library(${PROJECT_NAME} SHARED
+  src/core/commands/parser/basic_parsers.cpp
+  src/core/commands/parser/command_info_builder.cpp
+  src/core/commands/parser/command_parsers.cpp
+  src/core/commands/parser/command_registry.cpp
+  src/core/commands/parser/new_command_parser.cpp
   src/core/commands/command_config.cpp
   src/core/commands/command_info.cpp
   src/core/tasks/stages/move_relative_data.cpp
