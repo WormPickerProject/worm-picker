@@ -1,3 +1,8 @@
+// parser_core.hpp
+//
+// Copyright (c) 2025
+// SPDX-License-Identifier: Apache-2.0
+
 #pragma once
 
 #include <functional>
@@ -15,13 +20,14 @@ namespace worm_picker::parser {
 // Parser Types
 //=======================================
 
-// Parser input type (tracks current position in string)
+// Parser input type (tracks current position in string with column info)
 struct ParserInput {
     std::string_view text;
     size_t position;
+    size_t column;
     
-    ParserInput(std::string_view text, size_t position = 0)
-        : text(text), position(position) {}
+    ParserInput(std::string_view text, size_t position = 0, size_t column = 1)
+        : text(text), position(position), column(column) {}
     
     bool atEnd() const { return position >= text.length(); }
     
@@ -30,7 +36,17 @@ struct ParserInput {
     }
     
     ParserInput advance(size_t n = 1) const {
-        return ParserInput{text, std::min(position + n, text.length())};
+        if (atEnd()) return *this;
+        
+        size_t newPosition = std::min(position + n, text.length());
+        size_t newColumn = column;
+        
+        // Update column information
+        for (size_t i = position; i < newPosition; ++i) {
+            newColumn++;
+        }
+        
+        return ParserInput{text, newPosition, newColumn};
     }
     
     std::string_view remainder() const {
@@ -38,7 +54,19 @@ struct ParserInput {
     }
 
     ParserInput skipTo(size_t new_position) const {
-        return ParserInput{text, std::min(new_position, text.length())};
+        if (new_position <= position) return *this;
+        
+        size_t newColumn = column;
+        
+        // Update column information
+        newColumn += (new_position - position);
+        
+        return ParserInput{text, std::min(new_position, text.length()), newColumn};
+    }
+    
+    std::string positionInfo() const {
+        return "column " + std::to_string(column) + 
+               " (position " + std::to_string(position) + ")";
     }
 };
 
@@ -59,7 +87,8 @@ template <typename Pred>
 Parser<char> satisfy(Pred predicate, const std::string& description) {
     return [=](ParserInput input) -> ParserResult<char> {
         if (input.atEnd()) {
-            return ParserResult<char>::error("Unexpected end of input, expected " + description);
+            return ParserResult<char>::error("At " + input.positionInfo() + 
+                ": Unexpected end of input, expected " + description);
         }
         
         char c = input.current();
@@ -67,7 +96,8 @@ Parser<char> satisfy(Pred predicate, const std::string& description) {
             return ParserResult<char>::success({c, input.advance()});
         } else {
             return ParserResult<char>::error(
-                "Unexpected character '" + std::string(1, c) + "', expected " + description);
+                "At " + input.positionInfo() + ": Unexpected character '" + 
+                std::string(1, c) + "', expected " + description);
         }
     };
 }
@@ -83,15 +113,18 @@ inline Parser<std::string> literal(const std::string& expected) {
     return [=](ParserInput input) -> ParserResult<std::string> {
         if (input.remainder().size() < expected.size()) {
             return ParserResult<std::string>::error(
-                "Expected '" + expected + "', but input is too short");
+                "At " + input.positionInfo() + ": Expected '" + expected + 
+                "', but input is too short");
         }
         
         std::string_view prefix = input.remainder().substr(0, expected.size());
         if (prefix == expected) {
-            return ParserResult<std::string>::success({std::string(expected), input.advance(expected.size())});
+            return ParserResult<std::string>::success(
+                {std::string(expected), input.advance(expected.size())});
         } else {
             return ParserResult<std::string>::error(
-                "Expected '" + expected + "', got '" + std::string(prefix) + "'");
+                "At " + input.positionInfo() + ": Expected '" + expected + 
+                "', got '" + std::string(prefix) + "'");
         }
     };
 }
@@ -110,7 +143,8 @@ inline Parser<std::string> token(char delimiter = ':') {
         ParserInput newInput = input.skipTo(end);
         
         if (result.empty() && start == input.text.length()) {
-            return ParserResult<std::string>::error("Unexpected end of input, expected token");
+            return ParserResult<std::string>::error(
+                "At " + input.positionInfo() + ": Unexpected end of input, expected token");
         }
         
         return ParserResult<std::string>::success({result, newInput});
@@ -129,7 +163,7 @@ Parser<T> pure(T value) {
 template <typename T>
 Parser<T> fail(const std::string& message) {
     return [=](ParserInput input) -> ParserResult<T> {
-        return ParserResult<T>::error(message);
+        return ParserResult<T>::error("At " + input.positionInfo() + ": " + message);
     };
 }
 
@@ -185,7 +219,8 @@ Parser<T> choice(std::vector<Parser<T>> parsers) {
             errors.push_back(result.error());
         }
         
-        return ParserResult<T>::error("None of the parsers succeeded: " + 
+        return ParserResult<T>::error("At " + input.positionInfo() + 
+            ": None of the parsers succeeded: " + 
             [&errors]() {
                 std::string combined;
                 for (size_t i = 0; i < errors.size(); ++i) {
@@ -236,7 +271,8 @@ Parser<std::vector<T>> many1(Parser<T> parser) {
         
         auto [values, nextInput] = result.value();
         if (values.empty()) {
-            return ParserResult<std::vector<T>>::error("Expected at least one match");
+            return ParserResult<std::vector<T>>::error(
+                "At " + input.positionInfo() + ": Expected at least one match");
         }
         
         return ParserResult<std::vector<T>>::success({values, nextInput});

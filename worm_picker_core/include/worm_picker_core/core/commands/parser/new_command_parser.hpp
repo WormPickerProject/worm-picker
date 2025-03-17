@@ -4,26 +4,6 @@
 #include "worm_picker_core/core/result.hpp"
 #include "worm_picker_core/core/commands/command_info.hpp"
 #include "worm_picker_core/core/commands/parser/command_parser.hpp"
-// #include "worm_picker_core/core/commands/parser/parser_types.hpp"
-// #include "worm_picker_core/core/commands/parser/command_registry.hpp"
-
-// namespace worm_picker {
-// namespace parser {
-
-// class NewCommandParser {
-// public:
-//     // Constructor
-//     explicit NewCommandParser(const rclcpp::Node::SharedPtr& node);
-    
-//     // Parse a command string
-//     Result<CommandInfo> parse(const std::string& command);
-    
-// private:
-//     CommandRegistry registry_;
-//     rclcpp::Logger logger_{rclcpp::get_logger("NewCommandParser")};
-// };
-
-// }} // namespace worm_picker::parser
 
 namespace worm_picker::parser {
 
@@ -46,11 +26,12 @@ namespace worm_picker::parser {
                     auto [info, _] = result.value();
                     return Result<CommandInfo>::success(info);
                 } else {
-                    return Result<CommandInfo>::error(result.error());
+                    return Result<CommandInfo>::error(
+                        "Failed to parse command '" + command + "': " + result.error());
                 }
             } catch (const std::exception& e) {
                 return Result<CommandInfo>::error(
-                    std::string("Exception during parsing: ") + e.what());
+                    "Exception while parsing command '" + command + "': " + e.what());
             }
         }
     

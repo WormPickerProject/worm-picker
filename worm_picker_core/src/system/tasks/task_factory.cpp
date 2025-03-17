@@ -13,11 +13,10 @@
 #include "worm_picker_core/core/tasks/stages/move_to_point_data.hpp"
 #include "worm_picker_core/utils/parameter_utils.hpp"
 
-#include "worm_picker_core/core/commands/parser/new_command_parser.hpp"
-
 TaskFactory::TaskFactory(const NodePtr& node)
   : node_(node),
-    command_parser_(std::make_unique<CommandParser>(node))
+    command_parser_(std::make_unique<CommandParser>(node)),
+    new_command_parser_(std::make_unique<worm_picker::parser::NewCommandParser>(node))
 {
   initializeTaskMap();
 }
@@ -65,6 +64,30 @@ Result<TaskFactory::Task> TaskFactory::createTask(const std::string& command)
     task.add(std::make_unique<CurrentStateStage>("current"));
 
     auto parseCommand = [&]() -> Result<CommandInfo> {
+        const auto test_result = new_command_parser_->parse(command);
+        if (test_result.isSuccess()) {
+            const auto test_info = test_result.value();
+            auto logger = rclcpp::get_logger("TaskFactory");
+            RCLCPP_INFO(logger, "New Parser Command Info:");
+            RCLCPP_INFO(logger, "  Base Command: %s", test_info.getBaseCommand().c_str());
+    
+            std::string args_str;
+            for (const auto& arg : test_info.getArgs()) {
+                args_str += arg + ", ";
+            }
+            if (!args_str.empty()) args_str.resize(args_str.size() - 2);
+            RCLCPP_INFO(logger, "  Arguments: %s", args_str.c_str());
+    
+            if (test_info.getSpeedOverride()) {
+                auto speed = test_info.getSpeedOverride().value();
+                RCLCPP_INFO(logger, "  Speed Override: first = %f, second = %f", speed.first, speed.second);
+            } else {
+                RCLCPP_INFO(logger, "  Speed Override: none");
+            }
+    
+            RCLCPP_INFO(logger, "  Base Command Key: %s", test_info.getBaseCommandKey().c_str());
+            RCLCPP_INFO(logger, "  Base Args Amount: %zu", test_info.getBaseArgsAmount());
+        }
         return command_parser_->parse(command);
     };
     auto getTaskData = [&](const CommandInfo& info) -> Result<TaskData> {
