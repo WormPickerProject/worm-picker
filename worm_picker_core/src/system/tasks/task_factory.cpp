@@ -13,6 +13,8 @@
 #include "worm_picker_core/core/tasks/stages/move_to_point_data.hpp"
 #include "worm_picker_core/utils/parameter_utils.hpp"
 
+#include "worm_picker_core/core/commands/parser/new_command_parser.hpp"
+
 TaskFactory::TaskFactory(const NodePtr& node)
   : node_(node),
     command_parser_(std::make_unique<CommandParser>(node))
