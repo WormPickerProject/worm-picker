@@ -1,3 +1,8 @@
+// command_parser.hpp
+//
+// Copyright (c) 2025
+// SPDX-License-Identifier: Apache-2.0
+
 #pragma once
 #ifndef COMMAND_PARSER_HPP
 #define COMMAND_PARSER_HPP
@@ -18,14 +23,11 @@ namespace parser {
 //----------------------------------------
 // Command-Specific Types
 //----------------------------------------
-
-// Holds the result from parsing a variable-argument prefix (e.g., "N=3")
 struct VariableArgResult {
     size_t multiplier;
-    std::vector<std::string> remainingArgs;
+    std::vector<std::string> remaining_args;
 };
 
-// Represents optional speed override parameters
 struct SpeedOverride {
     double velocity;
     double acceleration;
@@ -34,77 +36,52 @@ struct SpeedOverride {
 //----------------------------------------
 // Command Registry
 //----------------------------------------
-
 class CommandRegistry {
 public:
     CommandRegistry() = default;
-    
-    // Load commands from node parameters
     void loadFromNode(const rclcpp::Node::SharedPtr& node);
-    
-    // Query methods
     bool hasCommand(const std::string& command) const;
     size_t getBaseArgCount(const std::string& command) const;
     bool isVariable(const std::string& command) const;
     size_t getVariableBaseCount(const std::string& command) const;
     std::vector<std::string> getAllCommands() const;
-    
-    // Register commands programmatically
-    void registerCommand(const std::string& command, size_t baseArgCount, bool isVariable = false, size_t variableBaseCount = 0);
+    void registerCommand(const std::string& command, size_t base_arg_count,
+                         bool is_variable = false, size_t variable_base_count = 0);
     
 private:
-    std::unordered_map<std::string, size_t> commandToBaseArgCount_;
-    std::unordered_map<std::string, bool> isVariableCommand_;
-    std::unordered_map<std::string, size_t> variableCommandBaseCount_;
-    
-    void loadCommandsFromParameter(const rclcpp::Node::SharedPtr& node, const std::string& paramName, size_t baseArgCount);
+    void loadCommandsFromParameter(const rclcpp::Node::SharedPtr& node, 
+                                   const std::string& param_name,
+                                   size_t base_arg_count);
+
+    std::unordered_map<std::string, size_t> command_to_base_arg_count_;
+    std::unordered_map<std::string, bool> is_variable_command_;
+    std::unordered_map<std::string, size_t> variable_command_base_count_;
 };
 
 //----------------------------------------
 // Helper and Basic Parsers
 //----------------------------------------
-
-// Parse the base command (everything before the first colon)
 Parser<std::string> baseCommandParser();
-
-// Parse a list of colon-separated arguments
 Parser<std::vector<std::string>> argumentsParser();
-
-// Parse and verify that the command name matches the expected one
-Parser<std::string> parseCommandName(const std::string& expectedCommand);
-
-// Helper to parse the colon following a command name
+Parser<std::string> parseCommandName(const std::string& expected_command);
 Parser<ParserInput> parseColon();
-
-// Helper to parse an optional colon (succeeds with current input if no colon is present)
 Parser<ParserInput> parseOptionalColon();
-
-// Validate that the argument list has either exactly the expected count
-// or the expected count plus 2 (if a speed override is provided)
 bool validateArguments(const std::vector<std::string>& args,
-                       size_t expectedCount,
+                       size_t expected_count,
                        const ParserInput& input,
-                       const std::string& commandName,
-                       std::string& errorMsg);
-
-// Extract speed override parameters from the argument list, if present
+                       const std::string& command_name,
+                       std::string& error_msg);
 std::optional<SpeedOverride> parseSpeedOverrideFromArgs(const std::vector<std::string>& args,
-                                                        size_t baseArgCount);
-
-// Helper to build a CommandInfo.
-CommandInfo buildCommandInfo(const std::string& commandName, 
-                             size_t baseArgCount, 
+                                                        size_t base_arg_count);
+CommandInfo buildCommandInfo(const std::string& command_name, 
+                             size_t base_arg_count, 
                              const std::vector<std::string>& args = {});
 
 //----------------------------------------
 // Command Parsers
 //----------------------------------------
-
-// Parse a command with fixed arguments (without a variable "N=" prefix)
-Parser<CommandInfo> commandParser(const std::string& commandName, size_t baseArgCount);
-
-// Parse a command with variable arguments (with a prefix like "N=3")
-Parser<CommandInfo> variableCommandParser(const std::string& commandName, size_t baseArgPerGroup);
+Parser<CommandInfo> commandParser(const std::string& command_name, size_t base_arg_count);
+Parser<CommandInfo> variableCommandParser(const std::string& command_name, size_t base_arg_group);
 
 //----------------------------------------
 // Command Builder Helper
@@ -112,9 +89,7 @@ Parser<CommandInfo> variableCommandParser(const std::string& commandName, size_t
 
 class CommandBuilder {
 public:
-    // Create individual parsers for all registered commands
     static std::vector<Parser<CommandInfo>> createCommandParsers(const CommandRegistry& registry);
-    // Create the main parser that tries all command parsers
     static Parser<CommandInfo> createMainParser(const CommandRegistry& registry);
 };
 
