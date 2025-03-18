@@ -4,14 +4,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #pragma once
-#ifndef COMMAND_PARSER_HPP
-#define COMMAND_PARSER_HPP
 
-#include <string>
-#include <vector>
-#include <optional>
-#include <unordered_map>
-#include <regex>
 #include <rclcpp/rclcpp.hpp>
 #include "worm_picker_core/utils/parameter_utils.hpp"
 #include "worm_picker_core/core/commands/parser/parser_core.hpp"
@@ -39,6 +32,7 @@ struct SpeedOverride {
 class CommandRegistry {
 public:
     CommandRegistry() = default;
+
     void loadFromNode(const rclcpp::Node::SharedPtr& node);
     bool hasCommand(const std::string& command) const;
     size_t getBaseArgCount(const std::string& command) const;
@@ -86,7 +80,6 @@ Parser<CommandInfo> variableCommandParser(const std::string& command_name, size_
 //----------------------------------------
 // Command Builder Helper
 //----------------------------------------
-
 class CommandBuilder {
 public:
     static std::vector<Parser<CommandInfo>> createCommandParsers(const CommandRegistry& registry);
@@ -95,5 +88,3 @@ public:
 
 } // namespace parser
 } // namespace worm_picker
-
-#endif // COMMAND_PARSER_HPP
