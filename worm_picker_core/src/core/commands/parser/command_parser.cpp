@@ -33,24 +33,24 @@ void CommandRegistry::loadFromNode(const rclcpp::Node::SharedPtr& node)
     }
 }
 
-bool CommandRegistry::hasCommand(const std::string& command) const
+bool CommandRegistry::hasCommand(const std::string& command) const noexcept
 {
     return command_to_base_arg_count_.find(command) != command_to_base_arg_count_.end();
 }
 
-size_t CommandRegistry::getBaseArgCount(const std::string& command) const
+std::size_t CommandRegistry::getBaseArgCount(const std::string& command) const noexcept
 {
     auto it = command_to_base_arg_count_.find(command);
     return (it != command_to_base_arg_count_.end()) ? it->second : 0;
 }
 
-bool CommandRegistry::isVariable(const std::string& command) const
+bool CommandRegistry::isVariable(const std::string& command) const noexcept
 {
     auto it = is_variable_command_.find(command);
     return (it != is_variable_command_.end()) ? it->second : false;
 }
 
-size_t CommandRegistry::getVariableBaseCount(const std::string& command) const
+std::size_t CommandRegistry::getVariableBaseCount(const std::string& command) const noexcept
 {
     auto it = variable_command_base_count_.find(command);
     return (it != variable_command_base_count_.end()) ? it->second : 0;
@@ -60,16 +60,16 @@ std::vector<std::string> CommandRegistry::getAllCommands() const
 {
     std::vector<std::string> result;
     result.reserve(command_to_base_arg_count_.size());
-    for (const auto& pair : command_to_base_arg_count_) {
-        result.push_back(pair.first);
+    for (const auto& [command, _] : command_to_base_arg_count_) {
+        result.push_back(command);
     }
     return result;
 }
 
 void CommandRegistry::registerCommand(const std::string& command,
-                                      size_t base_arg_count,
+                                      std::size_t base_arg_count,
                                       bool is_variable,
-                                      size_t variable_base_count)
+                                      std::size_t variable_base_count)
 {
     command_to_base_arg_count_[command] = base_arg_count;
     if (is_variable) {
@@ -79,8 +79,8 @@ void CommandRegistry::registerCommand(const std::string& command,
 }
 
 void CommandRegistry::loadCommandsFromParameter(const rclcpp::Node::SharedPtr& node,
-                                                  const std::string& param_name,
-                                                  size_t base_arg_count)
+                                                const std::string& param_name,
+                                                std::size_t base_arg_count)
 {
     auto commands = param_utils::getParameter<std::vector<std::string>>(node, param_name);
     if (commands) {
@@ -145,7 +145,7 @@ Parser<ParserInput> parseOptionalColon()
 }
 
 bool validateArguments(const std::vector<std::string>& args,
-                       size_t expected_count,
+                       std::size_t expected_count,
                        const ParserInput& input,
                        const std::string& command_name,
                        std::string& error_msg) 
@@ -161,27 +161,29 @@ bool validateArguments(const std::vector<std::string>& args,
 }
 
 std::optional<SpeedOverride> parseSpeedOverrideFromArgs(const std::vector<std::string>& args,
-                                                        size_t base_arg_count) 
+                                                        std::size_t base_arg_count) 
 {
     if (args.size() != base_arg_count + 2) {
         return std::nullopt;
     }
     
     try {
-        size_t idx = args.size() - 2;
+        std::size_t idx = args.size() - 2;
         double velocity = std::stod(args[idx]);
         double acceleration = std::stod(args[idx + 1]);
         if (velocity <= 0 || velocity > 1 || acceleration <= 0 || acceleration > 1) {
             return std::nullopt;
         }
         return SpeedOverride{velocity, acceleration};
-    } catch (...) {
+    } catch (const std::invalid_argument&) {
+        return std::nullopt;
+    } catch (const std::out_of_range&) {
         return std::nullopt;
     }
 }
 
 CommandInfo buildCommandInfo(const std::string& command_name, 
-                             size_t base_arg_count, 
+                             std::size_t base_arg_count, 
                              const std::vector<std::string>& args) 
 {
     CommandInfo info;
@@ -196,9 +198,9 @@ CommandInfo buildCommandInfo(const std::string& command_name,
 //----------------------------------------
 static Parser<VariableArgResult> variableArgParser() 
 {
-    return [](ParserInput input) -> ParserResult<VariableArgResult> {
-        static const std::regex n_pattern(R"(N=(\d+))");
+    static const std::regex n_pattern(R"(N=(\d+))");
 
+    return [](ParserInput input) -> ParserResult<VariableArgResult> {
         if (input.atEnd()) {
             return ParserResult<VariableArgResult>::error(
                 "At " + input.positionInfo() + ": Unexpected end of input");
@@ -218,7 +220,7 @@ static Parser<VariableArgResult> variableArgParser()
                 "At " + input.positionInfo() + ": Invalid multiplier: must be positive");
         }
 
-        size_t n_length = match[0].length();
+        std::size_t n_length = match[0].length();
         ParserInput after_n = input.advance(n_length);
         if (after_n.atEnd() || after_n.current() != ':') {
             return ParserResult<VariableArgResult>::error(
@@ -231,14 +233,14 @@ static Parser<VariableArgResult> variableArgParser()
         }
         auto [args, next_input] = args_result.value();
         return ParserResult<VariableArgResult>::success(
-            {{static_cast<size_t>(multiplier), args}, next_input});
+            {{static_cast<std::size_t>(multiplier), args}, next_input});
     };
 }
 
 //----------------------------------------
 // Command Parsers
 //----------------------------------------
-Parser<CommandInfo> commandParser(const std::string& command_name, size_t base_arg_count) 
+Parser<CommandInfo> commandParser(const std::string& command_name, std::size_t base_arg_count) 
 {
     return [command_name, base_arg_count](ParserInput input) -> ParserResult<CommandInfo> {
         auto commandChain = combine(
@@ -283,7 +285,8 @@ Parser<CommandInfo> commandParser(const std::string& command_name, size_t base_a
     };
 }
 
-Parser<CommandInfo> variableCommandParser(const std::string& command_name, size_t base_arg_group) 
+Parser<CommandInfo> variableCommandParser(const std::string& command_name, 
+                                          std::size_t base_arg_group) 
 {
     return [command_name, base_arg_group](ParserInput input) -> ParserResult<CommandInfo> {
         auto name_result = parseCommandName(command_name)(input);
@@ -307,7 +310,7 @@ Parser<CommandInfo> variableCommandParser(const std::string& command_name, size_
         }
         
         auto [var_info, after_var] = var_result.value();
-        size_t new_base_arg_count = var_info.multiplier * base_arg_group;
+        std::size_t new_base_arg_count = var_info.multiplier * base_arg_group;
         
         std::string error_msg;
         if (!validateArguments(var_info.remaining_args, new_base_arg_count, 
@@ -340,10 +343,10 @@ std::vector<Parser<CommandInfo>> CommandBuilder::createCommandParsers(
     
     for (const auto& command_name : registry.getAllCommands()) {
         if (registry.isVariable(command_name)) {
-            const size_t variable_base_count = registry.getVariableBaseCount(command_name);
+            const std::size_t variable_base_count = registry.getVariableBaseCount(command_name);
             parsers.push_back(variableCommandParser(command_name, variable_base_count));
         } else {
-            const size_t arg_count = registry.getBaseArgCount(command_name);
+            const std::size_t arg_count = registry.getBaseArgCount(command_name);
             parsers.push_back(commandParser(command_name, arg_count));
         }
     }
