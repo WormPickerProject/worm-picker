@@ -3,9 +3,8 @@
 // Copyright (c) 2025
 // SPDX-License-Identifier: Apache-2.0
 
+#include <regex>
 #include "worm_picker_core/core/commands/parser/command_parser.hpp"
-#include <algorithm>
-#include <sstream>
 
 namespace worm_picker {
 namespace parser {
@@ -69,8 +68,8 @@ std::vector<std::string> CommandRegistry::getAllCommands() const
 
 void CommandRegistry::registerCommand(const std::string& command,
                                       size_t base_arg_count,
-                                      bool is_variable /* = false */,
-                                      size_t variable_base_count /* = 0 */)
+                                      bool is_variable,
+                                      size_t variable_base_count)
 {
     command_to_base_arg_count_[command] = base_arg_count;
     if (is_variable) {
@@ -236,7 +235,6 @@ static Parser<VariableArgResult> variableArgParser()
     };
 }
 
-
 //----------------------------------------
 // Command Parsers
 //----------------------------------------
@@ -253,7 +251,7 @@ Parser<CommandInfo> commandParser(const std::string& command_name, size_t base_a
         if (!name_parse_result.isSuccess()) {
             return ParserResult<CommandInfo>::error(name_parse_result.error());
         }
-        auto [after_colon, unused] = name_parse_result.value();
+        auto [after_colon, _] = name_parse_result.value();
 
         // Handle commands with no arguments
         if (base_arg_count == 0 && after_colon.atEnd()) {
@@ -293,7 +291,7 @@ Parser<CommandInfo> variableCommandParser(const std::string& command_name, size_
             return ParserResult<CommandInfo>::error(name_result.error());
         }
         
-        auto [command_name_unused, after_command] = name_result.value();
+        auto [_, after_command] = name_result.value();
         
         if (after_command.atEnd() || after_command.current() != ':') {
             return ParserResult<CommandInfo>::error("At " + after_command.positionInfo() +
