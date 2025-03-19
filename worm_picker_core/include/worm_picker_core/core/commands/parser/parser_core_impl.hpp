@@ -31,21 +31,21 @@ Parser<char> satisfy(Pred predicate, const std::string& description) {
     };
 }
 
-// Always succeed with a value without consuming input
-template <typename T>
-Parser<T> pure(T value) {
-    return [=](ParserInput input) -> ParserResult<T> {
-        return ParserResult<T>::success({value, input});
-    };
-}
+// NOT USED
+// template <typename T>
+// Parser<T> pure(T value) {
+//     return [=](ParserInput input) -> ParserResult<T> {
+//         return ParserResult<T>::success({value, input});
+//     };
+// }
 
-// Always fail with a message
-template <typename T>
-Parser<T> fail(const std::string& message) {
-    return [=](ParserInput input) -> ParserResult<T> {
-        return ParserResult<T>::error("At " + input.positionInfo() + ": " + message);
-    };
-}
+// NOT USED
+// template <typename T>
+// Parser<T> fail(const std::string& message) {
+//     return [=](ParserInput input) -> ParserResult<T> {
+//         return ParserResult<T>::error("At " + input.positionInfo() + ": " + message);
+//     };
+// }
 
 // Run two parsers in sequence and combine their results
 template <typename T, typename U, typename Combiner>
@@ -75,11 +75,11 @@ combine(Parser<T> first, Parser<U> second, Combiner combiner) {
     };
 }
 
-// Run two parsers in sequence and keep the second result
-template <typename T, typename U>
-Parser<U> right(Parser<T> first, Parser<U> second) {
-    return combine(first, second, [](T, U b) { return b; });
-}
+// NOT USED
+// template <typename T, typename U>
+// Parser<U> right(Parser<T> first, Parser<U> second) {
+//     return combine(first, second, [](T, U b) { return b; });
+// }
 
 // Try the first parser, and if it fails, try the second parser
 template <typename T>
@@ -120,52 +120,52 @@ Parser<T> choice(std::vector<Parser<T>> parsers) {
     };
 }
 
-// Apply a parser zero or more times
-template <typename T>
-Parser<std::vector<T>> many(Parser<T> parser) {
-    return [=](ParserInput input) -> ParserResult<std::vector<T>> {
-        std::vector<T> results;
-        ParserInput currentInput = input;
+// NOT USED
+// template <typename T>
+// Parser<std::vector<T>> many(Parser<T> parser) {
+//     return [=](ParserInput input) -> ParserResult<std::vector<T>> {
+//         std::vector<T> results;
+//         ParserInput currentInput = input;
         
-        while (true) {
-            auto result = parser(currentInput);
-            if (!result.isSuccess()) {
-                break;
-            }
+//         while (true) {
+//             auto result = parser(currentInput);
+//             if (!result.isSuccess()) {
+//                 break;
+//             }
             
-            auto [value, nextInput] = result.value();
-            results.push_back(value);
+//             auto [value, nextInput] = result.value();
+//             results.push_back(value);
             
-            // Ensure we're making progress
-            if (nextInput.position == currentInput.position) {
-                break;
-            }
+//             // Ensure we're making progress
+//             if (nextInput.position == currentInput.position) {
+//                 break;
+//             }
             
-            currentInput = nextInput;
-        }
+//             currentInput = nextInput;
+//         }
         
-        return ParserResult<std::vector<T>>::success({results, currentInput});
-    };
-}
+//         return ParserResult<std::vector<T>>::success({results, currentInput});
+//     };
+// }
 
-// Apply a parser one or more times
-template <typename T>
-Parser<std::vector<T>> many1(Parser<T> parser) {
-    return [=](ParserInput input) -> ParserResult<std::vector<T>> {
-        auto result = many(parser)(input);
-        if (!result.isSuccess()) {
-            return result;
-        }
+// NOT USED
+// template <typename T>
+// Parser<std::vector<T>> many1(Parser<T> parser) {
+//     return [=](ParserInput input) -> ParserResult<std::vector<T>> {
+//         auto result = many(parser)(input);
+//         if (!result.isSuccess()) {
+//             return result;
+//         }
         
-        auto [values, nextInput] = result.value();
-        if (values.empty()) {
-            return ParserResult<std::vector<T>>::error(
-                "At " + input.positionInfo() + ": Expected at least one match");
-        }
+//         auto [values, nextInput] = result.value();
+//         if (values.empty()) {
+//             return ParserResult<std::vector<T>>::error(
+//                 "At " + input.positionInfo() + ": Expected at least one match");
+//         }
         
-        return ParserResult<std::vector<T>>::success({values, nextInput});
-    };
-}
+//         return ParserResult<std::vector<T>>::success({values, nextInput});
+//     };
+// }
 
 // Delimiter-separated list of items
 template <typename T, typename U>

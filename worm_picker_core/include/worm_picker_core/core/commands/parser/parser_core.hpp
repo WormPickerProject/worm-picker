@@ -61,13 +61,13 @@ Parser<std::string> literal(const std::string& expected);
 // Match a token until a delimiter or end
 Parser<std::string> token(char delimiter = ':');
 
-// Always succeed with a value without consuming input
-template <typename T>
-Parser<T> pure(T value);
+// NOT USED
+// template <typename T>
+// Parser<T> pure(T value);
 
-// Always fail with a message
-template <typename T>
-Parser<T> fail(const std::string& message);
+// NOT USED
+// template <typename T>
+// Parser<T> fail(const std::string& message);
 
 //=======================================
 // Parser Combinators
@@ -78,9 +78,9 @@ template <typename T, typename U, typename Combiner>
 Parser<typename std::invoke_result<Combiner, T, U>::type> 
 combine(Parser<T> first, Parser<U> second, Combiner combiner);
 
-// Run two parsers in sequence and keep the second result
-template <typename T, typename U>
-Parser<U> right(Parser<T> first, Parser<U> second);
+// NOT USED
+// template <typename T, typename U>
+// Parser<U> right(Parser<T> first, Parser<U> second);
 
 // Try the first parser, and if it fails, try the second parser
 template <typename T>
@@ -90,13 +90,13 @@ Parser<T> orElse(Parser<T> first, Parser<T> second);
 template <typename T>
 Parser<T> choice(std::vector<Parser<T>> parsers);
 
-// Apply a parser zero or more times
-template <typename T>
-Parser<std::vector<T>> many(Parser<T> parser);
+// NOT USED
+// template <typename T>
+// Parser<std::vector<T>> many(Parser<T> parser);
 
-// Apply a parser one or more times
-template <typename T>
-Parser<std::vector<T>> many1(Parser<T> parser);
+// NOT USED
+// template <typename T>
+// Parser<std::vector<T>> many1(Parser<T> parser);
 
 // Delimiter-separated list of items
 template <typename T, typename U>

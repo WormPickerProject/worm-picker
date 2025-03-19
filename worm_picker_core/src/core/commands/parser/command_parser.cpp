@@ -106,6 +106,47 @@ Parser<std::vector<std::string>> argumentsParser()
     return sepBy(token(':'), colon_parser);
 }
 
+Parser<VariableArgResult> variableArgParser() 
+{
+    static const std::regex n_pattern(R"(N=(\d+))");
+
+    return [](ParserInput input) -> ParserResult<VariableArgResult> {
+        if (input.atEnd()) {
+            return ParserResult<VariableArgResult>::error(
+                "At " + input.positionInfo() + ": Unexpected end of input");
+        }
+
+        std::string input_str(input.remainder());
+        std::smatch match;
+
+        if (!std::regex_search(input_str, match, n_pattern)) {
+            return ParserResult<VariableArgResult>::error(
+                "At " + input.positionInfo() + ": Expected 'N=' prefix");
+        }
+
+        int multiplier = std::stoi(match[1]);
+        if (multiplier <= 0) {
+            return ParserResult<VariableArgResult>::error(
+                "At " + input.positionInfo() + ": Invalid multiplier: must be positive");
+        }
+
+        std::size_t n_length = match[0].length();
+        ParserInput after_n = input.advance(n_length);
+        if (after_n.atEnd() || after_n.current() != ':') {
+            return ParserResult<VariableArgResult>::error(
+                "At " + input.positionInfo() + ": Expected ':' after N= token");
+        }
+
+        auto args_result = argumentsParser()(after_n.advance());
+        if (!args_result.isSuccess()) {
+            return ParserResult<VariableArgResult>::error(args_result.error());
+        }
+        auto [args, next_input] = args_result.value();
+        return ParserResult<VariableArgResult>::success(
+            {{static_cast<std::size_t>(multiplier), args}, next_input});
+    };
+}
+
 Parser<std::string> parseCommandName(const std::string& expected_command) 
 {
     return [expected_command](ParserInput input) -> ParserResult<std::string> {
@@ -190,51 +231,14 @@ CommandInfo buildCommandInfo(const std::string& command_name,
     info.setBaseCommand(command_name);
     info.setBaseArgsAmount(base_arg_count);
     info.setArgs(args);
+
+    auto speed_override = parseSpeedOverrideFromArgs(args, base_arg_count);
+    if (speed_override) {
+        info.setSpeedOverride(std::make_pair(
+            speed_override->velocity, speed_override->acceleration));
+    }
+
     return info;
-}
-
-//----------------------------------------
-// Variable Argument Parsing Helper
-//----------------------------------------
-static Parser<VariableArgResult> variableArgParser() 
-{
-    static const std::regex n_pattern(R"(N=(\d+))");
-
-    return [](ParserInput input) -> ParserResult<VariableArgResult> {
-        if (input.atEnd()) {
-            return ParserResult<VariableArgResult>::error(
-                "At " + input.positionInfo() + ": Unexpected end of input");
-        }
-
-        std::string input_str(input.remainder());
-        std::smatch match;
-
-        if (!std::regex_search(input_str, match, n_pattern)) {
-            return ParserResult<VariableArgResult>::error(
-                "At " + input.positionInfo() + ": Expected 'N=' prefix");
-        }
-
-        int multiplier = std::stoi(match[1]);
-        if (multiplier <= 0) {
-            return ParserResult<VariableArgResult>::error(
-                "At " + input.positionInfo() + ": Invalid multiplier: must be positive");
-        }
-
-        std::size_t n_length = match[0].length();
-        ParserInput after_n = input.advance(n_length);
-        if (after_n.atEnd() || after_n.current() != ':') {
-            return ParserResult<VariableArgResult>::error(
-                "At " + input.positionInfo() + ": Expected ':' after N= token");
-        }
-
-        auto args_result = argumentsParser()(after_n.advance());
-        if (!args_result.isSuccess()) {
-            return ParserResult<VariableArgResult>::error(args_result.error());
-        }
-        auto [args, next_input] = args_result.value();
-        return ParserResult<VariableArgResult>::success(
-            {{static_cast<std::size_t>(multiplier), args}, next_input});
-    };
 }
 
 //----------------------------------------
@@ -255,8 +259,8 @@ Parser<CommandInfo> commandParser(const std::string& command_name, std::size_t b
         }
         auto [after_colon, _] = name_parse_result.value();
 
-        // Handle commands with no arguments
         if (base_arg_count == 0 && after_colon.atEnd()) {
+            // Handle commands with no arguments
             return ParserResult<CommandInfo>::success(
                 {buildCommandInfo(command_name, 0), after_colon});
         }
@@ -265,7 +269,6 @@ Parser<CommandInfo> commandParser(const std::string& command_name, std::size_t b
         if (!args_result.isSuccess()) {
             return ParserResult<CommandInfo>::error(args_result.error());
         }
-
         auto [args, rest] = args_result.value();
 
         std::string error_msg;
@@ -273,62 +276,40 @@ Parser<CommandInfo> commandParser(const std::string& command_name, std::size_t b
             return ParserResult<CommandInfo>::error(error_msg);
         }
 
-        CommandInfo info = buildCommandInfo(command_name, base_arg_count, args);
-                
-        auto speed_override = parseSpeedOverrideFromArgs(args, base_arg_count);
-        if (speed_override) {
-            info.setSpeedOverride(std::make_pair(
-                speed_override->velocity, speed_override->acceleration));
-        }
-
-        return ParserResult<CommandInfo>::success({info, rest});
+        return ParserResult<CommandInfo>::success(
+            {buildCommandInfo(command_name, base_arg_count, args), rest});
     };
 }
 
-Parser<CommandInfo> variableCommandParser(const std::string& command_name, 
-                                          std::size_t base_arg_group) 
+Parser<CommandInfo> variableCommandParser(const std::string& command_name, std::size_t base_arg_group) 
 {
     return [command_name, base_arg_group](ParserInput input) -> ParserResult<CommandInfo> {
-        auto name_result = parseCommandName(command_name)(input);
-        if (!name_result.isSuccess()) {
-            return ParserResult<CommandInfo>::error(name_result.error());
+        auto commandChain = combine(parseCommandName(command_name), parseColon(),
+            [](std::string, ParserInput after_colon) { return after_colon; });
+
+        auto name_parse_result = commandChain(input);
+        if (!name_parse_result.isSuccess()) {
+            return ParserResult<CommandInfo>::error(name_parse_result.error());
         }
-        
-        auto [_, after_command] = name_result.value();
-        
-        if (after_command.atEnd() || after_command.current() != ':') {
-            return ParserResult<CommandInfo>::error("At " + after_command.positionInfo() +
-                ": Expected ':' after command");
-        }
-        
-        ParserInput after_colon = after_command.advance();
-        
+        auto [after_colon, _] = name_parse_result.value();
+
         auto var_result = variableArgParser()(after_colon);
         if (!var_result.isSuccess()) {
             // Fall back to standard command parser if variable parsing fails
             return commandParser(command_name, base_arg_group)(input);
         }
-        
         auto [var_info, after_var] = var_result.value();
-        std::size_t new_base_arg_count = var_info.multiplier * base_arg_group;
+
+        auto args = var_info.remaining_args;
+        std::size_t var_arg_count = var_info.multiplier * base_arg_group;
         
         std::string error_msg;
-        if (!validateArguments(var_info.remaining_args, new_base_arg_count, 
-                               after_colon, command_name, error_msg)) {
+        if (!validateArguments(args, var_arg_count, after_colon, command_name, error_msg)) {
             return ParserResult<CommandInfo>::error(error_msg);
         }
 
-        CommandInfo info = buildCommandInfo(command_name, new_base_arg_count, 
-                                            var_info.remaining_args);
-        
-        auto speed_override = parseSpeedOverrideFromArgs(var_info.remaining_args, 
-                                                         new_base_arg_count);
-        if (speed_override) {
-            info.setSpeedOverride(std::make_pair(
-                speed_override->velocity, speed_override->acceleration));
-        }
-        
-        return ParserResult<CommandInfo>::success({info, after_var});
+        return ParserResult<CommandInfo>::success(
+            {buildCommandInfo(command_name, var_arg_count, args), after_var});
     };
 }
 

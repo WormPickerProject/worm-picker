@@ -127,6 +127,12 @@ Parser<std::string> baseCommandParser();
 Parser<std::vector<std::string>> argumentsParser();
 
 /**
+ * @brief Parser for variable arguments
+ * @return Parser that extracts a VariableArgResult object
+ */
+Parser<VariableArgResult> variableArgParser();
+
+/**
  * @brief Parser for a specific command name
  * @param expected_command The expected command name
  * @return Parser that validates the command name
@@ -198,8 +204,7 @@ Parser<CommandInfo> commandParser(const std::string& command_name, std::size_t b
  * @param base_arg_group The base argument group size
  * @return Parser that extracts a CommandInfo object
  */
-Parser<CommandInfo> variableCommandParser(const std::string& command_name, 
-                                          std::size_t base_arg_group);
+Parser<CommandInfo> variableCommandParser(const std::string& command_name, std::size_t base_arg_group);
 
 //----------------------------------------
 // Command Builder Helper
