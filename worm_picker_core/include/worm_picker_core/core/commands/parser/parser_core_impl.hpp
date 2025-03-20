@@ -3,9 +3,8 @@
 // Copyright (c) 2025
 // SPDX-License-Identifier: Apache-2.0
 
-// #pragma once
-
-namespace worm_picker::parser {
+namespace worm_picker { 
+namespace parser {
 
 //=======================================
 // Template Parser Implementations
@@ -31,22 +30,6 @@ Parser<char> satisfy(Pred predicate, const std::string& description) {
     };
 }
 
-// NOT USED
-// template <typename T>
-// Parser<T> pure(T value) {
-//     return [=](ParserInput input) -> ParserResult<T> {
-//         return ParserResult<T>::success({value, input});
-//     };
-// }
-
-// NOT USED
-// template <typename T>
-// Parser<T> fail(const std::string& message) {
-//     return [=](ParserInput input) -> ParserResult<T> {
-//         return ParserResult<T>::error("At " + input.positionInfo() + ": " + message);
-//     };
-// }
-
 // Run two parsers in sequence and combine their results
 template <typename T, typename U, typename Combiner>
 Parser<typename std::invoke_result<Combiner, T, U>::type> 
@@ -58,14 +41,12 @@ combine(Parser<T> first, Parser<U> second, Combiner combiner) {
         if (!firstResult.isSuccess()) {
             return ParserResult<R>::error(firstResult.error());
         }
-        
         auto [firstValue, firstRest] = firstResult.value();
         
         auto secondResult = second(firstRest);
         if (!secondResult.isSuccess()) {
             return ParserResult<R>::error(secondResult.error());
         }
-        
         auto [secondValue, secondRest] = secondResult.value();
         
         return ParserResult<R>::success({
@@ -74,12 +55,6 @@ combine(Parser<T> first, Parser<U> second, Combiner combiner) {
         });
     };
 }
-
-// NOT USED
-// template <typename T, typename U>
-// Parser<U> right(Parser<T> first, Parser<U> second) {
-//     return combine(first, second, [](T, U b) { return b; });
-// }
 
 // Try the first parser, and if it fails, try the second parser
 template <typename T>
@@ -119,53 +94,6 @@ Parser<T> choice(std::vector<Parser<T>> parsers) {
             }());
     };
 }
-
-// NOT USED
-// template <typename T>
-// Parser<std::vector<T>> many(Parser<T> parser) {
-//     return [=](ParserInput input) -> ParserResult<std::vector<T>> {
-//         std::vector<T> results;
-//         ParserInput currentInput = input;
-        
-//         while (true) {
-//             auto result = parser(currentInput);
-//             if (!result.isSuccess()) {
-//                 break;
-//             }
-            
-//             auto [value, nextInput] = result.value();
-//             results.push_back(value);
-            
-//             // Ensure we're making progress
-//             if (nextInput.position == currentInput.position) {
-//                 break;
-//             }
-            
-//             currentInput = nextInput;
-//         }
-        
-//         return ParserResult<std::vector<T>>::success({results, currentInput});
-//     };
-// }
-
-// NOT USED
-// template <typename T>
-// Parser<std::vector<T>> many1(Parser<T> parser) {
-//     return [=](ParserInput input) -> ParserResult<std::vector<T>> {
-//         auto result = many(parser)(input);
-//         if (!result.isSuccess()) {
-//             return result;
-//         }
-        
-//         auto [values, nextInput] = result.value();
-//         if (values.empty()) {
-//             return ParserResult<std::vector<T>>::error(
-//                 "At " + input.positionInfo() + ": Expected at least one match");
-//         }
-        
-//         return ParserResult<std::vector<T>>::success({values, nextInput});
-//     };
-// }
 
 // Delimiter-separated list of items
 template <typename T, typename U>
@@ -207,4 +135,5 @@ Parser<std::vector<T>> sepBy(Parser<T> parser, Parser<U> separator) {
     };
 }
 
-} // namespace worm_picker::parser
+} // namespace parser
+} // namespace worm_picker

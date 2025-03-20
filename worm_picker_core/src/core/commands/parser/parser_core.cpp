@@ -5,7 +5,8 @@
 
 #include "worm_picker_core/core/commands/parser/parser_core.hpp"
 
-namespace worm_picker::parser {
+namespace worm_picker { 
+namespace parser {
 
 //=======================================
 // ParserInput Implementation
@@ -106,4 +107,5 @@ Parser<std::string> token(char delimiter) {
     };
 }
 
-} // namespace worm_picker::parser
+} // namespace parser
+} // namespace worm_picker
