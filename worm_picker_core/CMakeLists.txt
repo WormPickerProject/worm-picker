@@ -105,12 +105,9 @@ set(WORM_PICKER_DEPS
 # ----------------------------------------------------------------------------
 #
 add_library(${PROJECT_NAME} SHARED
-  # src/core/commands/parser/basic_parsers.cpp
-  # src/core/commands/parser/command_info_builder.cpp
-  # src/core/commands/parser/command_parsers.cpp
   src/core/commands/parser/command_parser.cpp
+  src/core/commands/parser/control_command_parser.cpp
   src/core/commands/parser/parser_core.cpp
-  src/core/commands/command_config.cpp
   src/core/commands/command_info.cpp
   src/core/tasks/stages/move_relative_data.cpp
   src/core/tasks/stages/move_to_circle_data.cpp
@@ -124,7 +121,6 @@ add_library(${PROJECT_NAME} SHARED
   src/infrastructure/interface/network/ros_command_client.cpp
   src/infrastructure/interface/network/tcp_socket_server.cpp
   src/infrastructure/parsers/calibration_points_parser.cpp
-  src/infrastructure/parsers/command_parser.cpp
   src/infrastructure/parsers/defined_tasks_parser.cpp
   src/infrastructure/parsers/hotel_data_parser.cpp
   src/infrastructure/parsers/workstation_data_parser.cpp

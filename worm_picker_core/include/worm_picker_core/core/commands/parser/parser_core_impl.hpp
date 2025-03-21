@@ -10,7 +10,6 @@ namespace parser {
 // Template Parser Implementations
 //=======================================
 
-// Match a single character satisfying a predicate
 template <typename Pred>
 Parser<char> satisfy(Pred&& predicate, const std::string& description) 
 {
@@ -60,7 +59,6 @@ combine(Parser<T> first, Parser<U> second, Combiner combiner)
     };
 }
 
-// Try the first parser, and if it fails, try the second parser
 template <typename T>
 Parser<T> orElse(Parser<T> first, Parser<T> second) 
 {
@@ -73,7 +71,6 @@ Parser<T> orElse(Parser<T> first, Parser<T> second)
     };
 }
 
-// Try multiple parsers in order until one succeeds
 template <typename T>
 Parser<T> choice(const std::vector<Parser<T>>& parsers) 
 {
@@ -101,17 +98,15 @@ Parser<T> choice(const std::vector<Parser<T>>& parsers)
     };
 }
 
-// Delimiter-separated list of items
 template <typename T, typename U>
 Parser<std::vector<T>> sepBy(Parser<T> parser, Parser<U> separator) 
 {
     return [parser, separator](ParserInput input) -> ParserResult<std::vector<T>> {
         std::vector<T> results;
+        results.reserve(8);
         
-        // Try to parse the first item
         auto firstResult = parser(input);
         if (!firstResult.isSuccess()) {
-            // Empty list is OK
             return ParserResult<std::vector<T>>::success({results, input});
         }
         

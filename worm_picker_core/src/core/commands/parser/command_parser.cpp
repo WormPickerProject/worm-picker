@@ -12,6 +12,7 @@ namespace parser {
 //----------------------------------------
 // CommandRegistry Implementation
 //----------------------------------------
+
 void CommandRegistry::loadFromNode(const rclcpp::Node::SharedPtr& node)
 {
     loadCommandsFromParameter(node, "commands.zero_arg", 0);
@@ -95,6 +96,7 @@ void CommandRegistry::loadCommandsFromParameter(const rclcpp::Node::SharedPtr& n
 //----------------------------------------
 // Basic Parsers and Helpers
 //----------------------------------------
+
 Parser<std::string> baseCommandParser() 
 {
     return token(':');
@@ -112,29 +114,33 @@ Parser<VariableArgResult> variableArgParser()
 
     return [](ParserInput input) -> ParserResult<VariableArgResult> {
         if (input.atEnd()) {
-            return ParserResult<VariableArgResult>::error(
-                "At " + input.positionInfo() + ": Unexpected end of input");
+            std::ostringstream oss;
+            oss << "At " << input.positionInfo() << ": Unexpected end of input";
+            return ParserResult<VariableArgResult>::error(oss.str());
         }
 
         std::string input_str(input.remainder());
         std::smatch match;
 
         if (!std::regex_search(input_str, match, n_pattern)) {
-            return ParserResult<VariableArgResult>::error(
-                "At " + input.positionInfo() + ": Expected 'N=' prefix");
+            std::ostringstream oss;
+            oss << "At " << input.positionInfo() << ": Expected 'N=' prefix";
+            return ParserResult<VariableArgResult>::error(oss.str());
         }
 
         int multiplier = std::stoi(match[1]);
         if (multiplier <= 0) {
-            return ParserResult<VariableArgResult>::error(
-                "At " + input.positionInfo() + ": Invalid multiplier: must be positive");
+            std::ostringstream oss;
+            oss << "At " << input.positionInfo() << ": Invalid multiplier: must be positive";
+            return ParserResult<VariableArgResult>::error(oss.str());
         }
 
         std::size_t n_length = match[0].length();
         ParserInput after_n = input.advance(n_length);
         if (after_n.atEnd() || after_n.current() != ':') {
-            return ParserResult<VariableArgResult>::error(
-                "At " + input.positionInfo() + ": Expected ':' after N= token");
+            std::ostringstream oss;
+            oss << "At " << input.positionInfo() << ": Expected ':' after N= token";
+            return ParserResult<VariableArgResult>::error(oss.str());
         }
 
         auto args_result = argumentsParser()(after_n.advance());
@@ -156,9 +162,10 @@ Parser<std::string> parseCommandName(const std::string& expected_command)
         }
         auto [actual_command, after_command] = command_result.value();
         if (actual_command != expected_command) {
-            return ParserResult<std::string>::error(
-                "At " + input.positionInfo() + ": Expected command '" + expected_command +
-                "', got '" + actual_command + "'");
+            std::ostringstream oss;
+            oss << "At " << input.positionInfo() << ": Expected command '" << expected_command
+                << "', got '" << actual_command << "'";
+            return ParserResult<std::string>::error(oss.str());
         }
         return ParserResult<std::string>::success({actual_command, after_command});
     };
@@ -168,8 +175,9 @@ Parser<ParserInput> parseColon()
 {
     return [](ParserInput input) -> ParserResult<ParserInput> {
         if (input.atEnd() || input.current() != ':') {
-            return ParserResult<ParserInput>::error(
-                "At " + input.positionInfo() + ": Expected ':' after command name");
+            std::ostringstream oss;
+            oss << "At " << input.positionInfo() << ": Expected ':' after command name";
+            return ParserResult<ParserInput>::error(oss.str());
         }
         return ParserResult<ParserInput>::success({input.advance(), input.advance()});
     };
@@ -244,6 +252,7 @@ CommandInfo buildCommandInfo(const std::string& command_name,
 //----------------------------------------
 // Command Parsers
 //----------------------------------------
+
 Parser<CommandInfo> commandParser(const std::string& command_name, std::size_t base_arg_count) 
 {
     return [command_name, base_arg_count](ParserInput input) -> ParserResult<CommandInfo> {
@@ -316,6 +325,7 @@ Parser<CommandInfo> variableCommandParser(const std::string& command_name, std::
 //----------------------------------------
 // Command Builder Implementation
 //----------------------------------------
+
 std::vector<Parser<CommandInfo>> CommandBuilder::createCommandParsers(
     const CommandRegistry& registry) 
 {

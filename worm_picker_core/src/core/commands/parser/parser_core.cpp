@@ -13,7 +13,9 @@ namespace parser {
 //=======================================
 
 ParserInput::ParserInput(std::string_view text, std::size_t position, std::size_t column)
-    : text(text), position(position), column(column) {}
+    : text(text), position(position), column(column) 
+{
+}
 
 bool ParserInput::atEnd() const 
 { 

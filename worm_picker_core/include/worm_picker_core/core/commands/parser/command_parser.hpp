@@ -35,6 +35,7 @@ struct SpeedOverride {
 //----------------------------------------
 // Command Registry
 //----------------------------------------
+
 /**
  * @brief Registry for commands and their expected argument counts
  */
@@ -114,6 +115,7 @@ private:
 //----------------------------------------
 // Helper and Basic Parsers
 //----------------------------------------
+
 /**
  * @brief Parser for the base command name
  * @return Parser that extracts a command name
@@ -190,6 +192,7 @@ CommandInfo buildCommandInfo(const std::string& command_name,
 //----------------------------------------
 // Command Parsers
 //----------------------------------------
+
 /**
  * @brief Parser for a standard command
  * @param command_name The command name
@@ -209,6 +212,7 @@ Parser<CommandInfo> variableCommandParser(const std::string& command_name, std::
 //----------------------------------------
 // Command Builder Helper
 //----------------------------------------
+
 /**
  * @brief Utility class for building command parsers
  */
