@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include <sstream>
 #include <functional>
 #include <string>
 #include <string_view>
@@ -24,16 +25,16 @@ namespace parser {
 // Parser input type (tracks current position in string with column info)
 struct ParserInput {
     std::string_view text;
-    size_t position;
-    size_t column;
+    std::size_t position;
+    std::size_t column;
     
-    ParserInput(std::string_view text, size_t position = 0, size_t column = 1);
+    ParserInput(std::string_view text, std::size_t position = 0, std::size_t column = 1);
     
     bool atEnd() const;
     char current() const;
-    ParserInput advance(size_t n = 1) const;
+    ParserInput advance(std::size_t n = 1) const;
     std::string_view remainder() const;
-    ParserInput skipTo(size_t new_position) const;
+    ParserInput skipTo(std::size_t new_position) const;
     std::string positionInfo() const;
 };
 
@@ -51,7 +52,7 @@ using Parser = std::function<ParserResult<T>(ParserInput)>;
 
 // Match a single character satisfying a predicate
 template <typename Pred>
-Parser<char> satisfy(Pred predicate, const std::string& description);
+Parser<char> satisfy(Pred&& predicate, const std::string& description);
 
 // Match a specific character
 Parser<char> character(char expected);
@@ -77,7 +78,7 @@ Parser<T> orElse(Parser<T> first, Parser<T> second);
 
 // Try multiple parsers in order until one succeeds
 template <typename T>
-Parser<T> choice(std::vector<Parser<T>> parsers);
+Parser<T> choice(const std::vector<Parser<T>>& parsers);
 
 // Delimiter-separated list of items
 template <typename T, typename U>
