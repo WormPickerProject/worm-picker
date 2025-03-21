@@ -11,8 +11,7 @@
 #include <moveit/task_constructor/stages.h>
 #include "worm_picker_core/core/result.hpp"
 #include "worm_picker_core/core/tasks/task_data.hpp"
-#include "worm_picker_core/infrastructure/parsers/command_parser.hpp"
-#include "worm_picker_core/core/commands/parser/new_command_parser.hpp"
+#include "worm_picker_core/core/commands/parser/control_command_parser.hpp"
 #include "worm_picker_core/infrastructure/parsers/workstation_data_parser.hpp"
 #include "worm_picker_core/infrastructure/parsers/hotel_data_parser.hpp"
 
@@ -47,7 +46,6 @@ private:
     void logCreatedTask(const std::string& command, const TaskData& task_data);
 
     NodePtr node_;
-    std::unique_ptr<CommandParser> command_parser_;
-    std::unique_ptr<worm_picker::parser::NewCommandParser> new_command_parser_;
+    std::unique_ptr<ControlCommandParser> control_command_parser_;
     TaskDataMap task_data_map_;
 };

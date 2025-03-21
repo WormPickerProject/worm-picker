@@ -15,8 +15,7 @@
 
 TaskFactory::TaskFactory(const NodePtr& node)
   : node_(node),
-    command_parser_(std::make_unique<CommandParser>(node)),
-    new_command_parser_(std::make_unique<worm_picker::parser::NewCommandParser>(node))
+    control_command_parser_(std::make_unique<ControlCommandParser>(node))
 {
   initializeTaskMap();
 }
@@ -26,7 +25,6 @@ void TaskFactory::initializeTaskMap()
     const auto& workstation = loadWorkstationData();
     const auto& hotel = loadHotelData();
     loadDefinedTasks(workstation, hotel);
-    // logTaskMap();
 }
 
 TaskFactory::WorkstationDataMap TaskFactory::loadWorkstationData() 
@@ -64,56 +62,9 @@ Result<TaskFactory::Task> TaskFactory::createTask(const std::string& command)
     task.add(std::make_unique<CurrentStateStage>("current"));
 
     auto parseCommand = [&]() -> Result<CommandInfo> {
-        const auto test_result = new_command_parser_->parse(command);
-        if (test_result.isSuccess()) {
-            const auto test_info = test_result.value();
-            auto logger = rclcpp::get_logger("TaskFactory");
-            RCLCPP_INFO(logger, "New Parser Command Info:");
-            RCLCPP_INFO(logger, "  Base Command: %s", test_info.getBaseCommand().c_str());
-    
-            std::string args_str;
-            for (const auto& arg : test_info.getArgs()) {
-                args_str += arg + ", ";
-            }
-            if (!args_str.empty()) args_str.resize(args_str.size() - 2);
-            RCLCPP_INFO(logger, "  Arguments: %s", args_str.c_str());
-    
-            if (test_info.getSpeedOverride()) {
-                auto speed = test_info.getSpeedOverride().value();
-                RCLCPP_INFO(logger, "  Speed Override: first = %f, second = %f", speed.first, speed.second);
-            } else {
-                RCLCPP_INFO(logger, "  Speed Override: none");
-            }
-    
-            RCLCPP_INFO(logger, "  Base Command Key: %s", test_info.getBaseCommandKey().c_str());
-            RCLCPP_INFO(logger, "  Base Args Amount: %zu", test_info.getBaseArgsAmount());
-        }
-        return command_parser_->parse(command);
+        return control_command_parser_->parse(command);
     };
     auto getTaskData = [&](const CommandInfo& info) -> Result<TaskData> {
-        // Temporary command info logging
-        auto logger = rclcpp::get_logger("TaskFactory");
-        RCLCPP_INFO(logger, "Command Info:");
-        RCLCPP_INFO(logger, "  Base Command: %s", info.getBaseCommand().c_str());
-
-        std::string args_str;
-        for (const auto& arg : info.getArgs()) {
-            args_str += arg + ", ";
-        }
-        if (!args_str.empty()) args_str.resize(args_str.size() - 2);
-        RCLCPP_INFO(logger, "  Arguments: %s", args_str.c_str());
-
-        if (info.getSpeedOverride()) {
-            auto speed = info.getSpeedOverride().value();
-            RCLCPP_INFO(logger, "  Speed Override: first = %f, second = %f", speed.first, speed.second);
-        } else {
-            RCLCPP_INFO(logger, "  Speed Override: none");
-        }
-
-        RCLCPP_INFO(logger, "  Base Command Key: %s", info.getBaseCommandKey().c_str());
-        RCLCPP_INFO(logger, "  Base Args Amount: %zu", info.getBaseArgsAmount());
-        // End of temporary command info logging
-        
         return fetchTaskData(info); 
     };
     auto configureTask = [&](const TaskData& task_data) -> Task {
