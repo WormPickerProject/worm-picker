@@ -28,7 +28,9 @@ ServiceHandler::ServiceHandler(NodePtr node,
     tf_buffer_ = std::make_shared<tf2_ros::Buffer>(node_->get_clock());
     tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
 }
-
+// Brigde between the tcp server and the task manager, this function handles the a request from the 
+// tcp serverand sends it to the task manager for execution. It also handles the response from the 
+// task manager and sends it back to the tcp server.
 void ServiceHandler::handleServiceRequest(const std::shared_ptr<const TaskCommandRequest>& request,
                                           const std::shared_ptr<TaskCommandResponse>& response) 
 {
@@ -44,6 +46,11 @@ void ServiceHandler::handleServiceRequest(const std::shared_ptr<const TaskComman
         auto pose = handleGetRequest(command);
         response->success = pose.isSuccess();
         response->feedback = pose.isSuccess() ? formatPose(pose.value()) : pose.error();
+        return;
+    } else if (command == "getPose") {
+        // Temporary solution to get the current pose
+        response->success = true;
+        response->feedback = formatPose(getCurrentPose());
         return;
     }
 
