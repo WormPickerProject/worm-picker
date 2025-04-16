@@ -21,6 +21,7 @@ public:
 private:
     using StageDataPtr = std::shared_ptr<StageData>;
     using Pose = geometry_msgs::msg::PoseStamped; 
+    using PoseMotionPair = std::pair<Pose, std::string>;
     
     static Result<Pose> extractCoordinates(const CommandInfo& info);
     static Result<Pose> parsePointStamped(const CommandInfo& info);

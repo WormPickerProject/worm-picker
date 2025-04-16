@@ -40,6 +40,7 @@ private:
     Result<void> handleMoveAllPlatesRandom();
     Result<void> handleMoveRowPlates(const std::string& row);
     Result<void> handleMovePlateAroundHotel();
+    Result<void> handleDemoTest(); 
     Result<void> executeMovementSequence(const std::vector<PointIdentifier>& points);
     bool isValidRow(const std::string& row) const;
     std::vector<PointIdentifier> getRowPoints(char row) const;

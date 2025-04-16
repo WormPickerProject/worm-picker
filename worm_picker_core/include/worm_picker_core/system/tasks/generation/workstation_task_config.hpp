@@ -24,7 +24,7 @@ struct OffsetXYZ {
 namespace offset {
     static constexpr OffsetXYZ PICK {-0.045, 0.000, 0.0125};
     static constexpr OffsetXYZ PLACE{ 0.000, 0.000, 0.0125};
-    static constexpr OffsetXYZ HOVER{ 0.020, 0.010, 0.0230};
+    static constexpr OffsetXYZ HOVER{ 0.020, 0.010, 0.0340};
     static constexpr OffsetXYZ POINT{ 0.000, 0.000, 0.0100};
 }
 

@@ -114,7 +114,7 @@ Result<void> CoreCommandInterface::Implementation::sendCommand(const std::string
                                    "\nFeedback: " + response->feedback);
     }
     
-    // RCLCPP_INFO(node_->get_logger(), "Command feedback: %s", response->feedback.c_str());
+    RCLCPP_INFO(node_->get_logger(), "Command feedback: %s", response->feedback.c_str());
     return Result<void>::success();
 }
 
@@ -227,6 +227,9 @@ Result<void> CoreCommandInterface::processUserCommand(const std::string& full_co
         {"movePlateAroundHotel", [](auto self, auto){ 
             return self->handleMovePlateAroundHotel(); 
         }},
+        {"DemoTest", [](auto self, auto){ 
+            return self->handleDemoTest(); 
+        }}
     };
 
     const std::string& base_command = parts[0];
@@ -462,6 +465,24 @@ Result<void> CoreCommandInterface::handleMoveRowPlates(const std::string& row)
     if (!result.isSuccess()) return result;
 
     return impl_->sendCommand(impl_->formatCommand("homeEndFactor"));
+}
+
+Result<void> CoreCommandInterface::handleDemoTest()
+{
+    return impl_->sendCommandsInOrder({
+        "homeEndFactor",
+        "workStationToHotel:1",
+        "pickPlateHotel:117",
+        "placeLidHotel:118",
+        "hotelToWorkStation:1",
+        "placePlateWorkStation:G1",
+        "pickPlateWorkStation:G1",
+        "workStationToHotel:1",
+        "pickLidHotel:118",
+        "placePlateHotel:117",
+        "hotelToWorkStation:1",
+        "home"
+    });
 }
 
 //------------------- Movement Sequence Helpers -------------------------
