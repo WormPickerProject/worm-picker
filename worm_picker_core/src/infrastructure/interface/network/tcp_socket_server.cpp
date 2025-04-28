@@ -1,167 +1,129 @@
 // tcp_socket_server.cpp
 //
-// Copyright (c) 2024
+// Copyright (c) 2025
 // SPDX-License-Identifier: Apache-2.0
 
 #include "worm_picker_core/infrastructure/interface/network/tcp_socket_server.hpp"
 
-TcpSocketServer::TcpSocketServer(uint16_t port)
-    : port_(port)
+#include <boost/asio/awaitable.hpp>
+#include <boost/asio/co_spawn.hpp>
+#include <boost/asio/redirect_error.hpp>
+#include <boost/asio/streambuf.hpp>
+#include <boost/asio/use_awaitable.hpp>
+#include <boost/asio/write.hpp>
+
+using boost::asio::awaitable;
+using boost::asio::co_spawn;
+using boost::asio::detached;
+using boost::asio::ip::tcp;
+namespace this_coro = boost::asio::this_coro;
+
+TcpSocketServer::TcpSocketServer(boost::asio::io_context& ctx, uint16_t port)
+    : ctx_(ctx),
+      acceptor_(ctx_, tcp::endpoint(tcp::v4(), port))
 {}
 
-TcpSocketServer::~TcpSocketServer()
-{
-    stopServer();
+TcpSocketServer::~TcpSocketServer() 
+{ 
+    stopServer(); 
 }
 
 bool TcpSocketServer::startServer()
 {
-    if (is_running_) {
+    if (running_.exchange(true)) {
         return true;
     }
 
     try {
-        initializeServerSocket();
-        is_running_ = true;
-        server_thread_ = std::jthread([this]() {
-            waitForClientConnections();
-        });
+        co_spawn(ctx_, acceptLoop(), detached);
         return true;
     } catch (const std::exception& e) {
-        RCLCPP_ERROR(rclcpp::get_logger("tcp_server"), "Failed to start server: %s", e.what());
-        if (server_socket_ != -1) {
-            close(server_socket_);
-            server_socket_ = -1;
-        }
+        RCLCPP_ERROR(rclcpp::get_logger("tcp_server"), "startServer: %s", e.what());
+        running_ = false;
         return false;
     }
 }
 
 void TcpSocketServer::stopServer()
 {
-    if (!is_running_) {
+    if (!running_.exchange(false)) {
         return;
     }
-
-    is_running_ = false;
-    
-    if (server_socket_ != -1) {
-        shutdown(server_socket_, SHUT_RDWR);
-        close(server_socket_);
-        server_socket_ = -1;
-    }
+    boost::system::error_code ec;
+    acceptor_.close(ec);
 }
 
-void TcpSocketServer::initializeServerSocket()
+void TcpSocketServer::setCommandHandler(CommandHandler cb)
 {
-    server_socket_ = socket(AF_INET, SOCK_STREAM, 0);
-    if (server_socket_ == -1) {
-        throw std::runtime_error("Failed to create socket: " + std::string(strerror(errno)));
-    }
-
-    int enable = 1;
-    if (setsockopt(server_socket_, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(enable)) == -1) {
-        throw std::runtime_error("Failed to set socket options: " + std::string(strerror(errno)));
-    }
-
-    sockaddr_in addr{};
-    addr.sin_family = AF_INET;
-    addr.sin_addr.s_addr = INADDR_ANY;
-    addr.sin_port = htons(port_);
-
-    if (bind(server_socket_, reinterpret_cast<sockaddr*>(&addr), sizeof(addr)) == -1) {
-        throw std::runtime_error("Failed to bind socket: " + std::string(strerror(errno)));
-    }
-
-    if (listen(server_socket_, SOCKET_BACKLOG) == -1) {
-        throw std::runtime_error("Failed to listen on socket: " + std::string(strerror(errno)));
-    }
+    std::scoped_lock lk(handler_mtx_);
+    handler_ = std::move(cb);
 }
 
-void TcpSocketServer::waitForClientConnections()
+awaitable<void> TcpSocketServer::acceptLoop()
 {
-    while (is_running_) {
-        sockaddr_in client_addr{};
-        socklen_t addr_len = sizeof(client_addr);
+    auto exec = co_await this_coro::executor;
 
-        int client_socket = accept(
-            server_socket_,
-            reinterpret_cast<sockaddr*>(&client_addr),
-            &addr_len
-        );
+    while (running_) {
+        boost::system::error_code ec;
+        tcp::socket sock = co_await acceptor_.async_accept(
+            boost::asio::redirect_error(boost::asio::use_awaitable, ec));
 
-        if (client_socket == -1) {
-            if (!is_running_) break;
-            if (errno == EINTR) continue;
-            if (errno == EBADF || errno == EINVAL) break;
+        if (!running_) {
+            co_return;
+        }
+        if (ec) {
+            RCLCPP_WARN(rclcpp::get_logger("tcp_server"), "accept(): %s", ec.message().c_str());
             continue;
         }
-
-        std::jthread([this, client_socket]() {
-            handleClientConnection(client_socket);
-        }).detach();
+        co_spawn(exec, session(std::move(sock)), detached);
     }
 }
 
-void TcpSocketServer::handleClientConnection(int client_socket) 
+awaitable<void> TcpSocketServer::session(tcp::socket sock)
 {
-    std::array<char, RECEIVE_BUFFER_SIZE> buffer;
-    std::string received_data;
+    boost::asio::streambuf buf(RECEIVE_BUFFER_SIZE);
 
-    while (is_running_) {
-        ssize_t bytes = recv(client_socket, buffer.data(), buffer.size(), 0);
-
-        if (bytes > 0) {
-            received_data.append(buffer.data(), bytes);
-            processReceivedData(received_data, client_socket);
-        } else if (bytes == 0) {
-            break;
-        } else {
-            if (errno == EINTR) {
-                continue; 
+    try {
+        while (running_) {
+            std::size_t n = co_await boost::asio::async_read_until(
+                sock, buf, '\n', boost::asio::use_awaitable);
+            if (n == 0) {
+                break;
             }
-            break; 
+
+            std::istream is(&buf);
+            std::string line;
+            std::getline(is, line);
+            if (!line.empty() && line.back() == '\r') {
+                line.pop_back();
+            }
+
+            CommandHandler h;
+            { std::scoped_lock lk(handler_mtx_); h = handler_; }
+            if (!h) {
+                continue;
+            }
+
+            auto exec = sock.get_executor();
+            h(line, [this,&sock,exec](Reply r) {
+                boost::asio::post(exec, [this,&sock,r]() mutable { enqueueResponse(sock, r); });
+            });
         }
+    } catch (const std::exception& e) {
+        RCLCPP_INFO(rclcpp::get_logger("tcp_server"), "session closed: %s", e.what());
     }
-
-    close(client_socket);
+    co_return;
 }
 
-void TcpSocketServer::processReceivedData(std::string& buffer, int client_socket) 
+void TcpSocketServer::enqueueResponse(tcp::socket& sock, const Reply& r)
 {
-    size_t pos;
-    while ((pos = buffer.find('\n')) != std::string::npos) {
-        std::string_view command(buffer.data(), pos);
-        if (!command.empty() && command.back() == '\r') {
-            command.remove_suffix(1);
-        }
+    std::string data = r.isSuccess()
+        ? "true\n"  + r.value() + '\n'
+        : "false\n" + r.error() + '\n';
 
-        executeCommand(command, client_socket);
-        buffer.erase(0, pos + 1);
-    }
-}
+    auto payload = std::make_shared<std::string>(std::move(data));
 
-void TcpSocketServer::executeCommand(std::string_view command, int client_socket) 
-{
-    CommandHandler handler;
-    {
-        std::lock_guard<std::mutex> lock(command_handler_mutex_);
-        handler = command_handler_;
-    }
-
-    if (handler) {
-        handler(std::string(command), [client_socket](bool success, std::string feedback) {
-            std::string response = 
-                std::string(success ? "true\n" : "false\n") +
-                std::string(feedback) + "\n";
-                
-            send(client_socket, response.data(), response.size(), 0);
-        });
-    }
-}
-
-void TcpSocketServer::setCommandHandler(CommandHandler handler) 
-{
-    std::lock_guard<std::mutex> lock(command_handler_mutex_);
-    command_handler_ = std::move(handler);
+    boost::asio::async_write(
+        sock, boost::asio::buffer(*payload),
+        [payload](auto, auto) { /* keep shared_ptr alive */ });
 }

@@ -5,34 +5,32 @@
 
 #pragma once
 
-#include <netinet/in.h>
-#include <rclcpp/rclcpp.hpp> 
+#include <boost/asio.hpp>
+#include <rclcpp/rclcpp.hpp>
+#include "worm_picker_core/core/result.hpp"
 
 class TcpSocketServer {
 public:
-    static constexpr size_t RECEIVE_BUFFER_SIZE = 2048;
-    static constexpr int SOCKET_BACKLOG = 1;
+    static constexpr std::size_t RECEIVE_BUFFER_SIZE = 2048;
 
-    using CommandHandler = std::function<void(const std::string&, 
-                                              std::function<void(bool, std::string)>)>;
+    using Reply    = Result<std::string>;
+    using ReplyFn  = std::function<void(Reply)>;
+    using CommandHandler = std::function<void(const std::string&, ReplyFn)>;
 
-    TcpSocketServer(uint16_t port);
+    TcpSocketServer(boost::asio::io_context& ctx, uint16_t port);
     ~TcpSocketServer();
     bool startServer();
     void stopServer();
-    void setCommandHandler(CommandHandler handler);
+    void setCommandHandler(CommandHandler cb);
 
 private:
-    void initializeServerSocket();
-    void waitForClientConnections();
-    void handleClientConnection(int client_socket);
-    void processReceivedData(std::string& buffer, int client_socket);
-    void executeCommand(std::string_view command, int client_socket);
+    boost::asio::awaitable<void> acceptLoop();
+    boost::asio::awaitable<void> session(boost::asio::ip::tcp::socket sock);
+    void enqueueResponse(boost::asio::ip::tcp::socket& sock, const Reply& r);
 
-    const uint16_t port_;
-    std::atomic<bool> is_running_{false};
-    int server_socket_{-1};
-    std::jthread server_thread_;
-    CommandHandler command_handler_;
-    std::mutex command_handler_mutex_;
+    boost::asio::io_context&                 ctx_;
+    boost::asio::ip::tcp::acceptor           acceptor_;
+    std::atomic<bool>                        running_{false};
+    CommandHandler                           handler_;
+    std::mutex                               handler_mtx_;
 };
