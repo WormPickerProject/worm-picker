@@ -5,16 +5,6 @@
 
 #pragma once
 
-// #ifndef BOOST_ASIO_HAS_CO_AWAIT
-// #    define BOOST_ASIO_HAS_CO_AWAIT
-// #endif
-
-// #include <memory>
-// #include <optional>
-// #include <string>
-// #include <thread>
-// #include <unordered_map>
-
 #include <boost/asio.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <std_srvs/srv/trigger.hpp>
