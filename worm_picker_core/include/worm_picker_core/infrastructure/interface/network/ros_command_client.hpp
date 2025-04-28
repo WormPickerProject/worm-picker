@@ -7,7 +7,6 @@
 
 #include <boost/asio.hpp>
 #include <rclcpp/rclcpp.hpp>
-#include <std_srvs/srv/trigger.hpp>
 #include <motoros2_interfaces/srv/start_traj_mode.hpp>
 #include <worm_picker_custom_msgs/srv/task_command.hpp>
 #include "worm_picker_core/core/result.hpp"
@@ -24,7 +23,6 @@ public:
 private:
     using Task              = worm_picker_custom_msgs::srv::TaskCommand;
     using StartTM           = motoros2_interfaces::srv::StartTrajMode;
-    using Trigger           = std_srvs::srv::Trigger;
     using Reply             = Result<std::string>;
     using ReplyFn           = std::function<void(Reply)>;
     using CommandHandler    = std::function<void(ReplyFn)>;
@@ -34,9 +32,8 @@ private:
     using WorkGuard         = boost::asio::executor_work_guard<IoExecutor>;
     using OptionalWorkGuard = std::optional<WorkGuard>;
 
-    static inline constexpr char const* k_task_srv  = "/task_command";
-    static inline constexpr char const* k_start_srv = "/start_traj_mode";
-    static inline constexpr char const* k_stop_srv  = "/stop_traj_mode";
+    static inline constexpr char const* TASK_SRV  = "/task_command";
+    static inline constexpr char const* START_SRV = "/start_traj_mode";
 
     void initCmdTable();
     void handleCmd(const std::string& cmd, ReplyFn reply);
@@ -46,7 +43,6 @@ private:
     rclcpp::Node::SharedPtr            node_;
     rclcpp::Client<Task>::SharedPtr    task_cli_;
     rclcpp::Client<StartTM>::SharedPtr start_cli_;
-    rclcpp::Client<Trigger>::SharedPtr stop_cli_;
     CommandRegistry                    cmd_tbl_;
     boost::asio::io_context            io_ctx_;
     IoStrand                           strand_;
