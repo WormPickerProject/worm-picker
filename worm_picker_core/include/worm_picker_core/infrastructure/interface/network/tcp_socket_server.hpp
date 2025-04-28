@@ -26,7 +26,7 @@ public:
 private:
     boost::asio::awaitable<void> acceptLoop();
     boost::asio::awaitable<void> session(boost::asio::ip::tcp::socket sock);
-    void enqueueResponse(boost::asio::ip::tcp::socket& sock, const Reply& r);
+    void dispatchAndReply(boost::asio::ip::tcp::socket& sock, CommandHandler& h, std::string cmd);
 
     boost::asio::io_context&                 ctx_;
     boost::asio::ip::tcp::acceptor           acceptor_;
