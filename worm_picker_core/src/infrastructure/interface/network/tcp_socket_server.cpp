@@ -83,47 +83,54 @@ awaitable<void> TcpSocketServer::session(tcp::socket sock)
 {
     boost::asio::streambuf buf(RECEIVE_BUFFER_SIZE);
 
-    try {
-        while (running_) {
-            std::size_t n = co_await boost::asio::async_read_until(
-                sock, buf, '\n', boost::asio::use_awaitable);
-            if (n == 0) {
-                break;
-            }
+    auto getHandler = [&]() -> std::optional<CommandHandler> {
+        std::scoped_lock lk(handler_mtx_);
+        if (handler_) return handler_;
+        return std::nullopt;
+    };
 
+    while (running_) {
+        std::size_t n = 0;
+        try {
+            n = co_await boost::asio::async_read_until(sock, buf, '\n', boost::asio::use_awaitable);
+        } catch (const std::exception& e) {
+            RCLCPP_INFO(rclcpp::get_logger("tcp_server"), "session closed: %s", e.what());
+            break;
+        }
+
+        if (n == 0) {
+            break;
+        }
+
+        std::string line;
+        {
             std::istream is(&buf);
-            std::string line;
             std::getline(is, line);
             if (!line.empty() && line.back() == '\r') {
                 line.pop_back();
             }
-
-            CommandHandler h;
-            { std::scoped_lock lk(handler_mtx_); h = handler_; }
-            if (!h) {
-                continue;
-            }
-
-            auto exec = sock.get_executor();
-            h(line, [this,&sock,exec](Reply r) {
-                boost::asio::post(exec, [this,&sock,r]() mutable { enqueueResponse(sock, r); });
-            });
         }
-    } catch (const std::exception& e) {
-        RCLCPP_INFO(rclcpp::get_logger("tcp_server"), "session closed: %s", e.what());
+
+        auto maybe_h = getHandler();
+        if (!maybe_h) {
+            continue;
+        }
+
+        dispatchAndReply(sock, *maybe_h, std::move(line));
     }
     co_return;
 }
 
-void TcpSocketServer::enqueueResponse(tcp::socket& sock, const Reply& r)
+void TcpSocketServer::dispatchAndReply(tcp::socket& sock, CommandHandler& h,std::string cmd)
 {
-    std::string data = r.isSuccess()
-        ? "true\n"  + r.value() + '\n'
-        : "false\n" + r.error() + '\n';
-
-    auto payload = std::make_shared<std::string>(std::move(data));
-
-    boost::asio::async_write(
-        sock, boost::asio::buffer(*payload),
-        [payload](auto, auto) { /* keep shared_ptr alive */ });
+    auto exec = sock.get_executor();
+    h(std::move(cmd), [this, &sock, exec](Reply r) mutable {
+        std::string out = r.isSuccess()
+            ? "true\n"  + r.value() + '\n'
+            : "false\n" + r.error() + '\n';
+        auto payload = std::make_shared<std::string>(std::move(out));
+        boost::asio::async_write(
+            sock, boost::asio::buffer(*payload),
+            [payload](auto, auto){ /* keep alive */ });
+    });
 }
