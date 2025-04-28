@@ -11,9 +11,8 @@ RosCommandClient::RosCommandClient(int argc, char **argv)
     rclcpp::init(argc, argv);
     node_ = rclcpp::Node::make_shared("ros_command_client");
 
-    task_cli_  = node_->create_client<Task>   (k_task_srv);
-    start_cli_ = node_->create_client<StartTM>(k_start_srv);
-    stop_cli_  = node_->create_client<Trigger>(k_stop_srv);
+    task_cli_  = node_->create_client<Task>   (TASK_SRV);
+    start_cli_ = node_->create_client<StartTM>(START_SRV);
 
     initCmdTable();
 }
@@ -69,10 +68,10 @@ void RosCommandClient::connectToTaskCommandService()
     while (rclcpp::ok() && !task_cli_->wait_for_service(std::chrono::seconds{5}))
     {
         RCLCPP_WARN_THROTTLE(node_->get_logger(), *node_->get_clock(),
-                             2000, "Waiting for %s ...", k_task_srv);
+                             2000, "Waiting for %s ...", TASK_SRV);
         r.sleep();
     }
-    RCLCPP_INFO(node_->get_logger(),"Connected to %s", k_task_srv);
+    RCLCPP_INFO(node_->get_logger(),"Connected to %s", TASK_SRV);
 }
 
 void RosCommandClient::runSocketServer(int port)
