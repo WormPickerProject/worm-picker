@@ -26,6 +26,9 @@ function(set_compiler_options target)
       $<$<CONFIG:Debug>:-g>
       $<$<CONFIG:Release>:-O3>
     )
+    target_compile_definitions(${target} PRIVATE
+      BOOST_ASIO_HAS_CO_AWAIT
+    )
   endif()
 endfunction()
 
