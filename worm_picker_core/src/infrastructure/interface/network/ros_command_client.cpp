@@ -5,113 +5,139 @@
 
 #include "worm_picker_core/infrastructure/interface/network/ros_command_client.hpp"
 
-RosCommandClient::RosCommandClient(int argc, char **argv) 
+RosCommandClient::RosCommandClient(int argc, char **argv)
+  : strand_(io_ctx_.get_executor())
 {
     rclcpp::init(argc, argv);
     node_ = rclcpp::Node::make_shared("ros_command_client");
 
-    task_command_client_ = node_->create_client<TaskCommand>("/task_command");
-    start_traj_client_ = node_->create_client<StartTrajMode>("/start_traj_mode");
-    stop_traj_client_ = node_->create_client<Trigger>("/stop_traj_mode");
+    task_cli_  = node_->create_client<Task>   (k_task_srv);
+    start_cli_ = node_->create_client<StartTM>(k_start_srv);
+    stop_cli_  = node_->create_client<Trigger>(k_stop_srv);
 
-    initializeCommandHandlers();
+    initCmdTable();
 }
 
-void RosCommandClient::initializeCommandHandlers() 
+RosCommandClient::~RosCommandClient()
 {
-    command_handlers_["startWormPicker"] = [this](StatusCallback completion_callback) { 
+    shutdownInternal();
+    if (rclcpp::ok()) {
+        rclcpp::shutdown();
+    }
+}
+
+void RosCommandClient::initCmdTable()
+{
+    cmd_tbl_["startWormPicker"] = [this](ReplyFn reply) {
         RCLCPP_INFO(node_->get_logger(), "Start command received.");
 
-        auto request = std::make_shared<StartTrajMode::Request>();
-        auto self = shared_from_this();
-        
-        using ReadyEnum = motoros2_interfaces::msg::MotionReadyEnum;
-        auto response_handler = [self, completion_callback](
-            const rclcpp::Client<StartTrajMode>::SharedFuture future) {
-                auto response = future.get();
-                bool success = (response->result_code.value == ReadyEnum::READY);
-                completion_callback(success, "");
+        using StartFuture = rclcpp::Client<StartTM>::SharedFuture;
+        auto response = [self = shared_from_this(), reply](const StartFuture future) {
+            using Ready = motoros2_interfaces::msg::MotionReadyEnum;
+            bool success = (future.get()->result_code.value == Ready::READY);
+            reply(success ? Reply::success("Robot started") : Reply::error("Robot not started"));
         };
 
-        start_traj_client_->async_send_request(request, std::move(response_handler));
+        auto request  = std::make_shared<StartTM::Request>();
+        start_cli_->async_send_request(request, std::move(response));
     };
 
-    command_handlers_["quit"] = [this](StatusCallback completion_callback) { 
+    cmd_tbl_["quit"] = [this](ReplyFn reply) {
         RCLCPP_INFO(node_->get_logger(), "Quit command received.");
+        reply(Reply::success("Shutting down..."));
         rclcpp::shutdown();
-        completion_callback(true, "");
     };
-    
+
+    cmd_tbl_["q"] = cmd_tbl_["quit"];
+
     /* To be implemented in the future
-        command_handlers_["stopWormPicker"] = [this](StatusCallback completion_callback) { 
+        cmd_tbl_["stopWormPicker"] = [this](ReplyFn reply) { 
             RCLCPP_INFO(node_->get_logger(), "Stop command received.");
             // Logic to stop the robot
         };
 
-        command_handlers_["launchWormPickerCore"] = [this](StatusCallback completion_callback) { 
+        cmd_tbl_["launchWormPickerCore"] = [this](ReplyFn reply) { 
             RCLCPP_INFO(node_->get_logger(), "Launch robot application command received.");
             // Logic to launch the robot core application
         };
     */
 }
 
-void RosCommandClient::connectToTaskCommandService() 
+void RosCommandClient::connectToTaskCommandService()
 {
-    while (rclcpp::ok() && !task_command_client_->wait_for_service(std::chrono::seconds(5))) {
-        std::this_thread::sleep_for(std::chrono::seconds(5));
+    rclcpp::Rate r(1.0);
+    while (rclcpp::ok() && !task_cli_->wait_for_service(std::chrono::seconds{5}))
+    {
+        RCLCPP_WARN_THROTTLE(node_->get_logger(), *node_->get_clock(),
+                             2000, "Waiting for %s ...", k_task_srv);
+        r.sleep();
     }
-    RCLCPP_INFO(node_->get_logger(), "Connected to task command service.");
+    RCLCPP_INFO(node_->get_logger(),"Connected to %s", k_task_srv);
 }
 
-void RosCommandClient::runSocketServer(int server_port) 
+void RosCommandClient::runSocketServer(int port)
 {
-    auto server = std::make_unique<TcpSocketServer>(server_port);
-    auto weak_self = weak_from_this();
+    work_guard_.emplace(boost::asio::make_work_guard(io_ctx_));
+    server_ = std::make_unique<TcpSocketServer>(io_ctx_, port);
 
-    server->setCommandHandler(
-        [weak_self](const std::string& command, StatusCallback completion_callback) {
-            if (auto self = weak_self.lock()) {
-                self->handleCommand(command, completion_callback);
+    std::weak_ptr<RosCommandClient> weak = shared_from_this();
+    server_->setCommandHandler([weak, strand=strand_](std::string cmd, ReplyFn reply) {
+        boost::asio::dispatch(strand, [weak, cmd=std::move(cmd), reply=std::move(reply)]() mutable {
+            if(auto self = weak.lock()) {
+                self->handleCmd(cmd,std::move(reply));
             } else {
-                completion_callback(false, "Server is not available.");
+                reply(Reply::error("ROS object destroyed"));
             }
-        }
-    );
+        });
+    });
 
-    RCLCPP_INFO(node_->get_logger(), "Starting server.");
-    server->startServer();
+    if (!server_->startServer()) {
+        RCLCPP_ERROR(node_->get_logger(),"TCP server failed to start");
+        return;
+    }
+    io_thread_ = std::jthread([this]{ io_ctx_.run(); });
 
-    rclcpp::executors::MultiThreadedExecutor executor;
-    executor.add_node(node_);
-    executor.spin();
+    rclcpp::executors::MultiThreadedExecutor exec;
+    exec.add_node(node_);
+    exec.spin();
 
-    RCLCPP_INFO(node_->get_logger(), "Stopping server.");
-    server->stopServer();
+    shutdownInternal();
 }
 
-void RosCommandClient::handleCommand(const std::string& command, 
-                                     StatusCallback completion_callback) 
+void RosCommandClient::handleCmd(const std::string& cmd, ReplyFn reply)
 {
-    if (auto it = command_handlers_.find(command); it != command_handlers_.end()) {
-        it->second(completion_callback);
+    if (auto it = cmd_tbl_.find(cmd); it != cmd_tbl_.end()){
+        it->second(std::move(reply)); 
         return;
     }
 
-    auto request = std::make_shared<TaskCommand::Request>();
-    request->command = command;
-    sendTaskCommandRequest(request, completion_callback);
+    auto request = std::make_shared<Task::Request>();
+    request->command = cmd;
+    forwardTask(request, std::move(reply));
 }
 
-void RosCommandClient::sendTaskCommandRequest(const std::shared_ptr<TaskCommand::Request>& request, 
-                                              StatusCallback completion_callback) 
+void RosCommandClient::forwardTask(std::shared_ptr<Task::Request> request, ReplyFn reply)
 {
-    RCLCPP_INFO(node_->get_logger(), "Task command received: '%s'", request->command.c_str());
+    RCLCPP_INFO(node_->get_logger(),"→ task_command: '%s'", request->command.c_str());
 
-    auto response_handler = [self = shared_from_this(), completion_callback](
-        const rclcpp::Client<TaskCommand>::SharedFuture future) {
-            auto response = future.get();
-            completion_callback(response->success, response->feedback);
+    using TaskFuture = rclcpp::Client<Task>::SharedFuture;
+    auto response = [self = shared_from_this(), reply](const TaskFuture future) {
+        auto response = future.get();
+        reply(response->success ? 
+            Reply::success(response->feedback) : 
+            Reply::error(response->feedback));
     };
 
-    task_command_client_->async_send_request(request, std::move(response_handler));
+    task_cli_->async_send_request(request, std::move(response));
+}
+
+void RosCommandClient::shutdownInternal()
+{
+    if (server_) {
+        server_->stopServer();
+    }
+    if (work_guard_) {
+        work_guard_.reset();
+    }
+    io_ctx_.stop();
 }
