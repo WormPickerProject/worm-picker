@@ -14,3 +14,8 @@ log/
 # Ignore timer log directory
 worm_picker_core/config/logs/timer_data.json
 worm_picker_description/program_data/data_files/hotel_data.json
+
+# Dependencies
+dependencies/industrial_core_ros2_msgs_only/
+dependencies/motoros2_client_interface_dependencies/
+dependencies/motoros2_interfaces/
