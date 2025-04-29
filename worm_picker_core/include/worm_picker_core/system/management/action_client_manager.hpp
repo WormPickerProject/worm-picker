@@ -9,6 +9,7 @@
 #include <rclcpp_action/rclcpp_action.hpp>
 #include <moveit_task_constructor_msgs/action/execute_task_solution.hpp>
 
+// This class interfaces with the action server for executing task solutions
 class ActionClientManager {
 public:
     using NodePtr = rclcpp::Node::SharedPtr;

@@ -26,16 +26,19 @@ inline void throwBadAccess(const char* msg) {
 template <typename T, typename E = std::string>
 class Result {
 public:
+    struct Success { T value; };
+    struct Error { E value; };
+
     static Result success(T value) {
-        return Result(std::move(value));
+        return Result(Success{std::move(value)});
     }
 
-    static Result error(E errorValue) {
-        return Result(std::move(errorValue));
+    static Result error(E error_value) {
+        return Result(Error{std::move(error_value)});
     }
 
     bool isSuccess() const noexcept {
-        return std::holds_alternative<T>(value_);
+        return std::holds_alternative<Success>(value_);
     }
 
     explicit operator bool() const noexcept {
@@ -46,42 +49,42 @@ public:
         if (!isSuccess()) {
             throwBadAccess("Attempted to access value of a failed Result");
         }
-        return std::get<T>(value_);
+        return std::get<Success>(value_).value;
     }
 
     T& value() & {
         if (!isSuccess()) {
             throwBadAccess("Attempted to access value of a failed Result");
         }
-        return std::get<T>(value_);
+        return std::get<Success>(value_).value;
     }
 
     T&& value() && {
         if (!isSuccess()) {
             throwBadAccess("Attempted to access value of a failed Result");
         }
-        return std::move(std::get<T>(value_));
+        return std::move(std::get<Success>(value_).value);
     }
 
     const E& error() const & {
         if (isSuccess()) {
             throwBadAccess("Attempted to access error of a successful Result");
         }
-        return std::get<E>(value_);
+        return std::get<Error>(value_).value;
     }
 
     E& error() & {
         if (isSuccess()) {
             throwBadAccess("Attempted to access error of a successful Result");
         }
-        return std::get<E>(value_);
+        return std::get<Error>(value_).value;
     }
 
     E&& error() && {
         if (isSuccess()) {
             throwBadAccess("Attempted to access error of a successful Result");
         }
-        return std::move(std::get<E>(value_));
+        return std::move(std::get<Error>(value_).value);
     }
 
     template <typename Func>
@@ -97,7 +100,7 @@ public:
                 return Result<U, E>::success(std::invoke(std::forward<Func>(func), value()));
             }
         }
-        return Result<U, E>::error(std::get<E>(value_));
+        return Result<U, E>::error(error());
     }
 
     template <typename Func>
@@ -113,7 +116,7 @@ public:
                 return Result<U, E>::success(std::invoke(std::forward<Func>(func), value()));
             }
         }
-        return Result<U, E>::error(std::get<E>(value_));
+        return Result<U, E>::error(error());
     }
 
     template <typename Func>
@@ -130,7 +133,7 @@ public:
         if (isSuccess()) {
             return std::invoke(std::forward<Func>(func), value());
         }
-        return ResultType::error(std::get<E>(value_));
+        return ResultType::error(error());
     }
 
     template <typename Func>
@@ -147,7 +150,7 @@ public:
         if (isSuccess()) {
             return std::invoke(std::forward<Func>(func), value());
         }
-        return ResultType::error(std::get<E>(value_));
+        return ResultType::error(error());
     }
 
     template <typename Func>
@@ -156,13 +159,13 @@ public:
     {
         using E2 = std::invoke_result_t<Func, const E&>;
         if (isSuccess()) {
-            return Result<T, E2>::success(std::get<T>(value_));
+            return Result<T, E2>::success(value());
         }
-        return Result<T, E2>::error(std::invoke(std::forward<Func>(func), std::get<E>(value_)));
+        return Result<T, E2>::error(std::invoke(std::forward<Func>(func), error()));
     }
 
     template <typename SuccessFunc, typename ErrorFunc>
-    auto match(SuccessFunc&& onSuccess, ErrorFunc&& onError) const
+    auto match(SuccessFunc&& on_success, ErrorFunc&& on_error) const
         -> std::invoke_result_t<SuccessFunc, const T&>
     {
         using ReturnType = std::invoke_result_t<SuccessFunc, const T&>;
@@ -172,16 +175,16 @@ public:
         );
 
         if (isSuccess()) {
-            return std::invoke(std::forward<SuccessFunc>(onSuccess), value());
+            return std::invoke(std::forward<SuccessFunc>(on_success), value());
         }
-        return std::invoke(std::forward<ErrorFunc>(onError), std::get<E>(value_));
+        return std::invoke(std::forward<ErrorFunc>(on_error), error());
     }
 
-    T valueOr(const T& defaultValue) const {
+    T valueOr(const T& default_value) const {
         if (isSuccess()) {
-            return std::get<T>(value_);
+            return value();
         }
-        return defaultValue;
+        return default_value;
     }
 
     template <typename Func>
@@ -189,7 +192,7 @@ public:
         if (isSuccess()) {
             return *this;
         }
-        return std::invoke(std::forward<Func>(f), std::get<E>(value_));
+        return std::invoke(std::forward<Func>(f), error());
     }
 
     friend std::ostream& operator<<(std::ostream& os, const Result& r) {
@@ -205,10 +208,10 @@ public:
     using ErrorType = E;
 
 private:
-    std::variant<T, E> value_;
+    std::variant<Success, Error> value_;
 
-    explicit Result(T value) : value_(std::move(value)) {}
-    explicit Result(E errorValue) : value_(std::move(errorValue)) {}
+    explicit Result(Success success) : value_(std::move(success)) {}
+    explicit Result(Error error) : value_(std::move(error)) {}
 };
 
 template <typename E>
@@ -218,8 +221,8 @@ public:
         return Result(true);
     }
 
-    static Result error(E errorValue) {
-        return Result(std::move(errorValue));
+    static Result error(E error_value) {
+        return Result(std::move(error_value));
     }
 
     bool isSuccess() const noexcept {
@@ -234,21 +237,21 @@ public:
         if (isSuccess()) {
             throwBadAccess("Attempted to access error of a successful void Result");
         }
-        return errorValue_;
+        return error_value_;
     }
 
     E& error() & {
         if (isSuccess()) {
             throwBadAccess("Attempted to access error of a successful void Result");
         }
-        return errorValue_;
+        return error_value_;
     }
 
     E&& error() && {
         if (isSuccess()) {
             throwBadAccess("Attempted to access error of a successful void Result");
         }
-        return std::move(errorValue_);
+        return std::move(error_value_);
     }
 
     template <typename Func>
@@ -264,7 +267,7 @@ public:
                 return Result<U, E>::success(std::invoke(std::forward<Func>(func)));
             }
         }
-        return Result<U, E>::error(errorValue_);
+        return Result<U, E>::error(error_value_);
     }
 
     template <typename Func>
@@ -280,7 +283,7 @@ public:
                 return Result<U, E>::success(std::invoke(std::forward<Func>(func)));
             }
         }
-        return Result<U, E>::error(errorValue_);
+        return Result<U, E>::error(error_value_);
     }
 
     template <typename Func>
@@ -297,7 +300,7 @@ public:
         if (isSuccess()) {
             return std::invoke(std::forward<Func>(func));
         }
-        return ResultType::error(errorValue_);
+        return ResultType::error(error_value_);
     }
 
     template <typename Func>
@@ -314,11 +317,11 @@ public:
         if (isSuccess()) {
             return std::invoke(std::forward<Func>(func));
         }
-        return ResultType::error(errorValue_);
+        return ResultType::error(error_value_);
     }
 
     template <typename SuccessFunc, typename ErrorFunc>
-    auto match(SuccessFunc&& onSuccess, ErrorFunc&& onError) const
+    auto match(SuccessFunc&& on_success, ErrorFunc&& on_error) const
         -> std::invoke_result_t<SuccessFunc>
     {
         using ReturnType = std::invoke_result_t<SuccessFunc>;
@@ -328,9 +331,9 @@ public:
         );
 
         if (isSuccess()) {
-            return std::invoke(std::forward<SuccessFunc>(onSuccess));
+            return std::invoke(std::forward<SuccessFunc>(on_success));
         }
-        return std::invoke(std::forward<ErrorFunc>(onError), errorValue_);
+        return std::invoke(std::forward<ErrorFunc>(on_error), error_value_);
     }
 
     template <typename Func>
@@ -338,14 +341,14 @@ public:
         if (isSuccess()) {
             return *this;
         }
-        return std::invoke(std::forward<Func>(f), errorValue_);
+        return std::invoke(std::forward<Func>(f), error_value_);
     }
 
     friend std::ostream& operator<<(std::ostream& os, const Result& r) {
         if (r.isSuccess()) {
             os << "Success(void)";
         } else {
-            os << "Error(" << r.errorValue_ << ")";
+            os << "Error(" << r.error_value_ << ")";
         }
         return os;
     }
@@ -355,8 +358,8 @@ public:
 
 private:
     bool success_ = false;
-    E errorValue_{};
+    E error_value_{};
 
     explicit Result(bool success) : success_(success) {}
-    explicit Result(E errorValue) : success_(false), errorValue_(std::move(errorValue)) {}
+    explicit Result(E error_value) : success_(false), error_value_(std::move(error_value)) {}
 };

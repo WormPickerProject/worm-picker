@@ -15,7 +15,7 @@
 
 TaskFactory::TaskFactory(const NodePtr& node)
   : node_(node),
-    command_parser_(std::make_unique<CommandParser>(node))
+    control_command_parser_(std::make_unique<ControlCommandParser>(node))
 {
   initializeTaskMap();
 }
@@ -25,7 +25,6 @@ void TaskFactory::initializeTaskMap()
     const auto& workstation = loadWorkstationData();
     const auto& hotel = loadHotelData();
     loadDefinedTasks(workstation, hotel);
-    // logTaskMap();
 }
 
 TaskFactory::WorkstationDataMap TaskFactory::loadWorkstationData() 
@@ -63,7 +62,7 @@ Result<TaskFactory::Task> TaskFactory::createTask(const std::string& command)
     task.add(std::make_unique<CurrentStateStage>("current"));
 
     auto parseCommand = [&]() -> Result<CommandInfo> {
-        return command_parser_->parse(command);
+        return control_command_parser_->parse(command);
     };
     auto getTaskData = [&](const CommandInfo& info) -> Result<TaskData> {
         return fetchTaskData(info); 

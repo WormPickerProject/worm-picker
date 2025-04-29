@@ -5,11 +5,9 @@ include(GNUInstallDirs)
 
 option(BUILD_TESTING "Build tests" ON)
 
-#
 # ----------------------------------------------------------------------------
 # C++ Standard & Build Type
 # ----------------------------------------------------------------------------
-#
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -18,94 +16,74 @@ if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Debug)
 endif()
 
-#
 # ----------------------------------------------------------------------------
 # Compiler Options Function
 # ----------------------------------------------------------------------------
-#
 function(set_compiler_options target)
   if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     target_compile_options(${target} PRIVATE
-      -Wall
-      -Wextra
-      -Wpedantic
+      -Wall -Wextra -Wpedantic
       $<$<CONFIG:Debug>:-g>
       $<$<CONFIG:Release>:-O3>
+    )
+    target_compile_definitions(${target} PRIVATE
+      BOOST_ASIO_HAS_CO_AWAIT
     )
   endif()
 endfunction()
 
-#
 # ----------------------------------------------------------------------------
 # Find Dependencies
 # ----------------------------------------------------------------------------
-#
-find_package(ament_cmake REQUIRED)
-find_package(rclcpp REQUIRED)
-find_package(worm_picker_custom_msgs REQUIRED)
-find_package(moveit_core REQUIRED)
-find_package(moveit_msgs REQUIRED)
-find_package(moveit_ros_planning_interface REQUIRED)
-find_package(moveit_task_constructor_core REQUIRED)
-find_package(moveit_task_constructor_msgs REQUIRED)
-find_package(moveit_task_constructor_visualization REQUIRED)
-find_package(moveit_ros_planning REQUIRED)
-find_package(geometry_msgs REQUIRED)
-find_package(tf2 REQUIRED)
-find_package(tf2_geometry_msgs REQUIRED)
-find_package(tf2_eigen REQUIRED)
-find_package(fmt REQUIRED)
-find_package(yaml-cpp REQUIRED)
-find_package(motoros2_interfaces REQUIRED)
-find_package(std_srvs REQUIRED)
+find_package(ament_cmake               REQUIRED)
+find_package(rclcpp                    REQUIRED)
+find_package(worm_picker_custom_msgs   REQUIRED)
+find_package(moveit_core               REQUIRED)
+find_package(moveit_msgs               REQUIRED)
+find_package(moveit_ros_planning_interface          REQUIRED)
+find_package(moveit_task_constructor_core           REQUIRED)
+find_package(moveit_task_constructor_msgs           REQUIRED)
+find_package(moveit_task_constructor_visualization  REQUIRED)
+find_package(moveit_ros_planning       REQUIRED)
+find_package(geometry_msgs             REQUIRED)
+find_package(tf2                       REQUIRED)
+find_package(tf2_geometry_msgs         REQUIRED)
+find_package(tf2_eigen                 REQUIRED)
+find_package(fmt                       REQUIRED)
+find_package(yaml-cpp                  REQUIRED)
+find_package(motoros2_interfaces       REQUIRED)
+find_package(std_srvs                  REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 find_package(worm_picker_moveit_config REQUIRED)
-find_package(nlohmann_json REQUIRED)
-find_package(isaac_ros_cumotion_moveit REQUIRED)
+find_package(nlohmann_json             REQUIRED)
+find_package(Boost                     REQUIRED COMPONENTS system)
 
-#
 # ----------------------------------------------------------------------------
 # Group Common Dependencies
 # ----------------------------------------------------------------------------
-#
 set(MOVEIT_DEPS
-  moveit_core
-  moveit_msgs
-  moveit_ros_planning
-  moveit_ros_planning_interface
-  moveit_task_constructor_core
-  moveit_task_constructor_msgs
-  moveit_task_constructor_visualization
+  moveit_core moveit_msgs moveit_ros_planning moveit_ros_planning_interface
+  moveit_task_constructor_core moveit_task_constructor_msgs moveit_task_constructor_visualization
 )
 
 set(ROS_DEPS
-  rclcpp
-  tf2
-  tf2_geometry_msgs
-  tf2_eigen
-  std_srvs
-  geometry_msgs
-  ament_index_cpp
+  rclcpp tf2 tf2_geometry_msgs tf2_eigen std_srvs geometry_msgs ament_index_cpp
 )
 
 set(WORM_PICKER_DEPS
   ${MOVEIT_DEPS}
   ${ROS_DEPS}
-  worm_picker_custom_msgs
-  motoros2_interfaces
-  fmt
-  yaml-cpp
-  nlohmann_json
-  isaac_ros_cumotion_moveit
+  worm_picker_custom_msgs motoros2_interfaces
+  fmt yaml-cpp nlohmann_json Boost
 )
 
-#
 # ----------------------------------------------------------------------------
 # Main Library
 # ----------------------------------------------------------------------------
-#
 add_library(${PROJECT_NAME} SHARED
-  src/core/commands/command_config.cpp
+  src/core/commands/parser/command_parser.cpp
+  src/core/commands/parser/control_command_parser.cpp
+  src/core/commands/parser/parser_core.cpp
   src/core/commands/command_info.cpp
   src/core/tasks/stages/move_relative_data.cpp
   src/core/tasks/stages/move_to_circle_data.cpp
@@ -119,7 +97,6 @@ add_library(${PROJECT_NAME} SHARED
   src/infrastructure/interface/network/ros_command_client.cpp
   src/infrastructure/interface/network/tcp_socket_server.cpp
   src/infrastructure/parsers/calibration_points_parser.cpp
-  src/infrastructure/parsers/command_parser.cpp
   src/infrastructure/parsers/defined_tasks_parser.cpp
   src/infrastructure/parsers/hotel_data_parser.cpp
   src/infrastructure/parsers/workstation_data_parser.cpp
@@ -157,40 +134,32 @@ target_include_directories(${PROJECT_NAME} PUBLIC
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
-ament_target_dependencies(
-  ${PROJECT_NAME}
+ament_target_dependencies(${PROJECT_NAME}
   ${WORM_PICKER_DEPS}
 )
 
-# Optionally link the cuMotion libraries if you have C++ code calling them:
-# target_link_libraries(${PROJECT_NAME}
-#   isaac_ros_cumotion_moveit::isaac_ros_cumotion_moveit
-# )
+target_link_libraries(${PROJECT_NAME} 
+  Boost::system
+)
 
-#
 # ----------------------------------------------------------------------------
-# add_worm_picker_executable Function
+# Helper to declare executables
 # ----------------------------------------------------------------------------
-#
 function(add_worm_picker_executable target_name)
   cmake_parse_arguments(EXE "" "" "SOURCES;DEPS" ${ARGN})
   add_executable(${target_name} ${EXE_SOURCES})
   target_compile_features(${target_name} PUBLIC cxx_std_20)
   set_compiler_options(${target_name})
-  target_link_libraries(${target_name} ${PROJECT_NAME})
+  target_link_libraries(${target_name} ${PROJECT_NAME} Boost::system)
   if(EXE_DEPS)
     ament_target_dependencies(${target_name} ${EXE_DEPS})
   endif()
-  install(TARGETS ${target_name}
-    RUNTIME DESTINATION lib/${PROJECT_NAME}
-  )
+  install(TARGETS ${target_name} RUNTIME DESTINATION lib/${PROJECT_NAME})
 endfunction()
 
-#
 # ----------------------------------------------------------------------------
 # Executables
 # ----------------------------------------------------------------------------
-#
 add_worm_picker_executable(worm_picker_robot
   SOURCES
     src/apps/worm_picker_main.cpp
@@ -262,16 +231,9 @@ install(
   DESTINATION share/${PROJECT_NAME}/launch
 )
 
-# install(
-#   DIRECTORY launch/
-#   DESTINATION share/${PROJECT_NAME}/
-# )
-
-#
 # ----------------------------------------------------------------------------
 # Testing
 # ----------------------------------------------------------------------------
-#
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   find_package(ament_cmake_gtest REQUIRED)
@@ -284,11 +246,9 @@ if(BUILD_TESTING)
   # endif()
 endif()
 
-#
 # ----------------------------------------------------------------------------
 # Final Package Export
 # ----------------------------------------------------------------------------
-#
 ament_export_targets(export_${PROJECT_NAME} HAS_LIBRARY_TARGET)
 ament_export_dependencies(${WORM_PICKER_DEPS})
 ament_package()

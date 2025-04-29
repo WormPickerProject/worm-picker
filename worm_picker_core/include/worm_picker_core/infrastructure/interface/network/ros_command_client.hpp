@@ -5,32 +5,48 @@
 
 #pragma once
 
-#include <rclcpp/rclcpp.hpp> 
-#include <worm_picker_custom_msgs/srv/task_command.hpp> 
-#include <motoros2_interfaces/srv/start_traj_mode.hpp> 
-#include <std_srvs/srv/trigger.hpp>
+#include <boost/asio.hpp>
+#include <rclcpp/rclcpp.hpp>
+#include <motoros2_interfaces/srv/start_traj_mode.hpp>
+#include <worm_picker_custom_msgs/srv/task_command.hpp>
+#include "worm_picker_core/core/result.hpp"
 #include "worm_picker_core/infrastructure/interface/network/tcp_socket_server.hpp"
 
-class RosCommandClient : public std::enable_shared_from_this<RosCommandClient> {
+class RosCommandClient : public std::enable_shared_from_this<RosCommandClient>
+{
 public:
-    RosCommandClient(int argc, char **argv);
+    explicit RosCommandClient(int argc, char **argv);
+    ~RosCommandClient();
     void connectToTaskCommandService();
-    void runSocketServer(int server_port);
+    void runSocketServer(int port);
 
 private:
-    using TaskCommand = worm_picker_custom_msgs::srv::TaskCommand;
-    using StartTrajMode = motoros2_interfaces::srv::StartTrajMode;
-    using Trigger = std_srvs::srv::Trigger;
-    using StatusCallback = std::function<void(bool, std::string)>;
+    using Task              = worm_picker_custom_msgs::srv::TaskCommand;
+    using StartTM           = motoros2_interfaces::srv::StartTrajMode;
+    using Reply             = Result<std::string>;
+    using ReplyFn           = std::function<void(Reply)>;
+    using CommandHandler    = std::function<void(ReplyFn)>;
+    using CommandRegistry   = std::unordered_map<std::string, CommandHandler>;
+    using IoExecutor        = boost::asio::io_context::executor_type;
+    using IoStrand          = boost::asio::strand<IoExecutor>;
+    using WorkGuard         = boost::asio::executor_work_guard<IoExecutor>;
+    using OptionalWorkGuard = std::optional<WorkGuard>;
 
-    void initializeCommandHandlers();
-    void handleCommand(const std::string& command, StatusCallback completion_callback);
-    void sendTaskCommandRequest(const std::shared_ptr<TaskCommand::Request>& request, 
-                                StatusCallback completion_callback);
+    static inline constexpr char const* TASK_SRV  = "/task_command";
+    static inline constexpr char const* START_SRV = "/start_traj_mode";
 
-    rclcpp::Node::SharedPtr node_;
-    rclcpp::Client<TaskCommand>::SharedPtr task_command_client_;
-    rclcpp::Client<StartTrajMode>::SharedPtr start_traj_client_;
-    rclcpp::Client<Trigger>::SharedPtr stop_traj_client_;
-    std::unordered_map<std::string, std::function<void(StatusCallback)>> command_handlers_;
+    void initCmdTable();
+    void handleCmd(const std::string& cmd, ReplyFn reply);
+    void forwardTask(std::shared_ptr<Task::Request> req, ReplyFn reply);
+    void shutdownInternal();
+
+    rclcpp::Node::SharedPtr            node_;
+    rclcpp::Client<Task>::SharedPtr    task_cli_;
+    rclcpp::Client<StartTM>::SharedPtr start_cli_;
+    CommandRegistry                    cmd_tbl_;
+    boost::asio::io_context            io_ctx_;
+    IoStrand                           strand_;
+    OptionalWorkGuard                  work_guard_;
+    std::unique_ptr<TcpSocketServer>   server_;
+    std::jthread                       io_thread_;
 };
