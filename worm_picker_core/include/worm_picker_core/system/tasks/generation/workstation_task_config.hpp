@@ -22,8 +22,8 @@ struct OffsetXYZ {
 };
 
 namespace offset {
-    static constexpr OffsetXYZ PICK {-0.045, 0.000, 0.0125};
-    static constexpr OffsetXYZ PLACE{ 0.000, 0.000, 0.0125};
+    static constexpr OffsetXYZ PICK {-0.045, 0.000, 0.0175};
+    static constexpr OffsetXYZ PLACE{ 0.000, 0.000, 0.0175};
     static constexpr OffsetXYZ HOVER{ 0.020, 0.010, 0.0340};
     static constexpr OffsetXYZ POINT{ 0.000, 0.000, 0.0100};
 }
@@ -35,8 +35,8 @@ struct MovementParams {
 };
 
 namespace motion {
-    static constexpr MovementParams PICK{ -0.025,  0.045, 0.025};
-    static constexpr MovementParams PLACE{-0.025, -0.045, 0.025};
+    static constexpr MovementParams PICK{ -0.03,  0.045, 0.03};
+    static constexpr MovementParams PLACE{-0.03, -0.045, 0.03};
 }
 
 namespace prefix {
