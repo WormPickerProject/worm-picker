@@ -1,12 +1,13 @@
 # Worm Picker 2.0
 
-> **Task-based motion control architecture for *C. elegans* manipulation**  
-> Motion‑control architecture developed for Logan Kaising’s 2025 honors thesis, *Design and Implementation of a Motion Control Architecture for WormPicker 2.0 Robotic System* (Ohio State University, Knowledge Bank ID 36c98e2e‑396e‑464d‑a1c3‑0c970d31b80a).
+> **Task-based motion control architecture for *C. elegans* manipulation**  
+> Motion‑control architecture developed for Logan Kaising's 2025 honors thesis, *Design and Implementation of a Motion Control Architecture for WormPicker 2.0 Robotic System* (The Ohio State University, Knowledge Bank handle 1811/105762).
 
 [![ROS 2](https://img.shields.io/badge/ROS2-Humble-blue.svg?logo=ros)](https://docs.ros.org/en/humble/) 
 [![MoveIt 2](https://img.shields.io/badge/MoveIt2-Humble-blueviolet.svg)](https://moveit.ros.org/) 
 [![License: Custom](https://img.shields.io/badge/License-Custom%20Limited-orange.svg)](LICENSE)
 [![C++](https://img.shields.io/badge/C++-20-00599C.svg?logo=c%2B%2B)](https://en.cppreference.com/w/cpp/20)
+[![Thesis](https://img.shields.io/badge/OSU-Thesis-scarlet.svg)](https://kb.osu.edu/handle/1811/105762)
 
 WormPicker 2.0 is a layered, task‑centric robotics platform that automates plate‑based worm manipulation at **13 animals min⁻¹**—a four‑fold improvement over prior systems—while maintaining sub‑0.01 mm positioning accuracy.  It marries a Yaskawa GP4 industrial manipulator with ROS 2, MoveIt 2, and a purpose‑built motion‑control stack to eliminate the manual bottleneck in high‑throughput *C. elegans* genetics.
 
@@ -110,10 +111,10 @@ worm-picker/
 
 ---
 
-## Citing WormPicker 2.0
+## Citing WormPicker 2.0
 If this software contributes to your academic work, please cite the associated thesis:
 
-> Kaising, L. (2025). *Design and Implementation of a Motion Control Architecture for WormPicker 2.0 Robotic System.* The Ohio State University Knowledge Bank. <https://kb.osu.edu/items/36c98e2e-396e-464d-a1c3-0c970d31b80a>
+> Kaising, L. (2025). *Design and Implementation of a Motion Control Architecture for WormPicker 2.0 Robotic System.* The Ohio State University. Department of Biomedical Engineering Honors Theses. https://kb.osu.edu/handle/1811/105762
 
 ---
 
