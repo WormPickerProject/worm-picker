@@ -27,6 +27,11 @@ WormPickerController::WormPickerController(const rclcpp::NodeOptions& options)
     }
 }
 
+WormPickerController::~WormPickerController() noexcept 
+{
+    worm_picker::setGlobalNode(nullptr);
+}
+
 // Initialize components
 // This function initializes the components of the WormPicker controller.
 void WormPickerController::initializeComponents() 
