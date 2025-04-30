@@ -6,7 +6,6 @@ Version 1.0 — 30 April 2025
 
 Copyright © 2025 Logan Kaising. All rights reserved.
 
-
 1.  DEFINITIONS  
     1.1 **“Software”** means all source code, binaries, documentation, configuration
          files, and any other materials contained in, or derived from, the repository
