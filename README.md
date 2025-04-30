@@ -28,41 +28,56 @@ WormPicker 2.0 is a layered, task‑centric robotics platform that automates pl
 ---
 
 ## Overview
-WormPicker 2.0 translates high‑level experimental commands into collision‑free trajectories through a five‑layer software architecture:
 
-1. **Interface Layer** – CLI & TCP/IP command APIs.  
-2. **Command Layer**  – Lightweight parser‑combinator library produces immutable `CommandInfo` objects.  
-3. **Task Layer**     – Factory pattern expands commands into MoveIt Task Constructor (MTC) tasks comprising reusable motion stages.  
-4. **Planning Layer** – Planner factory selects OMPL / Pilz / Cartesian planners and validates solutions against heuristics.  
-5. **Execution Layer** – ROS 2 controllers stream trajectories to the GP4; feedback loops maintain gentle contact with agar.
+WormPicker 2.0 translates high-level experimental commands into collision-free trajectories via a five-layer software architecture:
 
-A semi‑automated calibration node aligns digital models with the physical work‑cell, ensuring repeatability across up to 250 plates.
+1. **Interface Layer:**  
+   - CLI & TCP/IP command APIs  
+2. **Command Layer:**  
+   - Lightweight parser-combinator library produces immutable `CommandInfo` objects  
+3. **Task Layer:**  
+   - Factory pattern expands commands into MoveIt Task Constructor (MTC) tasks composed of reusable motion stages  
+4. **Planning Layer:**  
+   - Planner factory selects OMPL / Pilz / Cartesian planners and validates solutions against heuristics  
+5. **Execution Layer:**  
+   - ROS 2 controllers stream trajectories to the GP4; feedback loops maintain gentle contact with agar  
 
-## Key Features
+A semi-automated calibration node aligns digital models with the physical work-cell, ensuring repeatability across up to 250 plates.
 
-| Category | Highlights |
-|----------|------------|
-| **Task‑based architecture** | Declarative chain‑of‑stage design built on ROS 2 + MoveIt Task Constructor |
-| **Rich motion primitives** | Joint, Cartesian, circular, and relative moves with per‑stage velocity/acceleration scaling |
-| **Workstation & hotel maps** | JSON‑defined reference frames for plates, tools, and storage locations |
+---
 
-## Performance Highlights
-* **Throughput**          13 worms min⁻¹ (×4 vs. WormPicker 1.0)  
-* **Repeatability**       ± 0.01 mm (Yaskawa GP4 spec)  
-* **Workspace**           250 standard 6 cm agar plates  
-* **Runtime**             24/7 continuous operation
+## Key Features
+
+| Category                      | Highlights                                                             |
+|-------------------------------|------------------------------------------------------------------------|
+| **Task-based architecture**   | Declarative chain-of-stage design built on ROS 2 + MoveIt Task Constructor |
+| **Rich motion primitives**    | Joint, Cartesian, circular, and relative moves with per-stage velocity / acceleration scaling |
+| **Workstation & hotel maps**  | JSON-defined reference frames for plates, tools, and storage locations  |
+
+---
+
+## Performance Highlights
+
+- **Throughput:**  13 worms min⁻¹ (×4 vs. WormPicker 1.0)  
+- **Repeatability:** ± 0.01 mm (Yaskawa GP4 spec)  
+- **Workspace:**   250 standard 6 cm agar plates  
+- **Runtime:**      24/7 continuous operation  
+
+---
 
 ## System Requirements
 
-| Category | Requirement |
-|----------|-------------|
-| **Operating System** | Ubuntu 22.04 LTS (tested) |
-| **ROS 2** | Humble Hawksbill |
-| **MoveIt 2** | Humble with Task Constructor |
-| **Compiler** | GCC 11+ / Clang 15+ with C++20 support |
-| **CMake** | 3.22 or newer |
-| **Robot Hardware** | Yaskawa GP4 or any ROS 2-compatible 6+ DOF arm |
-| **Dependencies** | Boost, fmt, yaml-cpp, nlohmann/json, tf2, Eigen3 |
+| Category            | Requirement                                                                      |
+|---------------------|----------------------------------------------------------------------------------|
+| **Operating System**| Ubuntu 22.04 LTS (tested)                                                         |
+| **ROS 2**           | Humble Hawksbill                                                                 |
+| **MoveIt 2**        | Humble with Task Constructor                                                     |
+| **Compiler**        | GCC 11+ / Clang 15+ with C++20 support                                           |
+| **CMake**           | 3.22 or newer                                                                    |
+| **Robot Hardware**  | Yaskawa GP4 or any ROS 2-compatible 6+ DOF arm                                    |
+| **Dependencies**    | Boost, fmt, yaml-cpp, nlohmann/json, tf2, Eigen3                                  |
+
+---
 
 ## Repository Structure
 ```text
@@ -80,25 +95,37 @@ worm-picker/
 └── README.md                      # This document
 ```
 
+---
+
 ## Installation
 *TO BE FILLED OUT LATER*
 
 > **Quick reference**  
 > Clone with `vcs import < dependencies.repos` · `colcon build --symlink-install` · source the workspace · launch `worm_picker_system.launch.py`.
 
+---
+
 ## Usage
 *TO BE FILLED OUT LATER*
+
+---
 
 ## Citing WormPicker 2.0
 If this software contributes to your academic work, please cite the associated thesis:
 
 > Kaising, L. (2025). *Design and Implementation of a Motion Control Architecture for WormPicker 2.0 Robotic System.* The Ohio State University Knowledge Bank. <https://kb.osu.edu/items/36c98e2e-396e-464d-a1c3-0c970d31b80a>
 
+---
+
 ## Contribution Policy
 This repository is governed by a **restricted licence**.  Contributions are accepted **only** from authorised Fang‑Yen‑Lab personnel.  External pull requests will be closed without review.  See [CONTRIBUTING.md](CONTRIBUTING.md) for details.
 
+---
+
 ## License
 WormPicker 2.0 is released under a bespoke *Custom Limited License Agreement* that grants defined rights exclusively to the Fang‑Yen‑Lab.  Refer to the [LICENSE](LICENSE) file for legally binding terms.
+
+---
 
 ## Contact
 
