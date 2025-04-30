@@ -49,8 +49,20 @@ void TcpSocketServer::stopServer()
     if (!running_.exchange(false)) {
         return;
     }
+
     boost::system::error_code ec;
     acceptor_.close(ec);
+
+    std::lock_guard lk(sessions_mtx_);
+    for (auto it = sessions_.begin(); it != sessions_.end(); ) {
+        if (auto s = it->lock()) {
+            s->cancel(ec);
+            s->close(ec);
+            ++it;
+        } else {
+            it = sessions_.erase(it);
+        }
+    }
 }
 
 void TcpSocketServer::setCommandHandler(CommandHandler cb)
@@ -75,11 +87,19 @@ awaitable<void> TcpSocketServer::acceptLoop()
             RCLCPP_WARN(rclcpp::get_logger("tcp_server"), "accept(): %s", ec.message().c_str());
             continue;
         }
-        co_spawn(exec, session(std::move(sock)), detached);
+
+        auto sock_ptr = std::make_shared<tcp::socket>(std::move(sock));
+
+        {
+            std::lock_guard lk(sessions_mtx_);
+            sessions_.emplace_back(sock_ptr);
+        }
+
+        co_spawn(exec, session(sock_ptr), detached);
     }
 }
 
-awaitable<void> TcpSocketServer::session(tcp::socket sock)
+awaitable<void> TcpSocketServer::session(SocketPtr sock)
 {
     boost::asio::streambuf buf(RECEIVE_BUFFER_SIZE);
 
@@ -92,14 +112,23 @@ awaitable<void> TcpSocketServer::session(tcp::socket sock)
     while (running_) {
         std::size_t n = 0;
         try {
-            n = co_await boost::asio::async_read_until(sock, buf, '\n', boost::asio::use_awaitable);
+            n = co_await boost::asio::async_read_until(
+                *sock, buf, '\n', boost::asio::use_awaitable);
         } catch (const std::exception& e) {
             RCLCPP_INFO(rclcpp::get_logger("tcp_server"), "session closed: %s", e.what());
-            break;
+            co_return;
         }
 
         if (n == 0) {
-            break;
+            co_return;
+        }
+
+        if (buf.size() > MAX_LINE_LENGTH) {
+            RCLCPP_WARN(rclcpp::get_logger("tcp_server"),
+                "Line too long (%zu bytes); disconnecting", buf.size());
+            boost::system::error_code ec;
+            sock->close(ec);
+            co_return;
         }
 
         std::string line;
@@ -111,26 +140,32 @@ awaitable<void> TcpSocketServer::session(tcp::socket sock)
             }
         }
 
-        auto maybe_h = getHandler();
-        if (!maybe_h) {
-            continue;
+        if (auto maybe_h = getHandler()) {
+            dispatchAndReply(sock, std::move(*maybe_h), std::move(line));
         }
-
-        dispatchAndReply(sock, *maybe_h, std::move(line));
     }
+
+    {
+        std::lock_guard lk(sessions_mtx_);
+        std::erase_if(sessions_,
+                      [sock](const std::weak_ptr<tcp::socket>& w)
+                      { return w.expired() || w.lock() == sock; });
+    }
+    
     co_return;
 }
 
-void TcpSocketServer::dispatchAndReply(tcp::socket& sock, CommandHandler& h,std::string cmd)
+void TcpSocketServer::dispatchAndReply(SocketPtr sock, CommandHandler h, std::string cmd)
 {
-    auto exec = sock.get_executor();
-    h(std::move(cmd), [this, &sock, exec](Reply r) mutable {
+    auto exec = sock->get_executor();
+    h(std::move(cmd), [sock](Reply r) mutable {
         std::string out = r.isSuccess()
             ? "true\n"  + r.value() + '\n'
             : "false\n" + r.error() + '\n';
+
         auto payload = std::make_shared<std::string>(std::move(out));
         boost::asio::async_write(
-            sock, boost::asio::buffer(*payload),
-            [payload](auto, auto){ /* keep alive */ });
+            *sock, boost::asio::buffer(*payload),
+            [sock, payload](auto /*ec*/, auto /*bytes*/) { /* keep socket & payload alive */ });
     });
 }

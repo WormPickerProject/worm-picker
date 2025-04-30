@@ -12,9 +12,10 @@
 class TcpSocketServer {
 public:
     static constexpr std::size_t RECEIVE_BUFFER_SIZE = 2048;
+    static constexpr std::size_t MAX_LINE_LENGTH     = 8192;
 
-    using Reply    = Result<std::string>;
-    using ReplyFn  = std::function<void(Reply)>;
+    using Reply          = Result<std::string>;
+    using ReplyFn        = std::function<void(Reply)>;
     using CommandHandler = std::function<void(const std::string&, ReplyFn)>;
 
     TcpSocketServer(boost::asio::io_context& ctx, uint16_t port);
@@ -24,13 +25,18 @@ public:
     void setCommandHandler(CommandHandler cb);
 
 private:
+    using SocketPtr      = std::shared_ptr<boost::asio::ip::tcp::socket>;
+    using SocketWeakPtr = std::weak_ptr<boost::asio::ip::tcp::socket>;
+
     boost::asio::awaitable<void> acceptLoop();
-    boost::asio::awaitable<void> session(boost::asio::ip::tcp::socket sock);
-    void dispatchAndReply(boost::asio::ip::tcp::socket& sock, CommandHandler& h, std::string cmd);
+    boost::asio::awaitable<void> session(SocketPtr sock);
+    void dispatchAndReply(SocketPtr sock, CommandHandler h, std::string cmd);
 
     boost::asio::io_context&                 ctx_;
     boost::asio::ip::tcp::acceptor           acceptor_;
     std::atomic<bool>                        running_{false};
-    CommandHandler                           handler_;
     std::mutex                               handler_mtx_;
+    CommandHandler                           handler_;
+    std::mutex                               sessions_mtx_;
+    std::vector<SocketWeakPtr>               sessions_;
 };
