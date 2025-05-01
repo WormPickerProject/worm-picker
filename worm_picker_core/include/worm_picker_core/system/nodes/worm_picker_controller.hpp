@@ -31,6 +31,7 @@ public:
     using NodeBaseInterfacePtr = rclcpp::node_interfaces::NodeBaseInterface::SharedPtr;
 
     explicit WormPickerController(const rclcpp::NodeOptions& options = rclcpp::NodeOptions());
+    ~WormPickerController() noexcept;
     NodeBaseInterfacePtr getBaseInterface() const;
 
 private:
