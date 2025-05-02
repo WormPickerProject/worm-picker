@@ -19,11 +19,12 @@ public:
     ~TimerDataCollector();
     void recordTimerData(const std::string& command_name, const TimerResults& timer_results);
     void saveDataToFile() const;
+    void flushIfBufferBig(std::size_t max_entries = 1000) const;
 
 private:
     void initializeOutputDirectory(const NodePtr& node);
 
     mutable std::mutex data_mutex_;
-    nlohmann::json data_;
+    mutable nlohmann::json data_;
     std::filesystem::path output_path_;
 };

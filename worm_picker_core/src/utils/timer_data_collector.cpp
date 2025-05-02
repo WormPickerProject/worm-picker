@@ -71,3 +71,19 @@ void TimerDataCollector::saveDataToFile() const
 
     file.close();
 }
+
+void TimerDataCollector::flushIfBufferBig(std::size_t max_entries) const
+{
+    std::unique_lock<std::mutex> lock(data_mutex_);
+    if (data_.size() <= max_entries)
+        return;
+
+    nlohmann::json dump = std::move(data_);
+    data_               = nlohmann::json::array();
+    lock.unlock();
+
+    const std::filesystem::path file_path(output_path_ / "timer_data.json");
+    std::ofstream file(file_path, std::ios::app);
+    if (file)
+        file << dump.dump(4) << '\n';
+}

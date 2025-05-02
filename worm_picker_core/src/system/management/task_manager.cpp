@@ -16,7 +16,8 @@ TaskManager::TaskManager(const NodePtr& node,
   : node_{node},
     task_factory_{task_factory},
     timer_data_collector_{timer_data_collector},
-    task_validator_{std::make_shared<TaskValidator>(node)}
+    task_validator_{std::make_shared<TaskValidator>(node)},
+    current_task_{nullptr}
 {
     auto plate_mode   = param_utils::getParameter<std::string>(node_, "operation_modes.plate");
     auto worm_mode    = param_utils::getParameter<std::string>(node_, "operation_modes.worm");
@@ -38,7 +39,7 @@ Result<void> TaskManager::executeTask(const std::string& command) const
     }
 
     TimerResults timer_results;
-    auto task_storage = std::make_shared<Task>();
+    current_task_ = std::make_shared<Task>();
 
     auto createTaskWithTimer = [&]() -> Result<Task> {
         return measureTime<Task>("Create Task Timer", timer_results, [&]() {
@@ -46,27 +47,32 @@ Result<void> TaskManager::executeTask(const std::string& command) const
         });
     };
     auto storeCreatedTask = [&](Task& created_task) -> void {
-        *task_storage = std::move(created_task);
+        *current_task_ = std::move(created_task);
     };
     auto planTaskWithTimer = [&]() -> Result<void> {
         return measureTime<void>("Plan Task Timer", timer_results, [&]() {
-            return planTask(*task_storage);
+            return planTask(*current_task_);
         });
     };
     auto executeSolutionWithTimer = [&]() -> Result<void> {
         return measureTime<void>("Execute Task Timer", timer_results, [&]() {
-            return executeSolution(*task_storage, command);
+            return executeSolution(*current_task_, command);
         });
     };
     auto recordTimerResults = [&]() -> void {
         timer_data_collector_->recordTimerData(command, timer_results);
+        timer_data_collector_->flushIfBufferBig();
+    };
+    auto clearCompletedTask = [&]() -> void {
+        clearCurrentTask();
     };
 
     return createTaskWithTimer()
         .map(storeCreatedTask)
         .flatMap(planTaskWithTimer)
         .flatMap(executeSolutionWithTimer)
-        .map(recordTimerResults);
+        .map(recordTimerResults)
+        .map(clearCompletedTask);
 }
 
 Result<void> TaskManager::planTask(Task& task) const
@@ -123,4 +129,9 @@ std::optional<std::string> TaskManager::isModeSwitch(const std::string& command)
     auto it = mode_map_.find(command);
     if (it != mode_map_.end()) return it->second;
     return std::nullopt;
+}
+
+void TaskManager::clearCurrentTask() const 
+{
+    current_task_.reset();
 }

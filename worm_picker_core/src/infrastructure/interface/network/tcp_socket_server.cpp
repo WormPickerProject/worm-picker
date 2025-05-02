@@ -140,6 +140,8 @@ awaitable<void> TcpSocketServer::session(SocketPtr sock)
             }
         }
 
+        buf.consume(n);
+        
         if (auto maybe_h = getHandler()) {
             dispatchAndReply(sock, std::move(*maybe_h), std::move(line));
         }

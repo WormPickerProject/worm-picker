@@ -23,6 +23,7 @@ public:
                 const TaskFactoryPtr& task_factory,
                 const TimerDataCollectorPtr& timer_data_collector);
     Result<void> executeTask(const std::string& command) const;
+    void clearCurrentTask() const;
 
 private:
     using Task = moveit::task_constructor::Task;
@@ -53,4 +54,5 @@ private:
     TimerDataCollectorPtr timer_data_collector_;
     TaskValidatorPtr task_validator_;
     ModeMap mode_map_;
+    mutable std::shared_ptr<Task> current_task_;
 };
