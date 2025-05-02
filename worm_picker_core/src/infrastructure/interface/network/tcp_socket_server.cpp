@@ -158,14 +158,16 @@ awaitable<void> TcpSocketServer::session(SocketPtr sock)
 void TcpSocketServer::dispatchAndReply(SocketPtr sock, CommandHandler h, std::string cmd)
 {
     auto exec = sock->get_executor();
-    h(std::move(cmd), [sock](Reply r) mutable {
+    h(std::move(cmd), [sock, exec = std::move(exec)](Reply r) mutable {
         std::string out = r.isSuccess()
             ? "true\n"  + r.value() + '\n'
             : "false\n" + r.error() + '\n';
 
         auto payload = std::make_shared<std::string>(std::move(out));
-        boost::asio::async_write(
-            *sock, boost::asio::buffer(*payload),
-            [sock, payload](auto /*ec*/, auto /*bytes*/) { /* keep socket & payload alive */ });
+        boost::asio::post(exec, [sock, payload]() {
+            boost::asio::async_write(
+                *sock, boost::asio::buffer(*payload),
+                [sock, payload](auto /*ec*/, auto /*bytes*/) { /* keep socket & payload alive */ });
+        });
     });
 }
