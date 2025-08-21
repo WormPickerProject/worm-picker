@@ -1,0 +1,524 @@
+[
+    {
+        "hotel": {
+            "1": {
+                "room": {
+                    "1": {
+                        "coordinate": {
+                            "position_x": -0.20972,
+                            "position_y": 0.31990,
+                            "position_z": 0.01368,
+                            "orientation_x": 0.00001,
+                            "orientation_y": 0.00023,
+                            "orientation_z": 0.87965,
+                            "orientation_w": 0.47562
+                        }
+                    },
+                    "2": {
+                        "coordinate": {
+                            "position_x": -0.20955,
+                            "position_y": 0.31981,
+                            "position_z": 0.04057,
+                            "orientation_x": 0.00000,
+                            "orientation_y": 0.00023,
+                            "orientation_z": 0.87960,
+                            "orientation_w": 0.47571
+                        }
+                    },
+                    "3": {
+                        "coordinate": {
+                            "position_x": -0.20938,
+                            "position_y": 0.31972,
+                            "position_z": 0.06747,
+                            "orientation_x": -0.00000,
+                            "orientation_y": 0.00022,
+                            "orientation_z": 0.87955,
+                            "orientation_w": 0.47581
+                        }
+                    },
+                    "4": {
+                        "coordinate": {
+                            "position_x": -0.20921,
+                            "position_y": 0.31963,
+                            "position_z": 0.09436,
+                            "orientation_x": -0.00001,
+                            "orientation_y": 0.00022,
+                            "orientation_z": 0.87950,
+                            "orientation_w": 0.47590
+                        }
+                    },
+                    "5": {
+                        "coordinate": {
+                            "position_x": -0.20904,
+                            "position_y": 0.31954,
+                            "position_z": 0.12126,
+                            "orientation_x": -0.00001,
+                            "orientation_y": 0.00021,
+                            "orientation_z": 0.87945,
+                            "orientation_w": 0.47599
+                        }
+                    },
+                    "6": {
+                        "coordinate": {
+                            "position_x": -0.20878,
+                            "position_y": 0.31940,
+                            "position_z": 0.16153,
+                            "orientation_x": -0.00002,
+                            "orientation_y": 0.00020,
+                            "orientation_z": 0.87937,
+                            "orientation_w": 0.47613
+                        }
+                    },
+                    "7": {
+                        "coordinate": {
+                            "position_x": -0.20861,
+                            "position_y": 0.31931,
+                            "position_z": 0.18842,
+                            "orientation_x": -0.00003,
+                            "orientation_y": 0.00020,
+                            "orientation_z": 0.87932,
+                            "orientation_w": 0.47623
+                        }
+                    },
+                    "8": {
+                        "coordinate": {
+                            "position_x": -0.20844,
+                            "position_y": 0.31922,
+                            "position_z": 0.21532,
+                            "orientation_x": -0.00003,
+                            "orientation_y": 0.00019,
+                            "orientation_z": 0.87927,
+                            "orientation_w": 0.47632
+                        }
+                    },
+                    "9": {
+                        "coordinate": {
+                            "position_x": -0.20827,
+                            "position_y": 0.31913,
+                            "position_z": 0.24221,
+                            "orientation_x": -0.00004,
+                            "orientation_y": 0.00019,
+                            "orientation_z": 0.87922,
+                            "orientation_w": 0.47641
+                        }
+                    },
+                    "10": {
+                        "coordinate": {
+                            "position_x": -0.20810,
+                            "position_y": 0.31903,
+                            "position_z": 0.26911,
+                            "orientation_x": -0.00004,
+                            "orientation_y": 0.00019,
+                            "orientation_z": 0.87917,
+                            "orientation_w": 0.47651
+                        }
+                    },
+                    "11": {
+                        "coordinate": {
+                            "position_x": -0.20793,
+                            "position_y": 0.31894,
+                            "position_z": 0.29600,
+                            "orientation_x": -0.00005,
+                            "orientation_y": 0.00018,
+                            "orientation_z": 0.87912,
+                            "orientation_w": 0.47660
+                        }
+                    },
+                    "12": {
+                        "coordinate": {
+                            "position_x": -0.20768,
+                            "position_y": 0.31881,
+                            "position_z": 0.33628,
+                            "orientation_x": -0.00006,
+                            "orientation_y": 0.00017,
+                            "orientation_z": 0.87904,
+                            "orientation_w": 0.47674
+                        }
+                    },
+                    "13": {
+                        "coordinate": {
+                            "position_x": -0.20751,
+                            "position_y": 0.31872,
+                            "position_z": 0.36317,
+                            "orientation_x": -0.00006,
+                            "orientation_y": 0.00017,
+                            "orientation_z": 0.87899,
+                            "orientation_w": 0.47683
+                        }
+                    },
+                    "14": {
+                        "coordinate": {
+                            "position_x": -0.20734,
+                            "position_y": 0.31863,
+                            "position_z": 0.39006,
+                            "orientation_x": -0.00007,
+                            "orientation_y": 0.00016,
+                            "orientation_z": 0.87894,
+                            "orientation_w": 0.47693
+                        }
+                    },
+                    "15": {
+                        "coordinate": {
+                            "position_x": -0.20717,
+                            "position_y": 0.31853,
+                            "position_z": 0.41696,
+                            "orientation_x": -0.00007,
+                            "orientation_y": 0.00016,
+                            "orientation_z": 0.87889,
+                            "orientation_w": 0.47702
+                        }
+                    },
+                    "16": {
+                        "coordinate": {
+                            "position_x": -0.20700,
+                            "position_y": 0.31844,
+                            "position_z": 0.44385,
+                            "orientation_x": -0.00008,
+                            "orientation_y": 0.00016,
+                            "orientation_z": 0.87884,
+                            "orientation_w": 0.47711
+                        }
+                    },
+                    "17": {
+                        "coordinate": {
+                            "position_x": -0.20683,
+                            "position_y": 0.31835,
+                            "position_z": 0.47075,
+                            "orientation_x": -0.00008,
+                            "orientation_y": 0.00015,
+                            "orientation_z": 0.87879,
+                            "orientation_w": 0.47721
+                        }
+                    },
+                    "18": {
+                        "coordinate": {
+                            "position_x": -0.20657,
+                            "position_y": 0.31822,
+                            "position_z": 0.51102,
+                            "orientation_x": -0.00009,
+                            "orientation_y": 0.00014,
+                            "orientation_z": 0.87872,
+                            "orientation_w": 0.47735
+                        }
+                    },
+                    "19": {
+                        "coordinate": {
+                            "position_x": -0.20640,
+                            "position_y": 0.31812,
+                            "position_z": 0.53791,
+                            "orientation_x": -0.00010,
+                            "orientation_y": 0.00014,
+                            "orientation_z": 0.87867,
+                            "orientation_w": 0.47744
+                        }
+                    },
+                    "20": {
+                        "coordinate": {
+                            "position_x": -0.20623,
+                            "position_y": 0.31803,
+                            "position_z": 0.56481,
+                            "orientation_x": -0.00010,
+                            "orientation_y": 0.00013,
+                            "orientation_z": 0.87861,
+                            "orientation_w": 0.47753
+                        }
+                    },
+                    "21": {
+                        "coordinate": {
+                            "position_x": -0.20606,
+                            "position_y": 0.31794,
+                            "position_z": 0.59170,
+                            "orientation_x": -0.00011,
+                            "orientation_y": 0.00013,
+                            "orientation_z": 0.87856,
+                            "orientation_w": 0.47762
+                        }
+                    },
+                    "22": {
+                        "coordinate": {
+                            "position_x": -0.20589,
+                            "position_y": 0.31785,
+                            "position_z": 0.61860,
+                            "orientation_x": -0.00011,
+                            "orientation_y": 0.00012,
+                            "orientation_z": 0.87851,
+                            "orientation_w": 0.47772
+                        }
+                    },
+                    "23": {
+                        "coordinate": {
+                            "position_x": -0.20572,
+                            "position_y": 0.31776,
+                            "position_z": 0.64549,
+                            "orientation_x": -0.00012,
+                            "orientation_y": 0.00012,
+                            "orientation_z": 0.87846,
+                            "orientation_w": 0.47781
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "hotel": {
+            "2": {
+                "room": {
+                    "1": {
+                        "coordinate": {
+                            "position_x": -9999.9,
+                            "position_y": -9999.9,
+                            "position_z": -9999.9,
+                            "orientation_x": -9999.9,
+                            "orientation_y": -9999.9,
+                            "orientation_z": -9999.9,
+                            "orientation_w": -9999.9
+                        }
+                    },
+                    "2": {
+                        "coordinate": {
+                            "position_x": -9999.9,
+                            "position_y": -9999.9,
+                            "position_z": -9999.9,
+                            "orientation_x": -9999.9,
+                            "orientation_y": -9999.9,
+                            "orientation_z": -9999.9,
+                            "orientation_w": -9999.9
+                        }
+                    },
+                    "3": {
+                        "coordinate": {
+                            "position_x": -9999.9,
+                            "position_y": -9999.9,
+                            "position_z": -9999.9,
+                            "orientation_x": -9999.9,
+                            "orientation_y": -9999.9,
+                            "orientation_z": -9999.9,
+                            "orientation_w": -9999.9
+                        }
+                    },
+                    "4": {
+                        "coordinate": {
+                            "position_x": -9999.9,
+                            "position_y": -9999.9,
+                            "position_z": -9999.9,
+                            "orientation_x": -9999.9,
+                            "orientation_y": -9999.9,
+                            "orientation_z": -9999.9,
+                            "orientation_w": -9999.9
+                        }
+                    },
+                    "5": {
+                        "coordinate": {
+                            "position_x": -9999.9,
+                            "position_y": -9999.9,
+                            "position_z": -9999.9,
+                            "orientation_x": -9999.9,
+                            "orientation_y": -9999.9,
+                            "orientation_z": -9999.9,
+                            "orientation_w": -9999.9
+                        }
+                    },
+                    "6": {
+                        "coordinate": {
+                            "position_x": -9999.9,
+                            "position_y": -9999.9,
+                            "position_z": -9999.9,
+                            "orientation_x": -9999.9,
+                            "orientation_y": -9999.9,
+                            "orientation_z": -9999.9,
+                            "orientation_w": -9999.9
+                        }
+                    },
+                    "7": {
+                        "coordinate": {
+                            "position_x": -9999.9,
+                            "position_y": -9999.9,
+                            "position_z": -9999.9,
+                            "orientation_x": -9999.9,
+                            "orientation_y": -9999.9,
+                            "orientation_z": -9999.9,
+                            "orientation_w": -9999.9
+                        }
+                    },
+                    "8": {
+                        "coordinate": {
+                            "position_x": -9999.9,
+                            "position_y": -9999.9,
+                            "position_z": -9999.9,
+                            "orientation_x": -9999.9,
+                            "orientation_y": -9999.9,
+                            "orientation_z": -9999.9,
+                            "orientation_w": -9999.9
+                        }
+                    },
+                    "9": {
+                        "coordinate": {
+                            "position_x": -9999.9,
+                            "position_y": -9999.9,
+                            "position_z": -9999.9,
+                            "orientation_x": -9999.9,
+                            "orientation_y": -9999.9,
+                            "orientation_z": -9999.9,
+                            "orientation_w": -9999.9
+                        }
+                    },
+                    "10": {
+                        "coordinate": {
+                            "position_x": -9999.9,
+                            "position_y": -9999.9,
+                            "position_z": -9999.9,
+                            "orientation_x": -9999.9,
+                            "orientation_y": -9999.9,
+                            "orientation_z": -9999.9,
+                            "orientation_w": -9999.9
+                        }
+                    },
+                    "11": {
+                        "coordinate": {
+                            "position_x": -9999.9,
+                            "position_y": -9999.9,
+                            "position_z": -9999.9,
+                            "orientation_x": -9999.9,
+                            "orientation_y": -9999.9,
+                            "orientation_z": -9999.9,
+                            "orientation_w": -9999.9
+                        }
+                    },
+                    "12": {
+                        "coordinate": {
+                            "position_x": -9999.9,
+                            "position_y": -9999.9,
+                            "position_z": -9999.9,
+                            "orientation_x": -9999.9,
+                            "orientation_y": -9999.9,
+                            "orientation_z": -9999.9,
+                            "orientation_w": -9999.9
+                        }
+                    },
+                    "13": {
+                        "coordinate": {
+                            "position_x": -9999.9,
+                            "position_y": -9999.9,
+                            "position_z": -9999.9,
+                            "orientation_x": -9999.9,
+                            "orientation_y": -9999.9,
+                            "orientation_z": -9999.9,
+                            "orientation_w": -9999.9
+                        }
+                    },
+                    "14": {
+                        "coordinate": {
+                            "position_x": -9999.9,
+                            "position_y": -9999.9,
+                            "position_z": -9999.9,
+                            "orientation_x": -9999.9,
+                            "orientation_y": -9999.9,
+                            "orientation_z": -9999.9,
+                            "orientation_w": -9999.9
+                        }
+                    },
+                    "15": {
+                        "coordinate": {
+                            "position_x": -9999.9,
+                            "position_y": -9999.9,
+                            "position_z": -9999.9,
+                            "orientation_x": -9999.9,
+                            "orientation_y": -9999.9,
+                            "orientation_z": -9999.9,
+                            "orientation_w": -9999.9
+                        }
+                    },
+                    "16": {
+                        "coordinate": {
+                            "position_x": -9999.9,
+                            "position_y": -9999.9,
+                            "position_z": -9999.9,
+                            "orientation_x": -9999.9,
+                            "orientation_y": -9999.9,
+                            "orientation_z": -9999.9,
+                            "orientation_w": -9999.9
+                        }
+                    },
+                    "17": {
+                        "coordinate": {
+                            "position_x": -9999.9,
+                            "position_y": -9999.9,
+                            "position_z": -9999.9,
+                            "orientation_x": -9999.9,
+                            "orientation_y": -9999.9,
+                            "orientation_z": -9999.9,
+                            "orientation_w": -9999.9
+                        }
+                    },
+                    "18": {
+                        "coordinate": {
+                            "position_x": -9999.9,
+                            "position_y": -9999.9,
+                            "position_z": -9999.9,
+                            "orientation_x": -9999.9,
+                            "orientation_y": -9999.9,
+                            "orientation_z": -9999.9,
+                            "orientation_w": -9999.9
+                        }
+                    },
+                    "19": {
+                        "coordinate": {
+                            "position_x": -9999.9,
+                            "position_y": -9999.9,
+                            "position_z": -9999.9,
+                            "orientation_x": -9999.9,
+                            "orientation_y": -9999.9,
+                            "orientation_z": -9999.9,
+                            "orientation_w": -9999.9
+                        }
+                    },
+                    "20": {
+                        "coordinate": {
+                            "position_x": -9999.9,
+                            "position_y": -9999.9,
+                            "position_z": -9999.9,
+                            "orientation_x": -9999.9,
+                            "orientation_y": -9999.9,
+                            "orientation_z": -9999.9,
+                            "orientation_w": -9999.9
+                        }
+                    },
+                    "21": {
+                        "coordinate": {
+                            "position_x": -9999.9,
+                            "position_y": -9999.9,
+                            "position_z": -9999.9,
+                            "orientation_x": -9999.9,
+                            "orientation_y": -9999.9,
+                            "orientation_z": -9999.9,
+                            "orientation_w": -9999.9
+                        }
+                    },
+                    "22": {
+                        "coordinate": {
+                            "position_x": -9999.9,
+                            "position_y": -9999.9,
+                            "position_z": -9999.9,
+                            "orientation_x": -9999.9,
+                            "orientation_y": -9999.9,
+                            "orientation_z": -9999.9,
+                            "orientation_w": -9999.9
+                        }
+                    },
+                    "23": {
+                        "coordinate": {
+                            "position_x": -9999.9,
+                            "position_y": -9999.9,
+                            "position_z": -9999.9,
+                            "orientation_x": -9999.9,
+                            "orientation_y": -9999.9,
+                            "orientation_z": -9999.9,
+                            "orientation_w": -9999.9
+                        }
+                    }
+                }
+            }
+        }
+    }
+]
