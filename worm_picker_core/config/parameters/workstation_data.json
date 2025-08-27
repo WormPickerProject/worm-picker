@@ -69,13 +69,13 @@
             },
             "2": {
                 "coordinate": {
-                    "position_x": 0.34546,
-                    "position_y": -0.22393,
-                    "position_z": 0.32700,
-                    "orientation_x": 0.00004,
-                    "orientation_y": 0.00022,
-                    "orientation_z": -0.29073,
-                    "orientation_w": 0.95681
+                    "position_x": 0.33464,
+                    "position_y": -0.28590,
+                    "position_z": -0.00177,
+                    "orientation_x": -0.00019,
+                    "orientation_y": 0.00039,
+                    "orientation_z": -0.35107,
+                    "orientation_w": 0.93635
                 }
             }
         }
