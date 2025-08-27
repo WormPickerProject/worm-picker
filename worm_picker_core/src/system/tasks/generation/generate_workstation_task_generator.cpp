@@ -77,7 +77,7 @@ Coordinate GenerateWorkstationTaskGenerator::calculateDerivedPoint(const Coordin
         }
     }();
     
-    const double theta_rad = angle::THETA_STEP_RAD * (row_letter - angle::REFERENCE_ROW);
+    const double theta_rad = angle::THETA_STEP_RAD * (row_letter - angle::REFERENCE_ROW) + angle::REFERENCE_THETA_RAD;
     const double cos_theta = std::cos(theta_rad);
     const double sin_theta = std::sin(theta_rad);
 
