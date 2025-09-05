@@ -34,7 +34,7 @@ namespace rooms {
 
 namespace joint_1 {
     //static constexpr double TO_WORKSTATION = 0.0;
-    static constexpr double TO_WORKSTATION = -40; // Testing with compact WP2
+    static constexpr double TO_WORKSTATION = -0.698131701; // -40 deg in radiance Testing with compact WP2
 }
 
 } // namespace transfer_task_config

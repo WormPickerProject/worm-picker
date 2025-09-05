@@ -70,5 +70,9 @@
     {
         "name": "alignToHotel1",
         "stages": ["hotelRelativeAlignment", "Hotel1"]
+    },
+    {
+        "name": "alignToWorkStation",
+        "stages": ["alignToWorkStation"]
     }
 ]
