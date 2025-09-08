@@ -36,9 +36,9 @@ struct MovementParams {
 
 namespace motion {
     //static constexpr MovementParams PICK{ -0.03,  0.045, 0.03};
-    static constexpr MovementParams PICK{ -0.022, 0.045, 0.022}; // {dig amount, sliding amount, raiseamount} Testing with compact WP2
+    static constexpr MovementParams PICK{ -0.025, 0.045, 0.025}; // {dig amount, sliding amount, raiseamount} Testing with compact WP2
     //static constexpr MovementParams PLACE{-0.03, -0.045, 0.03};
-    static constexpr MovementParams PLACE{-0.022, -0.045, 0.022}; // Testing with compact WP2
+    static constexpr MovementParams PLACE{-0.025, -0.045, 0.025}; // Testing with compact WP2
 }
 
 namespace prefix {
