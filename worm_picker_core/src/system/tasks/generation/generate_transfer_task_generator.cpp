@@ -67,7 +67,7 @@ GenerateTransferTaskGenerator::createStagesForTask(const HotelData& data,
     stages.emplace_back(createMoveToJointStage(
         task_type_ == TaskType::ToHotel 
             ? hotelAngle(data.getCoordinate().getOrientation()) * 180.0 / M_PI
-            : transfer_config::joint_1::TO_WORKSTATION
+            : transfer_config::joint_1::TO_WORKSTATION_deg
     ));
     
     return stages;
