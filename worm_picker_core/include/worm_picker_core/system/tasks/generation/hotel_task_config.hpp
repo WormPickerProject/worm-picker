@@ -59,4 +59,9 @@ namespace prefix {
     static constexpr const char* POINT = "moveToPoint:";
 }
 
-} // namespace workstation_config
+namespace Joint4Constraints {
+    static constexpr double MIN_POS = -45; // degrees
+    static constexpr double MAX_POS =  45; // degrees
+}
+
+} // namespace hotel_config

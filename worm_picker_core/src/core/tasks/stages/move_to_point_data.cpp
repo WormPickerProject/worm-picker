@@ -46,6 +46,12 @@ void MoveToPointData::configureStageImpl(Stage& stage, const NodePtr& node) cons
 {
     using namespace moveit::task_constructor;
     auto& move_to_stage = dynamic_cast<stages::MoveTo&>(stage);
+    
+    if (joint_constraints_ && !joint_constraints_->empty()) {
+        auto constraints = createJointConstraints();
+        move_to_stage.setPathConstraints(constraints);
+    }
+    
     move_to_stage.setGoal(has_orientation_ ? createPoseGoal(node) : createPointGoal(node));
     setCommonInfo(move_to_stage, node);
 }
@@ -74,6 +80,39 @@ geometry_msgs::msg::PoseStamped MoveToPointData::createPoseGoal(const NodePtr& n
     target_point.pose.position.y = y_;
     target_point.pose.position.z = z_;
     return target_point;
+}
+
+void MoveToPointData::addJointConstraint(const JointConstraint& constraint) 
+{
+    if (!joint_constraints_) {
+        joint_constraints_ = std::vector<JointConstraint>();
+    }
+    joint_constraints_->push_back(constraint);
+}
+
+moveit_msgs::msg::Constraints MoveToPointData::createJointConstraints() const 
+{
+    moveit_msgs::msg::Constraints constraints;
+    constraints.name = "joint_constraints";
+    
+    if (joint_constraints_) {
+        for (const auto& jc : *joint_constraints_) {
+            moveit_msgs::msg::JointConstraint joint_constraint;
+            joint_constraint.joint_name = jc.joint_name;
+            
+            double center = (jc.min_position + jc.max_position) / 2.0;
+            double half_range = (jc.max_position - jc.min_position) / 2.0;
+            
+            joint_constraint.position = center;
+            joint_constraint.tolerance_above = half_range + jc.tolerance_above;
+            joint_constraint.tolerance_below = half_range + jc.tolerance_below;
+            joint_constraint.weight = jc.weight;
+            
+            constraints.joint_constraints.push_back(joint_constraint);
+        }
+    }
+    
+    return constraints;
 }
 
 std::unique_ptr<StageData> 

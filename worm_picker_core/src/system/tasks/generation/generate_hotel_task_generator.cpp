@@ -127,8 +127,18 @@ Coordinate GenerateHotelTaskGenerator::calculateDerivedPoint(const Coordinate& c
 std::shared_ptr<StageData> 
 GenerateHotelTaskGenerator::createMoveToPointStage(const Coordinate& coord) const
 {
-    return std::make_shared<MoveToPointData>(
+    auto move_stage = std::make_shared<MoveToPointData>(
         coord.getPositionX(), coord.getPositionY(), coord.getPositionZ(),
         coord.getOrientationX(), coord.getOrientationY(),
         coord.getOrientationZ(), coord.getOrientationW());
+    
+    move_stage->addJointConstraint(
+        JointConstraint(
+            JointNames::JOINT_4, 
+            deg2rad(hotel_config::Joint4Constraints::MIN_POS), 
+            deg2rad(hotel_config::Joint4Constraints::MAX_POS)
+        )
+    );
+    
+    return move_stage;
 }

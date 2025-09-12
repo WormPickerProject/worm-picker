@@ -6,7 +6,9 @@
 #pragma once
 
 #include <geometry_msgs/msg/pose_stamped.hpp>
+#include <moveit_msgs/msg/constraints.hpp>
 #include "worm_picker_core/core/tasks/stages/movement_data_base.hpp"
+#include "worm_picker_core/core/tasks/stages/joint_constraint.hpp"
 
 class MoveToPointData : public MovementDataBase {
 public:
@@ -17,6 +19,7 @@ public:
                     double ox, double oy, double oz, double ow,
                     double vel_scaling = 0.1, double acc_scaling = 0.1);
 
+    void addJointConstraint(const JointConstraint& constraint);
     std::unique_ptr<StageData> clone() const override;
     StageType getType() const override;
     double getX() const;
@@ -34,7 +37,8 @@ protected:
 
 private:
     geometry_msgs::msg::PoseStamped createPoseGoal(const NodePtr& node) const;
-    geometry_msgs::msg::PoseStamped createPointGoal(const NodePtr& node) const; 
+    geometry_msgs::msg::PoseStamped createPointGoal(const NodePtr& node) const;
+    moveit_msgs::msg::Constraints createJointConstraints() const;
 
     double x_{};
     double y_{};
@@ -44,4 +48,5 @@ private:
     double qz_{};
     double qw_{};
     bool has_orientation_{false};
+    std::optional<std::vector<JointConstraint>> joint_constraints_;
 };
