@@ -19,7 +19,7 @@ struct OffsetXYZ {
 };
 
 namespace offset {
-    static constexpr OffsetXYZ POSITION_OFFSET {-0.15, 0.00, 0.00}; 
+    static constexpr OffsetXYZ POSITION_OFFSET {-0.10, 0.00, 0.00}; 
 }
 
 namespace prefix {
