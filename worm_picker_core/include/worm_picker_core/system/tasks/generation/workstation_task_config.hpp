@@ -52,7 +52,7 @@ namespace angle {
     static constexpr double PI = 3.14159265358979323846;
     static constexpr double THETA_STEP_RAD = 7.6 * PI / 180.0; // Adjusted for compact WP2
     static constexpr char REFERENCE_ROW = 'C'; // Adjusted for compact WP2
-    static constexpr double REFERENCE_THETA_RAD = -40.0 * PI / 180.0; // The theta angle (rad) for the reference row
+    static constexpr double REFERENCE_THETA_RAD = -40.6 * PI / 180.0; // The theta angle (rad) for the reference row
 }
 
 } // namespace workstation_config

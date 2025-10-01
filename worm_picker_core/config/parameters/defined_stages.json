@@ -138,7 +138,7 @@
     {
         "name": "alignToWorkStation",
         "type": "JOINT",
-        "parameters": [-40, 0.0, 0.0, 0.0, 0.0, 0.0],
+        "parameters": [-40.6, 0.0, 0.0, 0.0, 0.0, 0.0],
         "joints_to_move": [1],
         "velocity_scaling": 0.1,
         "acceleration_scaling": 0.1
