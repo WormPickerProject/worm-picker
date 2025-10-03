@@ -231,7 +231,7 @@
         </visual>
     </link>
     <joint name="${prefix}wormpick-wormpick_tcp" type="fixed">
-        <origin xyz="-0.065 -0.15 0.00" rpy="${radians(-90.0)} ${radians(0.0)} ${radians(0.0)}"/>
+        <origin xyz="-0.075 -0.15 0.005" rpy="${radians(-90.0)} ${radians(0.0)} ${radians(0.0)}"/>
         <parent link="${prefix}wormpick"/>
         <child link="${prefix}wormpick_tcp"/> 
     </joint>
