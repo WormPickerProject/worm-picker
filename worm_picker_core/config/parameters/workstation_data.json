@@ -4,13 +4,13 @@
         "columns": {
             "1": {
                 "coordinate": {
-                    "position_x": 0.24943,
-                    "position_y": -0.21334,
-                    "position_z": 0.0044788,
-                    "orientation_x": 0.00002,
-                    "orientation_y": 0.00005,
-                    "orientation_z": -0.35729,
-                    "orientation_w": 0.93399
+                    "position_x": 0.29659,
+                    "position_y": -0.14150,
+                    "position_z": 0.00254,
+                    "orientation_x": 0.00001,
+                    "orientation_y": 0.00011,
+                    "orientation_z": -0.22072,
+                    "orientation_w": 0.97534
                 }
             },
             "2": {
