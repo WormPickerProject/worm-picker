@@ -74,5 +74,9 @@
     {
         "name": "alignToWorkStation",
         "stages": ["alignToWorkStation"]
+    },
+    {
+        "name": "swipePick",
+        "stages": ["swipePick"]
     }
 ]

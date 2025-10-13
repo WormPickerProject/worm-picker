@@ -48,7 +48,7 @@ parameters:
     zero_arg: ["home", "homeEndFactor", "moveToA2", "moveToM2", 
               "moveToG4", "moveToG1", "moveToI1", "moveToE1", 
               "moveToJ3", "moveToD3", "moveToI3", "moveToE3",
-              "alignToHotel1", "alignToWorkStation"]
+              "alignToHotel1", "alignToWorkStation", "swipePick"]
     one_arg: ["pickPlateWorkStation", "placePlateWorkStation", "swapEndFactor", "hoverWormPick",
               "moveToPoint", "pickPlateHotel", "placePlateHotel", "pickLidHotel", "placeLidHotel",
               "workStationToHotel", "hotelToWorkStation"]

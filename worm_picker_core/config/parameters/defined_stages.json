@@ -142,5 +142,13 @@
         "joints_to_move": [1],
         "velocity_scaling": 0.1,
         "acceleration_scaling": 0.1
+    },
+    {
+        "name": "swipePick",
+        "type": "JOINT",
+        "parameters": [0, 0.0, 0.0, 0.0, 0.0, -100],
+        "joints_to_move": [6],
+        "velocity_scaling": 1,
+        "acceleration_scaling": 1
     }
 ]
