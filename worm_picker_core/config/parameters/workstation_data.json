@@ -112,13 +112,13 @@
         "columns": {
             "1": {
                 "coordinate": {
-                    "position_x": 0.29324,
-                    "position_y": -0.08539,
-                    "position_z": 0.32700,
-                    "orientation_x": 0.00007,
-                    "orientation_y": 0.00022,
-                    "orientation_z": -0.14736,
-                    "orientation_w": 0.98908
+                    "position_x": 0.18398,
+                    "position_y": -0.27230,
+                    "position_z": 0.00231,
+                    "orientation_x": 0.00003,
+                    "orientation_y": 0.00008,
+                    "orientation_z": -0.46910,
+                    "orientation_w": 0.88314
                 }
             },
             "2": {
