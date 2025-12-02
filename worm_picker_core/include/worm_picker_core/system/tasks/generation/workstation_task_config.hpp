@@ -36,7 +36,7 @@ struct MovementParams {
 
 namespace motion {
     //static constexpr MovementParams PICK{ -0.03,  0.045, 0.03};
-    static constexpr MovementParams PICK{ -0.025, 0.045, 0.025}; // {dig amount, sliding amount, raiseamount} Testing with compact WP2
+    static constexpr MovementParams PICK{ -0.025, 0.044, 0.025}; // {dig amount, sliding amount, raiseamount} Testing with compact WP2
     //static constexpr MovementParams PLACE{-0.03, -0.045, 0.03};
     static constexpr MovementParams PLACE{-0.025, -0.045, 0.025}; // Testing with compact WP2
 }
@@ -50,7 +50,7 @@ namespace prefix {
 
 namespace angle {
     static constexpr double PI = 3.14159265358979323846;
-    static constexpr double THETA_STEP_RAD = 7.6 * PI / 180.0; // Adjusted for compact WP2
+    static constexpr double THETA_STEP_RAD = -7.6 * PI / 180.0; // Adjusted for compact WP2
     static constexpr char REFERENCE_ROW = 'C'; // Adjusted for compact WP2
     static constexpr double REFERENCE_THETA_RAD = -40.6 * PI / 180.0; // The theta angle (rad) for the reference row
 }
