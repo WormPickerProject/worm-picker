@@ -78,5 +78,9 @@
     {
         "name": "swipePick",
         "stages": ["swipePick"]
+    },
+    {
+        "name": "zeroJoint1",
+        "stages": ["zeroJoint1"]
     }
 ]

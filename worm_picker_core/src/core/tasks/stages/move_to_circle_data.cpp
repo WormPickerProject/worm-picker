@@ -13,18 +13,19 @@
 MoveToCircleData::MoveToCircleData() 
   : MovementDataBase(0.1, 0.1) {}
 
-  MoveToCircleData::MoveToCircleData(double px, double py, double pz,
-                                     double vel_scaling, double acc_scaling)
+// Deprecated: This constructor should no longer ever be called. 
+MoveToCircleData::MoveToCircleData(double px, double py, double pz,
+                                   double vel_scaling, double acc_scaling)
   : MovementDataBase(vel_scaling, acc_scaling),
     x_(px), y_(py), z_(pz),
     has_orientation_(false) {}
 
-  MoveToCircleData::MoveToCircleData(double px, double py, double pz,
-                                 double ox, double oy, double oz, double ow,
-                                 double vel_scaling, double acc_scaling)
+MoveToCircleData::MoveToCircleData(double px, double py, double pz,
+                                   double ox, double oy, double oz, double ow,
+                                   double vel_scaling, double acc_scaling)
   : MovementDataBase(vel_scaling, acc_scaling), 
     x_(px), y_(py), z_(pz), 
-    has_orientation_(false)
+    has_orientation_(true)
 {
     tf2::Quaternion q(ox, oy, oz, ow);
     q.normalize();

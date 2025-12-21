@@ -11,6 +11,7 @@
 MoveToPointData::MoveToPointData() 
   : MovementDataBase(0.1, 0.1) {}
 
+// Deprecated: This constructor should no longer ever be called.
 MoveToPointData::MoveToPointData(double px, double py, double pz,
                                  double vel_scaling, double acc_scaling)
   : MovementDataBase(vel_scaling, acc_scaling),

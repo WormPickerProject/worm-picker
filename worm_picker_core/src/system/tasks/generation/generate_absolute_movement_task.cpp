@@ -155,21 +155,45 @@ Result<std::shared_ptr<StageData>>
 GenerateAbsoluteMovementTask::createStage(const Pose& goal_pose, const std::string& motion_type,
                                           const NodePtr& node, size_t base_args)
 {
-    if (motion_type == "LIN") {
-        return Result<StageDataPtr>::success(createPointStage(goal_pose, base_args));
+    auto base_link = param_utils::getParameter<std::string>(node, "frames.base_link");
+    if (!base_link) {
+        return Result<StageDataPtr>::error("Missing parameter: frames.base_link");
     }
-    
+
+    auto goalWithCurrentOrientation = [&](const Pose& current) -> Pose {
+        Pose updated = goal_pose;
+        if (base_args == 4) {
+            updated.pose.orientation = current.pose.orientation;
+        }
+        return updated;
+    };
+
+    if (motion_type == "LIN") {
+        if (base_args == 8) {
+            return Result<StageDataPtr>::success(createPointStage(goal_pose, base_args));
+        }
+
+        // base_args == 4 (moveAbsolutePos): keep current orientation
+        return getCurrentPose(node).map([&](const Pose& current) -> StageDataPtr {
+            Pose updated_goal = goalWithCurrentOrientation(current);
+            return createPointStage(updated_goal, /*base_args=*/8);
+        });
+    }
+
     if (motion_type == "CIRC") {
-        auto stage = createCircleStage(goal_pose, base_args);
-        auto applyCircConstraint = [&, stage](const auto& current) -> Result<StageDataPtr> {
-            auto constraint = CircularConstraintCalculator::calculate(node, current, goal_pose);
-            constraint.header.frame_id = *param_utils::getParameter<std::string>(
-                node, "frames.base_link"
-            );
-            
-            stage->setCircularConstraint(circular_motion::makeCenterConstraint(constraint));
+        auto applyCircConstraint = [&](const Pose& current) -> Result<StageDataPtr> {
+            Pose updated_goal = goalWithCurrentOrientation(current);
+
+            const size_t ctor_args = (base_args == 4) ? 8 : base_args;
+            auto stage = createCircleStage(updated_goal, ctor_args);
+
+            auto center = CircularConstraintCalculator::calculate(node, current, goal_pose);
+            center.header.frame_id = *base_link;
+
+            stage->setCircularConstraint(circular_motion::makeCenterConstraint(center));
             return Result<StageDataPtr>::success(stage);
         };
+
         return getCurrentPose(node).flatMap(applyCircConstraint);
     }
     
@@ -228,9 +252,8 @@ GenerateAbsoluteMovementTask::getCurrentPose(rclcpp::Node::SharedPtr node)
             tf2::TimePointZero,
             std::chrono::milliseconds(100)
         );
-    } catch (const tf2::TransformException &ex) {
-        throw std::runtime_error("TF2 lookup failed: " + std::string(ex.what()));
-        return PoseResult::error(fmt::format("TF2 lookup failed: '{}'", std::string(ex.what())));
+    } catch (const tf2::TransformException& ex) {
+        return PoseResult::error(fmt::format("TF2 lookup failed: '{}'", ex.what()));
     }
 
     geometry_msgs::msg::PoseStamped pose;
@@ -240,5 +263,5 @@ GenerateAbsoluteMovementTask::getCurrentPose(rclcpp::Node::SharedPtr node)
     pose.pose.position.z = transform.transform.translation.z;
     pose.pose.orientation = transform.transform.rotation;
 
-    return PoseResult::success(pose);
+    return PoseResult::success(std::move(pose));
 }
