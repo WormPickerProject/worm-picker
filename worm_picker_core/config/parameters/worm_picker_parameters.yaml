@@ -52,7 +52,7 @@ parameters:
     one_arg: ["pickPlateWorkStation", "placePlateWorkStation", "swapEndFactor", "hoverWormPick",
               "moveToPoint", "pickPlateHotel", "placePlateHotel", "pickLidHotel", "placeLidHotel",
               "workStationToHotel", "hotelToWorkStation"]
-    two_arg: []
+    two_arg: ["hotelToHotel"]
     three_arg: ["moveRelative"]
     four_arg: ["moveAbsolutePos"]
     eight_arg: ["moveAbsolutePose"]

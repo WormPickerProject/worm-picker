@@ -9,6 +9,7 @@
 #include "worm_picker_core/system/tasks/generation/generate_workstation_task_generator.hpp"
 #include "worm_picker_core/system/tasks/generation/generate_hotel_task_generator.hpp"
 #include "worm_picker_core/system/tasks/generation/generate_transfer_task_generator.hpp"
+#include "worm_picker_core/system/tasks/generation/generate_hotel_transfer_task_generator.hpp"
 
 class TaskGenerator {
 public:

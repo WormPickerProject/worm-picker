@@ -25,6 +25,7 @@ namespace offset {
 namespace prefix {
     static constexpr const char* WORKSTATION_TO_HOTEL = "workStationToHotel:";
     static constexpr const char* HOTEL_TO_WORKSTATION = "hotelToWorkStation:";
+    static constexpr const char* HOTEL_TO_HOTEL = "hotelToHotel:";
 }
 
 namespace rooms {

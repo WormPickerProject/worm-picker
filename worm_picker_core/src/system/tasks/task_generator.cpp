@@ -54,6 +54,9 @@ TaskGenerator::GeneratorList TaskGenerator::initializeGenerators(
 
     generators.emplace_back(std::make_unique<GenerateTransferTaskGenerator>(
         hotel_map, transfer_config::TaskType::ToWorkstation));  
+    
+    generators.emplace_back(std::make_unique<GenerateHotelTransferTaskGenerator>(
+        hotel_map));
 
     return generators;
 }
