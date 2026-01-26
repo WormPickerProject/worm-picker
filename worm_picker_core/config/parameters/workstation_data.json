@@ -58,12 +58,12 @@
         "columns": {
             "1": {
                 "coordinate": {
-                    "position_x": 0.25014,
-                    "position_y": -0.21440,
-                    "position_z": 0.00225,
-                    "orientation_x": 0.00005,
-                    "orientation_y": 0.00013,
-                    "orientation_z": -0.34694,
+                    "position_x": 0.25004,
+                    "position_y": -0.21432,
+                    "position_z": 0.00214,
+                    "orientation_x": 0.00004,
+                    "orientation_y": 0.00015,
+                    "orientation_z": -0.34693,
                     "orientation_w": 0.93789
                 }
             },
