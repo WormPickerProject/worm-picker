@@ -74,10 +74,10 @@ void RosCommandClient::connectToTaskCommandService()
     RCLCPP_INFO(node_->get_logger(),"Connected to %s", TASK_SRV);
 }
 
-void RosCommandClient::runSocketServer(int port)
+void RosCommandClient::runSerialServer(std::string device, unsigned baud_rate)
 {
     work_guard_.emplace(boost::asio::make_work_guard(io_ctx_));
-    server_ = std::make_unique<TcpSocketServer>(io_ctx_, port);
+    server_ = std::make_unique<SerialPortServer>(io_ctx_, std::move(device), baud_rate);
 
     std::weak_ptr<RosCommandClient> weak = shared_from_this();
     server_->setCommandHandler([weak, strand=strand_](std::string cmd, ReplyFn reply) {
@@ -91,7 +91,7 @@ void RosCommandClient::runSocketServer(int port)
     });
 
     if (!server_->startServer()) {
-        RCLCPP_ERROR(node_->get_logger(),"TCP server failed to start");
+        RCLCPP_ERROR(node_->get_logger(),"Serial server failed to start");
         return;
     }
     io_thread_ = std::jthread([this]{ io_ctx_.run(); });

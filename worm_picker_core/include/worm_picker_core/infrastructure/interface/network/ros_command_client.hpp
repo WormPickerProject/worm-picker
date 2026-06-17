@@ -10,7 +10,7 @@
 #include <motoros2_interfaces/srv/start_traj_mode.hpp>
 #include <worm_picker_custom_msgs/srv/task_command.hpp>
 #include "worm_picker_core/core/result.hpp"
-#include "worm_picker_core/infrastructure/interface/network/tcp_socket_server.hpp"
+#include "worm_picker_core/infrastructure/interface/network/serial_port_server.hpp"
 
 class RosCommandClient : public std::enable_shared_from_this<RosCommandClient>
 {
@@ -18,7 +18,7 @@ public:
     explicit RosCommandClient(int argc, char **argv);
     ~RosCommandClient();
     void connectToTaskCommandService();
-    void runSocketServer(int port);
+    void runSerialServer(std::string device, unsigned baud_rate);
 
 private:
     using Task              = worm_picker_custom_msgs::srv::TaskCommand;
@@ -47,6 +47,6 @@ private:
     boost::asio::io_context            io_ctx_;
     IoStrand                           strand_;
     OptionalWorkGuard                  work_guard_;
-    std::unique_ptr<TcpSocketServer>   server_;
+    std::unique_ptr<SerialPortServer>  server_;
     std::jthread                       io_thread_;
 };

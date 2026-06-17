@@ -26,6 +26,8 @@ class WormPickerLauncher:
         self.use_massif:    bool | None = None
         self.interface:     str  | None = None
         self.terminal:      str  | None = None
+        self.serial_device: str  | None = None
+        self.serial_baud:   str  | None = None
 
         self.cfg:        dict[str, Path] = {}
         self.moveit_cfg  = None
@@ -45,6 +47,10 @@ class WormPickerLauncher:
                                   description="Command interface: none | cli | network | both"),
             DeclareLaunchArgument("terminal",   default_value="gnome-terminal",
                                   description="Terminal emulator used to spawn interfaces"),
+            DeclareLaunchArgument("serial_device", default_value="/dev/ttyUSB0",
+                                  description="Serial device used by the command bridge"),
+            DeclareLaunchArgument("serial_baud",   default_value="115200",
+                                  description="Baud rate of the serial command bridge"),
         ]
 
     def _resolve_arguments(self, context):
@@ -57,6 +63,8 @@ class WormPickerLauncher:
         self.use_massif    = LaunchConfiguration("use_massif").perform(context).lower() == "true"
         self.interface     = LaunchConfiguration("interface").perform(context).lower()
         self.terminal      = LaunchConfiguration("terminal").perform(context)
+        self.serial_device = LaunchConfiguration("serial_device").perform(context)
+        self.serial_baud   = LaunchConfiguration("serial_baud").perform(context)
 
     def _setup_config_paths(self):
         """Locate package resources and validate"""
@@ -198,8 +206,9 @@ class WormPickerLauncher:
         return nodes
 
     def _create_interface_nodes(self):
-        """Spawn CLI / TCP helpers in their own GNOME-terminal tabs/windows."""
-        def spawn(title: str, exe: str, enabled: bool) -> ExecuteProcess:
+        """Spawn CLI / serial helpers in their own GNOME-terminal tabs/windows."""
+        def spawn(title: str, exe: str, enabled: bool, args: str = "") -> ExecuteProcess:
+            invocation = f"ros2 run worm_picker_core {exe} {args}".rstrip()
             return ExecuteProcess(
                 condition=IfCondition("true" if enabled else "false"),
                 cmd=[
@@ -208,7 +217,7 @@ class WormPickerLauncher:
                         "source /opt/ros/humble/setup.bash && "
                         "source ~/ws_moveit2/install/setup.bash && "
                         "source ~/worm-picker/install/setup.bash && "
-                        f"ros2 run worm_picker_core {exe}"
+                        f"{invocation}"
                     ),
                 ],
                 shell=False,
@@ -220,8 +229,9 @@ class WormPickerLauncher:
         return [
             spawn("WormPicker CLI", "core_command_interface",
                   self.interface in {"cli", "both"}),
-            spawn("WormPicker TCP", "command_networking",
-                  self.interface in {"network", "both"}),
+            spawn("WormPicker Serial", "command_networking",
+                  self.interface in {"network", "both"},
+                  f"{self.serial_device} {self.serial_baud}"),
         ]
 
     def launch_setup(self, context, *_, **__):
