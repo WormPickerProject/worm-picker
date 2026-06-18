@@ -17,7 +17,7 @@ int main(int argc, char **argv)
 
     auto client = std::make_shared<RosCommandClient>(argc, argv);
 
-    std::jthread([client]() { client->connectToTaskCommandService(); });
+    std::jthread connect_thread([client]() { client->connectToTaskCommandService(); });
     client->runSerialServer(device, baud);
 
     return 0;
